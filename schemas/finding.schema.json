@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://adobe-hackathon-2026.invalid/agent-readiness-audit/finding.schema.json",
+  "title": "Finding",
+  "description": "One audit finding. Transcribed field-for-field from docs/CONTRACTS.md section 2, which is frozen. The handout-required fields are id, title, severity, evidence and suggested_action (with summary and priority); everything else is an approved extension. severity and suggested_action.priority are derived by the orchestrator from the impact inputs, confidence, effort and status declared here, and are never hand-assigned by a diagnostic.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "severity",
+    "evidence",
+    "suggested_action",
+    "skill",
+    "rule_id",
+    "status",
+    "category",
+    "symptom",
+    "confidence",
+    "impact",
+    "scope",
+    "evidence_refs",
+    "false_positive_controls_applied",
+    "exceptions_checked"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^F-[0-9]{3,}$" },
+    "title": { "type": "string", "minLength": 1 },
+    "severity": { "$ref": "#/$defs/severity" },
+    "evidence": { "type": "string", "minLength": 1 },
+
+    "suggested_action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "priority", "what", "where", "why", "how", "mechanism", "success_criteria", "effort"],
+      "properties": {
+        "summary": { "type": "string", "minLength": 1 },
+        "priority": { "enum": ["P0", "P1", "P2", "P3"] },
+        "what": { "type": "string", "minLength": 1 },
+        "where": { "type": "string", "minLength": 1 },
+        "why": { "type": "string", "minLength": 1 },
+        "how": { "type": "string", "minLength": 1 },
+        "mechanism": { "type": "string", "minLength": 1 },
+        "success_criteria": { "type": "string", "minLength": 1 },
+        "effort": { "$ref": "#/$defs/effort" }
+      }
+    },
+
+    "skill": {
+      "enum": [
+        "access-and-indexability",
+        "render-and-extraction",
+        "identity-and-markup",
+        "answerability",
+        "freshness-and-corroboration",
+        "arrival-and-engagement",
+        "audit-orchestrator"
+      ]
+    },
+    "rule_id": { "type": "string", "pattern": "^[A-Z]{3}-[0-9]{3}$" },
+    "status": { "enum": ["found", "risk", "proactive"] },
+    "category": { "enum": ["discoverability", "engagement"] },
+    "symptom": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "enum": ["invisible", "misrepresented", "bounce"] }
+    },
+    "confidence": { "$ref": "#/$defs/confidence" },
+
+    "impact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["blocking", "breadth", "content_importance"],
+      "properties": {
+        "blocking": { "type": "boolean" },
+        "breadth": { "enum": ["site", "section", "page"] },
+        "content_importance": { "enum": ["primary", "secondary"] }
+      }
+    },
+
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pages_affected", "pages_examined", "page_types"],
+      "properties": {
+        "pages_affected": { "type": "integer", "minimum": 0 },
+        "pages_examined": { "type": "integer", "minimum": 0 },
+        "page_types": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["url", "observation", "layer", "method", "retrieved_at"],
+        "properties": {
+          "url": { "type": "string" },
+          "observation": { "type": "string", "minLength": 1 },
+          "layer": { "type": "string" },
+          "method": { "enum": ["fetch", "render"] },
+          "retrieved_at": { "$ref": "#/$defs/timestamp" }
+        }
+      }
+    },
+
+    "false_positive_controls_applied": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "exceptions_checked": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+
+  "$defs": {
+    "severity": { "enum": ["critical", "high", "medium", "low"] },
+    "confidence": { "enum": ["high", "medium", "low"] },
+    "effort": { "enum": ["low", "medium", "high"] },
+    "timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    }
+  }
+}
