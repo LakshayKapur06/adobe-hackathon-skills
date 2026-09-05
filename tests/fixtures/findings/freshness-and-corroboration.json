@@ -1,0 +1,45 @@
+{
+  "findings": [
+    {
+      "id": "F-002",
+      "title": "Home page carries no machine-readable date",
+      "evidence": "Examined 2 pages; the home page has no visible date, no schema dateModified or datePublished, and no HTTP Last-Modified header, so its currency cannot be established from the response. The About page carries all three.",
+      "suggested_action": {
+        "summary": "Emit a dateModified on the home page so its currency is establishable without guessing.",
+        "what": "A schema.org dateModified on the home page, matching an HTTP Last-Modified header.",
+        "where": "The home page template at http://localhost:8000/index.html.",
+        "why": "Nothing in the response says when the page last changed, so a system deciding between this page and an older third-party description of the brand has no recency signal to prefer it by.",
+        "how": "Populate dateModified from the content's own last edit, not from the build timestamp. A date that changes on every deploy is not a freshness signal; it is noise, and it makes every future genuine change indistinguishable from a rebuild.",
+        "mechanism": "Recency arbitration: a datable page can be preferred over a stale external description of the same facts.",
+        "success_criteria": "The home page response contains a dateModified that changes when the page's content changes and not when it does not.",
+        "effort": "low"
+      },
+      "skill": "freshness-and-corroboration",
+      "rule_id": "FRC-003",
+      "status": "proactive",
+      "category": "discoverability",
+      "symptom": ["misrepresented"],
+      "confidence": "high",
+      "impact": { "blocking": false, "breadth": "page", "content_importance": "primary" },
+      "scope": { "pages_affected": 1, "pages_examined": 2, "page_types": ["home"] },
+      "evidence_refs": [
+        {
+          "url": "http://localhost:8000/index.html",
+          "observation": "dates.visible_dates is empty; schema_date_modified, schema_date_published and http_last_modified are all null",
+          "layer": "first_party",
+          "method": "fetch",
+          "retrieved_at": "2026-09-06T09:00:01Z"
+        }
+      ],
+      "false_positive_controls_applied": [
+        "checked all three date sources before concluding the page is undated",
+        "excluded pages whose content is inherently undated, such as a contact page with no substantive claims"
+      ],
+      "exceptions_checked": [
+        "evergreen pages whose content genuinely does not change, where a stale-looking date would be worse than none"
+      ]
+    }
+  ],
+  "not_assessed": [],
+  "checks_passed": []
+}

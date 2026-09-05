@@ -1,0 +1,377 @@
+{
+  "canonical_claims": [],
+  "claim_candidates": [
+    {
+      "extraction_method": "jsonld",
+      "id": "CC-001",
+      "kind": "legal_name",
+      "locator": "jsonld:Organization.name",
+      "observed_count": 4,
+      "source_url": "http://localhost:8000/index.html",
+      "value_normalized": "fixture instruments",
+      "value_raw": "Fixture Instruments"
+    },
+    {
+      "extraction_method": "jsonld",
+      "id": "CC-002",
+      "kind": "founded_year",
+      "locator": "jsonld:Organization.foundingDate",
+      "observed_count": 3,
+      "source_url": "http://localhost:8000/index.html",
+      "value_normalized": "1974",
+      "value_raw": "1974"
+    },
+    {
+      "extraction_method": "visible_text",
+      "id": "CC-003",
+      "kind": "address",
+      "locator": "main > p:nth-of-type(3)",
+      "observed_count": 3,
+      "source_url": "http://localhost:8000/index.html",
+      "value_normalized": "12 laburnum road pune 411001 maharashtra india",
+      "value_raw": "12 Laburnum Road, Pune 411001, Maharashtra, India"
+    }
+  ],
+  "crawl": {
+    "blocked_by_robots": 1,
+    "discovered": 3,
+    "errors": 0,
+    "fetched": 2,
+    "sampling": {
+      "strata": [
+        {
+          "discovered": 1,
+          "page_type": "home",
+          "sampled": 1
+        },
+        {
+          "discovered": 1,
+          "page_type": "informational",
+          "sampled": 1
+        }
+      ],
+      "strategy": "stratified:sitemap+nav+linkgraph"
+    }
+  },
+  "errors": [],
+  "external": {
+    "attempted": false,
+    "frontier_size": 0,
+    "hits": [],
+    "method": "none",
+    "origins": [],
+    "truncated": false
+  },
+  "link_graph": {
+    "edges": [
+      [
+        "http://localhost:8000/index.html",
+        "http://localhost:8000/about.html"
+      ],
+      [
+        "http://localhost:8000/about.html",
+        "http://localhost:8000/index.html"
+      ]
+    ],
+    "max_depth_from_home": 1,
+    "orphans": []
+  },
+  "pages": [
+    {
+      "canonical": "http://localhost:8000/index.html",
+      "canonical_self": true,
+      "content_type": "text/html",
+      "dates": {
+        "http_last_modified": null,
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "visible_dates": []
+      },
+      "fetched_at": "2026-09-06T09:00:01Z",
+      "final_url": "http://localhost:8000/index.html",
+      "headers": {
+        "cache_control": null,
+        "last_modified": null,
+        "x_robots_tag": null
+      },
+      "hreflang": [],
+      "jsonld": [
+        {
+          "contradicts_visible_text": false,
+          "errors": [],
+          "fields_present": [
+            "@id",
+            "name",
+            "foundingDate",
+            "url",
+            "address"
+          ],
+          "type": "Organization",
+          "valid": true
+        }
+      ],
+      "lang": "en",
+      "meta_robots": [
+        "index",
+        "follow"
+      ],
+      "microdata_or_rdfa": false,
+      "obstructions": [],
+      "page_type": "home",
+      "page_type_confidence": 0.95,
+      "provenance": {
+        "layer": "first_party",
+        "method": "fetch"
+      },
+      "raw": {
+        "bytes": 1892,
+        "forms": 0,
+        "headings": [
+          {
+            "level": 1,
+            "text": "Fixture Instruments"
+          },
+          {
+            "level": 2,
+            "text": "What we make"
+          },
+          {
+            "level": 2,
+            "text": "Where to find us"
+          }
+        ],
+        "iframes": 0,
+        "images": [],
+        "links": [
+          {
+            "anchor": "Fixture Instruments",
+            "href": "/index.html",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "About",
+            "href": "/about.html",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "Cart",
+            "href": "/cart",
+            "internal": true,
+            "rel": null
+          }
+        ],
+        "tables": 0,
+        "text_hash": "sha256:f0e1d2c3b4a5968778695a4b3c2d1e0fa1b2c3d4e5f60718293a4b5c6d7e8f90",
+        "text_len": 741
+      },
+      "redirect_chain": [],
+      "rendered": {
+        "available": false,
+        "delta_ratio": null,
+        "headings": [],
+        "text_hash": null,
+        "text_len": null
+      },
+      "status": 200,
+      "text": {
+        "boilerplate_ratio": 0.18,
+        "heading_density_per_1k": 25.4,
+        "longest_block_words": 41,
+        "visible_excerpt": "Fixture Instruments has made precision tuning forks in Pune, India since 1974.",
+        "word_count": 118
+      },
+      "timing": {
+        "fetch_ms": 5,
+        "render_ms": null,
+        "ttfb_ms": 3
+      },
+      "url": "http://localhost:8000/index.html"
+    },
+    {
+      "canonical": "http://localhost:8000/about.html",
+      "canonical_self": true,
+      "content_type": "text/html",
+      "dates": {
+        "http_last_modified": null,
+        "schema_date_modified": "2026-08-01",
+        "schema_date_published": null,
+        "visible_dates": [
+          "2026-08-01"
+        ]
+      },
+      "fetched_at": "2026-09-06T09:00:02Z",
+      "final_url": "http://localhost:8000/about.html",
+      "headers": {
+        "cache_control": null,
+        "last_modified": null,
+        "x_robots_tag": null
+      },
+      "hreflang": [],
+      "jsonld": [
+        {
+          "contradicts_visible_text": false,
+          "errors": [],
+          "fields_present": [
+            "name",
+            "dateModified",
+            "publisher"
+          ],
+          "type": "AboutPage",
+          "valid": true
+        }
+      ],
+      "lang": "en",
+      "meta_robots": [
+        "index",
+        "follow"
+      ],
+      "microdata_or_rdfa": false,
+      "obstructions": [],
+      "page_type": "informational",
+      "page_type_confidence": 0.88,
+      "provenance": {
+        "layer": "first_party",
+        "method": "fetch"
+      },
+      "raw": {
+        "bytes": 1604,
+        "forms": 0,
+        "headings": [
+          {
+            "level": 1,
+            "text": "About Fixture Instruments"
+          },
+          {
+            "level": 2,
+            "text": "Calibration"
+          },
+          {
+            "level": 2,
+            "text": "Who does it"
+          }
+        ],
+        "iframes": 0,
+        "images": [],
+        "links": [
+          {
+            "anchor": "Fixture Instruments",
+            "href": "/index.html",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "About",
+            "href": "/about.html",
+            "internal": true,
+            "rel": null
+          }
+        ],
+        "tables": 0,
+        "text_hash": "sha256:0a1b2c3d4e5f60718293a4b5c6d7e8f90f0e1d2c3b4a5968778695a4b3c2d1e0",
+        "text_len": 688
+      },
+      "redirect_chain": [],
+      "rendered": {
+        "available": false,
+        "delta_ratio": null,
+        "headings": [],
+        "text_hash": null,
+        "text_len": null
+      },
+      "status": 200,
+      "text": {
+        "boilerplate_ratio": 0.16,
+        "heading_density_per_1k": 24.8,
+        "longest_block_words": 52,
+        "visible_excerpt": "Every fork is compared against a reference oscillator traceable to a national standard.",
+        "word_count": 121
+      },
+      "timing": {
+        "fetch_ms": 4,
+        "render_ms": null,
+        "ttfb_ms": 2
+      },
+      "url": "http://localhost:8000/about.html"
+    }
+  ],
+  "robots": {
+    "ai_agents": {
+      "CCBot": "unspecified",
+      "ClaudeBot": "unspecified",
+      "GPTBot": "unspecified",
+      "Google-Extended": "unspecified",
+      "Googlebot": "unspecified",
+      "OAI-SearchBot": "unspecified",
+      "PerplexityBot": "unspecified"
+    },
+    "fetched": true,
+    "groups": [
+      {
+        "allow": [
+          "/"
+        ],
+        "crawl_delay": null,
+        "disallow": [
+          "/cart"
+        ],
+        "user_agent": "*"
+      }
+    ],
+    "sitemaps": [
+      "http://localhost:8000/sitemap.xml"
+    ],
+    "status": 200,
+    "url": "http://localhost:8000/robots.txt"
+  },
+  "run_context": {
+    "budgets": {
+      "crawl_s": 90,
+      "external_s": 90,
+      "global_s": 300,
+      "render_s": 60
+    },
+    "capabilities": {
+      "egress": false,
+      "js_render": false,
+      "renderer": null
+    },
+    "corroboration": {
+      "method": "none",
+      "provider_unavailable": []
+    },
+    "degradations": [
+      {
+        "impact": "render-delta rules not assessed",
+        "reason": "no browser found",
+        "what": "render"
+      },
+      {
+        "impact": "corroboration rules not assessed",
+        "reason": "egress disabled for the fixture run",
+        "what": "external"
+      }
+    ],
+    "finished_at": "2026-09-06T09:00:07Z",
+    "started_at": "2026-09-06T09:00:00Z"
+  },
+  "schema_version": "2.0.0",
+  "site": {
+    "detected_locales": [
+      "en"
+    ],
+    "input": "http://localhost:8000",
+    "registrable_domain": "localhost",
+    "resolved_origin": "http://localhost:8000"
+  },
+  "sitemaps": [
+    {
+      "lastmod_present_ratio": 1.0,
+      "parse_ok": true,
+      "status": 200,
+      "url": "http://localhost:8000/sitemap.xml",
+      "url_count": 2
+    }
+  ]
+}

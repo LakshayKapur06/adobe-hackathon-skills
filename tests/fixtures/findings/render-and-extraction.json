@@ -1,0 +1,11 @@
+{
+  "findings": [],
+  "not_assessed": [
+    {
+      "rule_id": "RND-002",
+      "reason": "no browser available, so no rendered DOM exists to compare against the server HTML",
+      "enable_hint": "install a Chromium-based browser and re-run"
+    }
+  ],
+  "checks_passed": []
+}

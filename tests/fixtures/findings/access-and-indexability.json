@@ -1,0 +1,10 @@
+{
+  "findings": [],
+  "not_assessed": [],
+  "checks_passed": [
+    {
+      "rule_id": "ACC-001",
+      "summary": "No AI crawler is disallowed in robots.txt; all seven tracked agents fall under the wildcard group, which allows /"
+    }
+  ]
+}

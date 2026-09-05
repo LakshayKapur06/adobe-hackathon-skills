@@ -1,0 +1,52 @@
+{
+  "category": "discoverability",
+  "confidence": "medium",
+  "evidence": "Examined 2 pages; the single Organization node at http://localhost:8000/#org declares @id, name, foundingDate, url and address, and no sameAs. No off-site profile is therefore linked from the entity the site publishes.",
+  "evidence_refs": [
+    {
+      "layer": "first_party",
+      "method": "fetch",
+      "observation": "jsonld[0].fields_present is [@id, name, foundingDate, url, address]; sameAs absent",
+      "retrieved_at": "2026-09-06T09:00:01Z",
+      "url": "http://localhost:8000/index.html"
+    }
+  ],
+  "exceptions_checked": [
+    "brands with no off-site presence to point at, for which the recommendation is to establish one first rather than to fabricate links"
+  ],
+  "false_positive_controls_applied": [],
+  "id": "F-001",
+  "impact": {
+    "blocking": false,
+    "breadth": "site",
+    "content_importance": "secondary"
+  },
+  "rule_id": "IDM-004",
+  "scope": {
+    "page_types": [
+      "home",
+      "informational"
+    ],
+    "pages_affected": 2,
+    "pages_examined": 2
+  },
+  "severity": "low",
+  "skill": "identity-and-markup",
+  "status": "proactive",
+  "suggested_action": {
+    "effort": "medium",
+    "how": "Add the URLs of profiles the brand actually controls and that name it back. Each target must be verifiable in both directions; a sameAs pointing at a profile that does not mention the brand weakens the claim rather than strengthening it.",
+    "mechanism": "Identity disambiguation: an entity reachable from several independent addresses is resolvable, where an entity asserted only on its own domain is not.",
+    "priority": "P2",
+    "success_criteria": "Every sameAs target resolves and names the brand, and the Organization node can be matched to an external entity record without guessing.",
+    "summary": "Add sameAs links from the Organization node to the profiles the brand already controls off-site.",
+    "what": "A sameAs array on the existing Organization node listing the brand's own off-site profiles.",
+    "where": "The JSON-LD Organization block in the site-wide head, at http://localhost:8000/#org.",
+    "why": "The node currently asserts an identity that nothing off-site can be matched against, so a retrieval system holding two entities with similar names has nothing to break the tie with."
+  },
+  "symptom": [
+    "invisible",
+    "misrepresented"
+  ],
+  "title": "Organization node has no sameAs identity anchors"
+}
