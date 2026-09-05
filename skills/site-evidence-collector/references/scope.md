@@ -49,10 +49,18 @@ then the same site would produce different evidence on two machines.
 
 ## Two-pass ordering
 
-Pass 1 crawls and extracts claim candidates. `identity-and-markup` promotes them
-to canonical claims. Pass 2 probes off-site, seeded by those claims. The split
-exists because promotion is a judgement, and the collector does not judge; see
-`skills/audit-orchestrator/references/composition.md`.
+Pass 1 crawls and extracts claim candidates. The audit's identity diagnostic
+promotes them to canonical claims. Pass 2 probes off-site, seeded by those
+claims.
+
+The split exists to resolve a circular dependency without breaking the
+single-observer rule. Corroboration needs to know what the brand claims, and
+deciding which of several candidate strings *is* the brand's claim is a
+judgement — weighing how often a string occurs, by which extraction method, on
+how prominent a page. If the collector made that judgement it would be
+interpreting rather than observing; if the corroboration diagnostic fetched its
+own sources it would become a second observer. Splitting observation into two
+passes, with the judgement in between, avoids both.
 
 ## Politeness
 
