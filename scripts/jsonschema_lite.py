@@ -10,8 +10,9 @@ guard.
 Supported keywords, which is exactly what schemas/*.json use and no more:
 
     $ref (local "#/$defs/x" and sibling-file "name.schema.json"), type, enum,
-    const, properties, required, additionalProperties (false only), items,
-    minItems, maxItems, minLength, minimum, maximum, exclusiveMinimum, pattern
+    const, properties, required, additionalProperties (false, closing the
+    object, or a schema every unlisted property must satisfy), items, minItems,
+    maxItems, minLength, minimum, maximum, exclusiveMinimum, pattern
 
 Anything else in a schema raises UnsupportedKeyword rather than being ignored.
 A validator that silently skips a constraint is worse than no validator, since
@@ -75,10 +76,14 @@ class Validator:
                     pass
                 elif key not in SUPPORTED:
                     raise UnsupportedKeyword("%s uses unsupported keyword %r" % (path, key))
-                if key == "additionalProperties" and value is not False:
-                    raise UnsupportedKeyword(
-                        "%s: additionalProperties must be false when present" % (path,)
-                    )
+                if key == "additionalProperties":
+                    if value is True:
+                        raise UnsupportedKeyword(
+                            "%s: additionalProperties must be false or a schema; true would "
+                            "let an invented field through unchecked" % (path,)
+                        )
+                    if isinstance(value, dict):
+                        self._audit(value, path + "/additionalProperties")
                 if key in ("properties", "$defs"):
                     for sub, subschema in value.items():
                         self._audit(subschema, "%s/%s/%s" % (path, key, sub))
@@ -148,10 +153,15 @@ class Validator:
             for name in schema.get("required", []):
                 if name not in value:
                     out.append("%s: missing required property %r" % (path, name))
-            if schema.get("additionalProperties") is False and props:
+            extra = schema.get("additionalProperties")
+            if extra is False and props:
                 for name in value:
                     if name not in props:
                         out.append("%s: unknown property %r" % (path, name))
+            elif isinstance(extra, dict):
+                for name in sorted(value):
+                    if name not in props:
+                        self._validate(value[name], extra, "%s.%s" % (path, name), out)
             for name, subschema in props.items():
                 if name in value:
                     self._validate(value[name], subschema, "%s.%s" % (path, name), out)

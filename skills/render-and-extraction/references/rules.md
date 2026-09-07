@@ -34,6 +34,7 @@ directions, which is what makes fabricated evidence impossible.
 - `pages[].status`
 - `pages[].raw.text_len`
 - `pages[].raw.text_hash`
+- `pages[].raw.text_path`
 - `pages[].raw.images`
 - `pages[].raw.images[].alt`
 - `pages[].raw.images[].text_likely`
@@ -43,9 +44,11 @@ directions, which is what makes fabricated evidence impossible.
 - `pages[].rendered.available`
 - `pages[].rendered.text_len`
 - `pages[].rendered.text_hash`
+- `pages[].rendered.text_path`
 - `pages[].rendered.delta_ratio`
 - `pages[].rendered.headings`
 - `pages[].jsonld[].fields_present`
+- `pages[].jsonld[].values`
 - `pages[].jsonld[].type`
 - `pages[].page_type`
 - `pages[].page_type_confidence`

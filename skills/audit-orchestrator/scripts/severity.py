@@ -39,16 +39,10 @@ def severity(impact, confidence):
     (``site``/``section``/``page``) and ``content_importance``
     (``primary``/``secondary``). ``confidence`` is ``high``/``medium``/``low``.
 
-    Note on the reference text: docs/CONTRACTS.md writes the final line as
-    ``min(base, cap, key=ORDER.index)``. Because ORDER runs most-severe-first,
-    ``min`` returns the *more* severe of the two, which would let a
-    low-confidence finding stay ``critical`` and contradicts both the sentence
-    immediately below it ("Only a high-confidence finding can ever be
-    critical") and the definition of severity as "capped by confidence". We
-    implement the stated intent: the cap binds, so we take the *less* severe of
-    base and cap, which with this ORDER is ``max``. Behaviour is otherwise
-    identical to the contract, and the truth table in
-    tests/test_severity.py asserts the cap holds in every combination.
+    The cap binds downward: a finding can only be as severe as the confidence in
+    the diagnosis allows, so only a high-confidence finding can ever be
+    ``critical``. The truth table in tests/test_severity.py asserts that in every
+    one of the 324 combinations.
     """
     blocking = impact["blocking"]
     breadth = impact["breadth"]
@@ -77,7 +71,9 @@ def severity(impact, confidence):
         base = "low"
 
     cap = CONFIDENCE_CAP[confidence]
-    return max(base, cap, key=ORDER.index)
+    # ORDER is most-severe-first, so a HIGHER index is LESS severe.
+    # The cap must bind downward: take whichever is less severe.
+    return base if ORDER.index(base) >= ORDER.index(cap) else cap
 
 
 def priority(sev, effort, status):

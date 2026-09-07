@@ -29,6 +29,10 @@ returning 5xx — is a Day 5 deliverable per `docs/PLAN.md`, not optional polish
 schema-valid and internally consistent with `site/`: the same two URLs, the same
 counts, the same claim strings.
 
+`evidence/pages/*.txt` are the extracted-text sidecars that the bundle's
+`raw.text_path` and `rendered.text_path` fields point at, named by the sha256
+of their own contents.
+
 `findings/*.json` are diagnostic outputs in the shape each diagnostic writes.
 They carry rule identifiers from rule sets that land on Days 3 and 4. Today they
 serve one purpose only: exercising the orchestrator's merge, derivation,

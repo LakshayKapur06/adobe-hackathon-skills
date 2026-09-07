@@ -13,15 +13,37 @@ or the word "should", it belongs in a diagnostic.
 | Sitemaps | Status, URL count, `lastmod` presence ratio, parse success |
 | Crawl | Discovered, fetched, blocked by robots, errors, sampling strategy and strata |
 | Per page | Status, redirect chain, content type, headers, meta robots, canonical, lang, hreflang, page type and its confidence |
-| Raw extraction | Byte size, text length and hash, headings, links, images with alt, table/iframe/form counts |
-| Rendered | Availability, text length and hash, headings, raw-vs-rendered delta ratio |
-| Structured data | JSON-LD blocks with type, validity, errors, fields present, and whether they contradict visible text |
+| Raw extraction | Byte size, text length and hash, the extracted-text sidecar path, headings, in-page anchor targets, links, images with alt, table/iframe/form counts |
+| Rendered | Availability, text length and hash, its own sidecar path, headings, raw-vs-rendered delta ratio |
+| Structured data | JSON-LD blocks with type, validity, errors, fields present, a flat map of dotted path to asserted value, and whether they contradict visible text |
 | Text shape | Visible excerpt, word count, boilerplate ratio, longest block, heading density |
 | Dates | Visible dates, schema published/modified, HTTP `Last-Modified` |
 | Obstructions | Cookie walls, modals, paywalls, age gates |
 | Timing | TTFB, fetch time, render time |
 | Claims | Candidate strings with kind, normalised value, source URL, locator, method, observed count |
 | Off-site | Frontier size, truncation, origins with independence metadata, per-claim hits |
+| User-agent probe | Status and extracted-text length returned to each named AI crawler, on the home page and one deep page only |
+
+## Extracted text lives beside the bundle, not inside it
+
+`raw.text_path` and `rendered.text_path` point at
+`evidence/pages/<sha256>.txt`, which holds the extracted text whose length and
+hash the sibling fields report. Inlining full page text would make the bundle
+unreadable and undiffable for no gain; naming the files by content hash means
+two pages with identical extracted text share one file. Those sidecars are part
+of the evidence bundle: the collector writes them and nothing else does, and a
+diagnostic reading one is still reading observation, not fetching.
+
+## The user-agent probe, and its deliberate bound
+
+`ua_probe` is the one observation that varies the request identity, to detect a
+site that serves different content or a different status to a named AI crawler
+than to an ordinary client. It is bounded hard at two URLs — the home page and
+one deep page — because repeating it across a sample would be indistinguishable
+from probing the site, and because two URLs is enough to tell conditional
+serving from a one-off. Every probe respects robots.txt: a URL we are disallowed
+from is not requested under any user agent, and the probe never re-requests a
+URL that already errored.
 
 ## Not observed, on purpose
 

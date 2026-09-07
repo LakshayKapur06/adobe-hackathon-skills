@@ -3,8 +3,8 @@
 You are building `agent-readiness-audit`, an Agent Skill Marketplace for the
 Adobe University Hackathon 2026 Round 3. Read `docs/DECISIONS.md`,
 `docs/CONTRACTS.md`, `docs/RULE_FORMAT.md` and `docs/PLAN.md` before writing
-anything. The authoritative challenge specification is the PDF in
-`docs/handout/`.
+anything. The authoritative challenge specification is the PDF at
+`docs/handout.pdf`.
 
 ## Non-negotiable constraints (from the handout)
 
@@ -54,7 +54,7 @@ anything. The authoritative challenge specification is the PDF in
 ## Scope discipline
 
 - Do **not** infer additional handout requirements. If a requirement is not in
-  `docs/DECISIONS.md` or the PDF in `docs/handout/`, ask before implementing.
+  `docs/DECISIONS.md` or the PDF at `docs/handout.pdf`, ask before implementing.
 - Do **not** re-litigate settled decisions. `docs/DECISIONS.md` records what was
   decided and why, including deliberate exclusions. If you think one is wrong,
   say so explicitly and wait, do not silently work around it.

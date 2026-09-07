@@ -2,12 +2,12 @@
 
 Copy everything in the fenced block below as your first message in Claude Code,
 after you have (1) created the repo, (2) dropped in `CLAUDE.md` and the `docs/`
-files, and (3) copied the Round 3 handout PDF into `docs/handout/`.
+files, and (3) copied the Round 3 handout PDF to `docs/handout.pdf`.
 
 ```
 Read CLAUDE.md, docs/DECISIONS.md, docs/CONTRACTS.md, docs/RULE_FORMAT.md and
-docs/PLAN.md in full before writing anything. Also read the handout PDF in
-docs/handout/ — it is the authoritative specification.
+docs/PLAN.md in full before writing anything. Also read the handout PDF at
+docs/handout.pdf — it is the authoritative specification.
 
 We are building an Agent Skill Marketplace for the Adobe University Hackathon
 2026 Round 3. The architecture, the skill roster, the data contracts and the

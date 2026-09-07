@@ -31,6 +31,7 @@ path in this list must exist in the evidence schema — CI enforces both
 directions, which is what makes fabricated evidence impossible.
 
 - `canonical_claims`
+- `pages[].jsonld[].values`
 - `canonical_claims[].value_normalized`
 - `canonical_claims[].kind`
 - `canonical_claims[].first_party_confidence`

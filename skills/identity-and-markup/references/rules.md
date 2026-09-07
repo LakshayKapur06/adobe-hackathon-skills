@@ -36,6 +36,7 @@ directions, which is what makes fabricated evidence impossible.
 - `pages[].jsonld[].valid`
 - `pages[].jsonld[].errors`
 - `pages[].jsonld[].fields_present`
+- `pages[].jsonld[].values`
 - `pages[].jsonld[].contradicts_visible_text`
 - `pages[].microdata_or_rdfa`
 - `pages[].raw.headings`

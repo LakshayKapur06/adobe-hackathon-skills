@@ -61,35 +61,47 @@ about the same page — the worst failure mode available to an auditor.
    every downstream finding must be able to state its denominator.
 
 5. **Extract with the standard library only.** Parse with `html.parser`. Record
-   raw text metrics, headings, links, images, tables, iframes, forms, JSON-LD,
-   meta robots, canonical, hreflang, dates, obstructions and timings, exactly as
-   the schema declares them. Third-party parsers may only ever be an optional
-   performance path producing byte-identical output; a dependency must never
-   change extraction semantics.
+   raw text metrics, headings, in-page anchor targets, links, images, tables,
+   iframes, forms, JSON-LD with the values it asserts, meta robots, canonical,
+   hreflang, dates, obstructions and timings, exactly as the schema declares
+   them. Write the extracted text itself to `evidence/pages/<sha256>.txt` and
+   record the path, rather than inlining page text into the bundle. Third-party
+   parsers may only ever be an optional performance path producing
+   byte-identical output; a dependency must never change extraction semantics.
 
 6. **Render only where it changes the answer.** If a renderer is available,
    render a bounded subset and record the raw-versus-rendered delta. If not,
    record the degradation with its impact so the orchestrator can mark the
    affected rules `not_assessed` rather than silently passing them.
 
-7. **Extract claim candidates, do not interpret them.** Emit candidate strings
+7. **Probe user-agent-conditional serving, twice and no more.** Request the
+   home page and one deep page under each named AI crawler's user agent and
+   record the status and extracted-text length each one receives. This is the
+   only observation that varies the request identity, so it is bounded hard at
+   two URLs: repeating it across a sample would be indistinguishable from
+   probing the site. Never probe a URL robots.txt disallows us from, under any
+   user agent.
+
+8. **Extract claim candidates, do not interpret them.** Emit candidate strings
    with kind, normalised value, source URL, locator and extraction method.
    Promotion of a candidate to a canonical claim is a judgement and belongs to
    `identity-and-markup`, which writes back before the second pass.
 
-8. **Probe off-site, keylessly, with a disclosed coverage bound.** Using the
+9. **Probe off-site, keylessly, with a disclosed coverage bound.** Using the
    canonical claims, query the keyless providers listed in
    `references/providers.md` and write `external.hits` in one schema regardless
    of which provider answered. Respect each third-party domain's own robots.txt.
    Record `frontier_size` and `truncated`. We do not have open-web recall and
    the evidence bundle must never imply that we do.
 
-9. **Write the bundle.** `workdir/evidence/evidence.json`, conforming to
-   `../../schemas/evidence.schema.json`. Validate before returning.
+10. **Write the bundle.** `workdir/evidence/evidence.json`, conforming to
+    `../../schemas/evidence.schema.json`, plus the text sidecars under
+    `workdir/evidence/pages/`. Validate before returning.
 
 ## Output
 
-`workdir/evidence/evidence.json` only. One file, one schema, one writer.
+`workdir/evidence/evidence.json`, plus the extracted-text sidecars it points
+at under `workdir/evidence/pages/`. One schema, one writer.
 
 Scope, non-goals and the two-pass ordering are in `references/scope.md`; stage
 budgets and overrun behaviour in `references/budgets.md`; the corroboration

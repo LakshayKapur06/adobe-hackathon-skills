@@ -107,7 +107,17 @@
             "address"
           ],
           "type": "Organization",
-          "valid": true
+          "valid": true,
+          "values": {
+            "@id": "http://localhost:8000/#org",
+            "address.addressCountry": "IN",
+            "address.addressLocality": "Pune",
+            "address.postalCode": "411001",
+            "address.streetAddress": "12 Laburnum Road",
+            "foundingDate": "1974",
+            "name": "Fixture Instruments",
+            "url": "http://localhost:8000/"
+          }
         }
       ],
       "lang": "en",
@@ -124,6 +134,16 @@
         "method": "fetch"
       },
       "raw": {
+        "anchors": [
+          {
+            "heading_text": "What we make",
+            "id": "what-we-make"
+          },
+          {
+            "heading_text": "Where to find us",
+            "id": "where-to-find-us"
+          }
+        ],
         "bytes": 1892,
         "forms": 0,
         "headings": [
@@ -163,8 +183,9 @@
           }
         ],
         "tables": 0,
-        "text_hash": "sha256:f0e1d2c3b4a5968778695a4b3c2d1e0fa1b2c3d4e5f60718293a4b5c6d7e8f90",
-        "text_len": 741
+        "text_hash": "sha256:a35b9e1573e854ff011f1aa0354569851e46b3c9d06d8ccaa891d77a4b9c217e",
+        "text_len": 678,
+        "text_path": "evidence/pages/a35b9e1573e854ff011f1aa0354569851e46b3c9d06d8ccaa891d77a4b9c217e.txt"
       },
       "redirect_chain": [],
       "rendered": {
@@ -172,7 +193,8 @@
         "delta_ratio": null,
         "headings": [],
         "text_hash": null,
-        "text_len": null
+        "text_len": null,
+        "text_path": null
       },
       "status": 200,
       "text": {
@@ -180,7 +202,7 @@
         "heading_density_per_1k": 25.4,
         "longest_block_words": 41,
         "visible_excerpt": "Fixture Instruments has made precision tuning forks in Pune, India since 1974.",
-        "word_count": 118
+        "word_count": 107
       },
       "timing": {
         "fetch_ms": 5,
@@ -219,7 +241,12 @@
             "publisher"
           ],
           "type": "AboutPage",
-          "valid": true
+          "valid": true,
+          "values": {
+            "dateModified": "2026-08-01",
+            "name": "About Fixture Instruments",
+            "publisher": "http://localhost:8000/#org"
+          }
         }
       ],
       "lang": "en",
@@ -236,6 +263,16 @@
         "method": "fetch"
       },
       "raw": {
+        "anchors": [
+          {
+            "heading_text": "Calibration",
+            "id": "calibration"
+          },
+          {
+            "heading_text": "Who does it",
+            "id": "who-does-it"
+          }
+        ],
         "bytes": 1604,
         "forms": 0,
         "headings": [
@@ -269,8 +306,9 @@
           }
         ],
         "tables": 0,
-        "text_hash": "sha256:0a1b2c3d4e5f60718293a4b5c6d7e8f90f0e1d2c3b4a5968778695a4b3c2d1e0",
-        "text_len": 688
+        "text_hash": "sha256:94a6516fd6e66e5da04e34e9d1598909ffadf102db3758ab40220a74e9bda934",
+        "text_len": 607,
+        "text_path": "evidence/pages/94a6516fd6e66e5da04e34e9d1598909ffadf102db3758ab40220a74e9bda934.txt"
       },
       "redirect_chain": [],
       "rendered": {
@@ -278,7 +316,8 @@
         "delta_ratio": null,
         "headings": [],
         "text_hash": null,
-        "text_len": null
+        "text_len": null,
+        "text_path": null
       },
       "status": 200,
       "text": {
@@ -286,7 +325,7 @@
         "heading_density_per_1k": 24.8,
         "longest_block_words": 52,
         "visible_excerpt": "Every fork is compared against a reference oscillator traceable to a national standard.",
-        "word_count": 121
+        "word_count": 95
       },
       "timing": {
         "fetch_ms": 4,
@@ -372,6 +411,28 @@
       "status": 200,
       "url": "http://localhost:8000/sitemap.xml",
       "url_count": 2
+    }
+  ],
+  "ua_probe": [
+    {
+      "status": 200,
+      "text_len": 678,
+      "user_agent": "GPTBot"
+    },
+    {
+      "status": 200,
+      "text_len": 678,
+      "user_agent": "ClaudeBot"
+    },
+    {
+      "status": 200,
+      "text_len": 607,
+      "user_agent": "GPTBot"
+    },
+    {
+      "status": 200,
+      "text_len": 607,
+      "user_agent": "ClaudeBot"
     }
   ]
 }

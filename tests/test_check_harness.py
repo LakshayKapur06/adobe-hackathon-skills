@@ -149,8 +149,18 @@ class TestLiteValidator(unittest.TestCase):
     def test_refuses_a_schema_it_cannot_fully_enforce(self):
         with self.assertRaises(UnsupportedKeyword):
             Validator({"type": "object", "propertyNames": {"pattern": "^a"}})
+        # additionalProperties: true would let an invented field through
+        # unchecked, which is precisely what the evidence schema exists to stop.
         with self.assertRaises(UnsupportedKeyword):
-            Validator({"type": "object", "additionalProperties": {"type": "string"}})
+            Validator({"type": "object", "additionalProperties": True})
+        with self.assertRaises(UnsupportedKeyword):
+            Validator({"type": "object", "additionalProperties": {"multipleOf": 2}})
+
+    def test_free_form_maps_have_their_values_checked(self):
+        # The shape jsonld[].values uses: any key, but every value a string.
+        v = Validator({"type": "object", "additionalProperties": {"type": "string"}})
+        self.assertTrue(v.is_valid({"offers.price": "12999.00", "name": "X9"}))
+        self.assertFalse(v.is_valid({"offers.price": 12999}))
 
     def test_enforces_the_keywords_our_schemas_rely_on(self):
         schema = {

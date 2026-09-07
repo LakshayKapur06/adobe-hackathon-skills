@@ -182,11 +182,9 @@
             "rel": null
           }
         ],
-        "reading_grade_level": 9.2,
         "tables": 0,
         "text_hash": "sha256:a35b9e1573e854ff011f1aa0354569851e46b3c9d06d8ccaa891d77a4b9c217e",
-        "text_len": 678,
-        "text_path": "evidence/pages/a35b9e1573e854ff011f1aa0354569851e46b3c9d06d8ccaa891d77a4b9c217e.txt"
+        "text_len": 678
       },
       "redirect_chain": [],
       "rendered": {

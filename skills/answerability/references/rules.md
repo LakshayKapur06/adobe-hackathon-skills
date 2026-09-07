@@ -36,6 +36,8 @@ directions, which is what makes fabricated evidence impossible.
 - `pages[].text.heading_density_per_1k`
 - `pages[].text.visible_excerpt`
 - `pages[].raw.headings`
+- `pages[].raw.text_path`
+- `pages[].raw.anchors`
 - `pages[].raw.headings[].level`
 - `pages[].raw.headings[].text`
 - `pages[].page_type`

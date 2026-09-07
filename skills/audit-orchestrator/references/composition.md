@@ -25,6 +25,7 @@ observed facts.
 | Path | Written by | Read by | Schema |
 |---|---|---|---|
 | `evidence/evidence.json` | `site-evidence-collector` | all six diagnostics | `schemas/evidence.schema.json` |
+| `evidence/pages/<sha256>.txt` | `site-evidence-collector` | diagnostics needing page text | plain text; length and hash are in the bundle |
 | `evidence/evidence.json` key `canonical_claims` | `identity-and-markup` | `freshness-and-corroboration`, collector pass 2 | same |
 | `findings/<skill-id>.json` | each diagnostic | orchestrator | `schemas/finding.schema.json` per element |
 | `report.json` | orchestrator | the caller | `schemas/report.schema.json` |

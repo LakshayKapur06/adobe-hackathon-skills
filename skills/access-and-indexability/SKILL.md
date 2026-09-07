@@ -36,7 +36,7 @@ reads nothing else and never touches the network.
 Principally: `robots`, `sitemaps`, `crawl`, `pages[].status`,
 `pages[].redirect_chain`, `pages[].headers.x_robots_tag`,
 `pages[].meta_robots`, `pages[].canonical`, `pages[].canonical_self`,
-`pages[].hreflang`, `site.resolved_origin`.
+`pages[].hreflang`, `site.resolved_origin`, `ua_probe`.
 
 ## Procedure
 

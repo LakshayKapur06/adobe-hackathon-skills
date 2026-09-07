@@ -17,6 +17,7 @@
     "claim_candidates",
     "canonical_claims",
     "external",
+    "ua_probe",
     "errors"
   ],
   "properties": {
@@ -276,6 +277,22 @@
       }
     },
 
+    "ua_probe": {
+      "type": "array",
+      "description": "User-agent-conditional serving probe. Bounded hard at the home page plus one deep page, because this is the one observation that deliberately varies the request identity; repeating it across a sample would be indistinguishable from probing. robots.txt is respected: a disallowed URL is not probed under any user agent.",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["user_agent", "status", "text_len"],
+        "properties": {
+          "user_agent": { "type": "string", "minLength": 1 },
+          "status": { "type": ["integer", "null"] },
+          "text_len": { "type": ["integer", "null"], "minimum": 0 }
+        }
+      }
+    },
+
     "errors": {
       "type": "array",
       "items": {
@@ -300,6 +317,26 @@
     "confidence": { "enum": ["high", "medium", "low"] },
     "claim_kind": {
       "enum": ["tagline", "legal_name", "founded_year", "price", "address", "product_name", "numeric_claim"]
+    },
+    "text_path": {
+      "type": "string",
+      "description": "Relative path to the extracted-text sidecar, evidence/pages/<sha256>.txt. Named by content hash, so two pages with identical extracted text share one file and a bundle stays diffable.",
+      "pattern": "^evidence/pages/[0-9a-f]{8,64}\\.txt$"
+    },
+    "text_path_or_null": {
+      "type": ["string", "null"],
+      "description": "As text_path, but null when no render happened, so that an absent render stays distinguishable from an empty one.",
+      "pattern": "^evidence/pages/[0-9a-f]{8,64}\\.txt$"
+    },
+    "anchor": {
+      "type": "object",
+      "description": "An in-page fragment target a deep link can address, paired with the heading it labels. An assistant citing a passage can only link to it if the passage has an addressable id.",
+      "additionalProperties": false,
+      "required": ["id", "heading_text"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "heading_text": { "type": "string" }
+      }
     },
     "heading": {
       "type": "object",
@@ -347,12 +384,14 @@
         "raw": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["bytes", "text_len", "text_hash", "headings", "links", "images", "tables", "iframes", "forms"],
+          "required": ["bytes", "text_len", "text_hash", "text_path", "headings", "anchors", "links", "images", "tables", "iframes", "forms"],
           "properties": {
             "bytes": { "type": "integer", "minimum": 0 },
             "text_len": { "type": "integer", "minimum": 0 },
             "text_hash": { "type": "string" },
+            "text_path": { "$ref": "#/$defs/text_path" },
             "headings": { "type": "array", "items": { "$ref": "#/$defs/heading" } },
+            "anchors": { "type": "array", "items": { "$ref": "#/$defs/anchor" } },
             "links": {
               "type": "array",
               "items": {
@@ -388,11 +427,12 @@
         "rendered": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["available", "text_len", "text_hash", "headings", "delta_ratio"],
+          "required": ["available", "text_len", "text_hash", "text_path", "headings", "delta_ratio"],
           "properties": {
             "available": { "type": "boolean" },
             "text_len": { "type": ["integer", "null"], "minimum": 0 },
             "text_hash": { "type": ["string", "null"] },
+            "text_path": { "$ref": "#/$defs/text_path_or_null" },
             "headings": { "type": "array", "items": { "$ref": "#/$defs/heading" } },
             "delta_ratio": { "type": ["number", "null"] }
           }
@@ -402,12 +442,17 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["type", "valid", "errors", "fields_present", "contradicts_visible_text"],
+            "required": ["type", "valid", "errors", "fields_present", "values", "contradicts_visible_text"],
             "properties": {
               "type": { "type": "string" },
               "valid": { "type": "boolean" },
               "errors": { "type": "array", "items": { "type": "string" } },
               "fields_present": { "type": "array", "items": { "type": "string" } },
+              "values": {
+                "type": "object",
+                "description": "Flat map of dotted path to string value, so a rule can compare what the markup asserts against what the visible text says without re-parsing the block. Capped at 4KB per page across all blocks; on overflow the collector keeps the shortest values first, since the fields worth cross-checking are short ones.",
+                "additionalProperties": { "type": "string" }
+              },
               "contradicts_visible_text": { "type": "boolean" }
             }
           }

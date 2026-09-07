@@ -34,6 +34,9 @@ directions, which is what makes fabricated evidence impossible.
 - `pages[].obstructions`
 - `pages[].obstructions[].kind`
 - `pages[].raw.headings`
+- `pages[].raw.anchors`
+- `pages[].raw.anchors[].id`
+- `pages[].raw.anchors[].heading_text`
 - `pages[].raw.links`
 - `pages[].raw.links[].href`
 - `pages[].raw.links[].internal`

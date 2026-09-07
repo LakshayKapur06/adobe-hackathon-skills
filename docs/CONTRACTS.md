@@ -11,7 +11,11 @@ Three contracts: the evidence bundle, the finding, and the severity function.
 ## 1. `evidence/evidence.json`
 
 Produced by `site-evidence-collector`. Consumed by every diagnostic. Diagnostics
-may read nothing else.
+may read nothing else, with one exception: the extracted-text sidecar files that
+`raw.text_path` and `rendered.text_path` point at. Those are part of the bundle,
+written by the collector and by nothing else, and are held outside
+`evidence.json` only so that full page text does not have to be inlined into it.
+A diagnostic still fetches nothing.
 
 ```jsonc
 {
@@ -65,9 +69,18 @@ may read nothing else.
                 "asserted_value": "fly higher", "matches_current": false,
                 "retrieved_at": "2026-09-20T14:34:02Z" } ]
   },
+  "ua_probe": [ { "user_agent": "GPTBot", "status": 200, "text_len": 1840 } ],
   "errors": [ { "url": "...", "stage": "fetch", "message": "timeout" } ]
 }
 ```
+
+**`ua_probe`.** Detects user-agent-conditional serving: a site that returns
+different content, or a different status, to a named AI crawler than to an
+ordinary client. Bounded hard at two URLs — the homepage and one deep page —
+because this is the one observation that deliberately varies the request
+identity, and repeating it across a sample would be indistinguishable from
+probing. Every probe respects robots.txt: a URL we are disallowed from is not
+probed under any user agent.
 
 ### PageEvidence
 
@@ -89,15 +102,20 @@ may read nothing else.
   "page_type_confidence": 0.82,
   "raw": {
     "bytes": 48213, "text_len": 1840, "text_hash": "sha256:...",
+    "text_path": "evidence/pages/9f2b...c1.txt",
     "headings": [ { "level": 1, "text": "Velocity X9" } ],
+    "anchors": [ { "id": "specs", "heading_text": "Specifications" } ],
     "links": [ { "href": "/cart", "rel": null, "anchor": "Buy", "internal": true } ],
     "images": [ { "src": "/img/spec.png", "alt": "", "text_likely": true } ],
     "tables": 1, "iframes": 0, "forms": 1
   },
   "rendered": { "available": true, "text_len": 4210, "text_hash": "sha256:...",
+                "text_path": "evidence/pages/4d7a...8e.txt",
                 "headings": [], "delta_ratio": 0.56 },
   "jsonld": [ { "type": "Product", "valid": true, "errors": [],
                 "fields_present": ["name","offers.price","offers.priceCurrency"],
+                "values": { "name": "Velocity X9", "offers.price": "12999.00",
+                            "offers.priceCurrency": "INR" },
                 "contradicts_visible_text": false } ],
   "microdata_or_rdfa": false,
   "text": { "visible_excerpt": "...", "word_count": 620, "boilerplate_ratio": 0.41,
@@ -109,6 +127,25 @@ may read nothing else.
   "provenance": { "layer": "first_party", "method": "fetch|render" }
 }
 ```
+
+**`raw.text_path` and `rendered.text_path`.** Relative paths to
+`evidence/pages/<sha256>.txt`, holding the extracted text whose length and hash
+the sibling fields report. The collector writes them; diagnostics that need the
+text itself — passage shape, summarisation survivability, a token present in one
+layer and absent from the other — read the file rather than inlining page text
+into the bundle. Named by content hash, so two pages with identical extracted
+text share one file and a bundle stays diffable.
+
+**`raw.anchors`.** The in-page fragment targets a deep link can address, paired
+with the heading each one labels. An assistant citing a specific passage can
+only link to it if the passage has an addressable id.
+
+**`jsonld[].values`.** A flat map of dotted path to string value, so a rule can
+compare what the markup asserts against what the visible text says without
+re-parsing the block. Capped at 4KB per page: values are for cross-checking
+specific claims, not for carrying the document. On overflow the collector keeps
+the shortest values first and truncates the map, since the fields worth checking
+against visible text are short ones — a name, a price, a date — not prose.
 
 **Rule:** if a diagnostic needs a field that is not in this schema, that is a
 contract change. Stop and ask. Do not invent the field.
@@ -161,6 +198,10 @@ Also required at report top level: `site`, `audited_at`, `summary`, plus our
 `run_context` block (pages crawled vs discovered, sampling strategy, capabilities,
 degradations, time spent) so no finding can be attacked as drawn from three pages.
 
+`schemas/report.schema.json` is the normative encoding of the report top level.
+Where this prose and that schema disagree, the schema is the contract, and a
+change to either without the other is a build failure.
+
 ### Status semantics
 
 - `found` — an observed defect. Requires direct evidence.
@@ -194,6 +235,8 @@ Severity is defined on observables only. We cannot observe whether a fix changes
 AI citation rates, so severity never encodes predicted AI outcomes.
 
 ```python
+ORDER = ["critical", "high", "medium", "low"]     # most severe first
+
 def severity(impact, confidence):
     blocking = impact["blocking"]                 # prevents a funnel stage entirely
     breadth = impact["breadth"]                   # "site" | "section" | "page"
@@ -206,7 +249,9 @@ def severity(impact, confidence):
     else:                                               base = "low"
 
     cap = {"high": "critical", "medium": "high", "low": "medium"}[confidence]
-    return min(base, cap, key=ORDER.index)        # ORDER = ["critical","high","medium","low"]
+    # ORDER is most-severe-first, so a HIGHER index is LESS severe.
+    # The cap must bind downward: take whichever is less severe.
+    return base if ORDER.index(base) >= ORDER.index(cap) else cap
 ```
 
 Only a high-confidence finding can ever be `critical`.
