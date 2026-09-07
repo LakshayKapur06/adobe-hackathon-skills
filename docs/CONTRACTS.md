@@ -69,7 +69,8 @@ A diagnostic still fetches nothing.
                 "asserted_value": "fly higher", "matches_current": false,
                 "retrieved_at": "2026-09-20T14:34:02Z" } ]
   },
-  "ua_probe": [ { "user_agent": "GPTBot", "status": 200, "text_len": 1840 } ],
+  "ua_probe": [ { "url": "https://example.com/", "user_agent": "GPTBot",
+                  "status": 200, "text_len": 1840, "text_hash": "sha256:..." } ],
   "errors": [ { "url": "...", "stage": "fetch", "message": "timeout" } ]
 }
 ```
@@ -81,6 +82,13 @@ because this is the one observation that deliberately varies the request
 identity, and repeating it across a sample would be indistinguishable from
 probing. Every probe respects robots.txt: a URL we are disallowed from is not
 probed under any user agent.
+
+Each entry names the `url` it describes, so the same URL can be compared across
+user agents — which is the only comparison that detects conditional serving.
+`text_hash` is the hash of the extracted text as returned to that user agent,
+under the same `sha256:` convention as `raw.text_hash`; when no body comes back
+it is the hash of the empty string, so the field stays comparable rather than
+absent. Two agents receiving the same status and different hashes is the signal.
 
 ### PageEvidence
 

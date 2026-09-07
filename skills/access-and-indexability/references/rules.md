@@ -53,9 +53,11 @@ directions, which is what makes fabricated evidence impossible.
 - `pages[].lang`
 - `pages[].hreflang`
 - `ua_probe`
+- `ua_probe[].url`
 - `ua_probe[].user_agent`
 - `ua_probe[].status`
 - `ua_probe[].text_len`
+- `ua_probe[].text_hash`
 - `pages[].page_type`
 - `site.resolved_origin`
 - `site.registrable_domain`

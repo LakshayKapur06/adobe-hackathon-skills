@@ -279,16 +279,18 @@
 
     "ua_probe": {
       "type": "array",
-      "description": "User-agent-conditional serving probe. Bounded hard at the home page plus one deep page, because this is the one observation that deliberately varies the request identity; repeating it across a sample would be indistinguishable from probing. robots.txt is respected: a disallowed URL is not probed under any user agent.",
+      "description": "User-agent-conditional serving probe. Each entry names the url it describes, so the same URL can be compared across user agents, which is the only comparison that detects conditional serving; text_hash follows the sha256: convention of raw.text_hash and is the hash of the empty string when no body comes back. Bounded hard at the home page plus one deep page, because this is the one observation that deliberately varies the request identity; repeating it across a sample would be indistinguishable from probing. robots.txt is respected: a disallowed URL is not probed under any user agent.",
       "maxItems": 16,
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["user_agent", "status", "text_len"],
+        "required": ["url", "user_agent", "status", "text_len", "text_hash"],
         "properties": {
+          "url": { "type": "string", "minLength": 1 },
           "user_agent": { "type": "string", "minLength": 1 },
           "status": { "type": ["integer", "null"] },
-          "text_len": { "type": ["integer", "null"], "minimum": 0 }
+          "text_len": { "type": ["integer", "null"], "minimum": 0 },
+          "text_hash": { "type": "string", "minLength": 1 }
         }
       }
     },
