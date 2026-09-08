@@ -52,6 +52,10 @@ directions, which is what makes fabricated evidence impossible.
 - `link_graph.orphans`
 - `link_graph.max_depth_from_home`
 - `link_graph.edges`
+- `schema_version`
+- `pages[].fetched_at`
+- `pages[].provenance.layer`
+- `pages[].provenance.method`
 
 ## Rule budget
 

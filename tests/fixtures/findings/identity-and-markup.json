@@ -18,10 +18,24 @@
       "rule_id": "IDM-004",
       "status": "proactive",
       "category": "discoverability",
-      "symptom": ["invisible", "misrepresented"],
+      "symptom": [
+        "invisible",
+        "misrepresented"
+      ],
       "confidence": "medium",
-      "impact": { "blocking": false, "breadth": "site", "content_importance": "secondary" },
-      "scope": { "pages_affected": 2, "pages_examined": 2, "page_types": ["home", "informational"] },
+      "impact": {
+        "blocking": false,
+        "breadth": "site",
+        "content_importance": "secondary"
+      },
+      "scope": {
+        "pages_affected": 2,
+        "pages_examined": 2,
+        "page_types": [
+          "home",
+          "about"
+        ]
+      },
       "evidence_refs": [
         {
           "url": "http://localhost:8000/index.html",

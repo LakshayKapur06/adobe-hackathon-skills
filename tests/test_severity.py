@@ -38,7 +38,7 @@ EXPECTED_BASE = {
     (True, "page", "primary"): "low",
     (True, "page", "secondary"): "low",
     (False, "site", "primary"): "high",
-    (False, "site", "secondary"): "low",
+    (False, "site", "secondary"): "medium",
     (False, "section", "primary"): "medium",
     (False, "section", "secondary"): "medium",
     (False, "page", "primary"): "low",
@@ -92,6 +92,61 @@ class TestSeverityTruthTable(unittest.TestCase):
             impact = {"blocking": blocking, "breadth": breadth, "content_importance": importance}
             ranks = [RANK[sev_mod.severity(impact, c)] for c in ("high", "medium", "low")]
             self.assertEqual(ranks, sorted(ranks), (impact, ranks))
+
+
+class TestSeverityIsMonotonic(unittest.TestCase):
+    """Severity must never move backwards when an impact input gets worse.
+
+    A ladder written as a branch cascade is easy to get subtly wrong: an earlier
+    branch can capture a case a later one was meant to widen, and the result is
+    an inversion that looks fine in any single row of the truth table. These
+    three properties are what catch that, and they hold across every confidence
+    level because the confidence cap is itself monotonic.
+    """
+
+    @staticmethod
+    def sev(blocking, breadth, importance, confidence):
+        return RANK[sev_mod.severity(
+            {"blocking": blocking, "breadth": breadth, "content_importance": importance},
+            confidence,
+        )]
+
+    def test_widening_breadth_never_lowers_severity(self):
+        for blocking in BLOCKING:
+            for importance in IMPORTANCE:
+                for confidence in CONFIDENCE:
+                    with self.subTest(blocking=blocking, importance=importance,
+                                      confidence=confidence):
+                        ranks = [self.sev(blocking, b, importance, confidence)
+                                 for b in ("page", "section", "site")]
+                        # RANK counts down in severity, so widening breadth must
+                        # produce a non-increasing sequence of ranks.
+                        self.assertEqual(
+                            ranks, sorted(ranks, reverse=True),
+                            "page/section/site ranks %s are not monotonic" % (ranks,),
+                        )
+
+    def test_blocking_is_never_less_severe_than_non_blocking(self):
+        for breadth in BREADTH:
+            for importance in IMPORTANCE:
+                for confidence in CONFIDENCE:
+                    with self.subTest(breadth=breadth, importance=importance,
+                                      confidence=confidence):
+                        self.assertLessEqual(
+                            self.sev(True, breadth, importance, confidence),
+                            self.sev(False, breadth, importance, confidence),
+                        )
+
+    def test_primary_is_never_less_severe_than_secondary(self):
+        for blocking in BLOCKING:
+            for breadth in BREADTH:
+                for confidence in CONFIDENCE:
+                    with self.subTest(blocking=blocking, breadth=breadth,
+                                      confidence=confidence):
+                        self.assertLessEqual(
+                            self.sev(blocking, breadth, "primary", confidence),
+                            self.sev(blocking, breadth, "secondary", confidence),
+                        )
 
     def test_rejects_unknown_values(self):
         good = {"blocking": True, "breadth": "site", "content_importance": "primary"}

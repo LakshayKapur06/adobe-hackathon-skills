@@ -130,7 +130,7 @@
       "page_type": "home",
       "page_type_confidence": 0.95,
       "provenance": {
-        "layer": "first_party",
+        "layer": "firstparty",
         "method": "fetch"
       },
       "raw": {
@@ -198,7 +198,7 @@
       },
       "status": 200,
       "text": {
-        "boilerplate_ratio": 1.4,
+        "boilerplate_ratio": 0.18,
         "heading_density_per_1k": 25.4,
         "longest_block_words": 41,
         "visible_excerpt": "Fixture Instruments has made precision tuning forks in Pune, India since 1974.",

@@ -46,7 +46,7 @@
         },
         {
           "discovered": 1,
-          "page_type": "informational",
+          "page_type": "about",
           "sampled": 1
         }
       ],
@@ -257,7 +257,7 @@
       ],
       "microdata_or_rdfa": false,
       "obstructions": [],
-      "page_type": "informational",
+      "page_type": "about",
       "page_type_confidence": 0.88,
       "provenance": {
         "layer": "first_party",

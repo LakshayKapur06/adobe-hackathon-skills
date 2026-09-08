@@ -65,7 +65,11 @@ def severity(impact, confidence):
         base = "high"
     elif not blocking and breadth == "site" and primary:
         base = "high"
-    elif breadth == "section":
+    elif breadth in ("site", "section"):
+        # Not `breadth == "section"`. The narrower form scored a non-blocking
+        # site-wide secondary problem below the same problem confined to one
+        # section, which inverts the ladder. Severity must be monotonic in every
+        # impact input; tests/test_severity.py enforces all three directions.
         base = "medium"
     else:
         base = "low"

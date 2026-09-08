@@ -186,6 +186,7 @@
       "properties": {
         "edges": {
           "type": "array",
+          "maxItems": 5000,
           "items": {
             "type": "array",
             "items": { "type": "string" },
@@ -251,7 +252,7 @@
             "required": ["registrable_domain", "source_type", "urls", "syndication_cluster", "brand_owned"],
             "properties": {
               "registrable_domain": { "type": "string" },
-              "source_type": { "type": "string" },
+              "source_type": { "$ref": "#/$defs/source_type" },
               "urls": { "type": "array", "items": { "type": "string" } },
               "syndication_cluster": { "type": ["string", "null"] },
               "brand_owned": { "type": "boolean" }
@@ -316,6 +317,14 @@
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
     },
     "agent_verdict": { "enum": ["allowed", "disallowed", "unspecified"] },
+    "page_type": {
+      "description": "Closed vocabulary. A rule branching on page_type == \"product\" fails silently and permanently if the collector writes \"products\", so the value set is a contract, not a convention. \"other\" is a real classification carrying a low page_type_confidence, not a failure marker.",
+      "enum": ["home", "product", "category", "article", "about", "contact", "policy", "doc", "other"]
+    },
+    "layer": { "enum": ["first_party", "third_party"] },
+    "source_type": {
+      "enum": ["encyclopedic", "retailer", "directory", "news", "review", "forum", "social"]
+    },
     "confidence": { "enum": ["high", "medium", "low"] },
     "claim_kind": {
       "enum": ["tagline", "legal_name", "founded_year", "price", "address", "product_name", "numeric_claim"]
@@ -381,7 +390,7 @@
         "canonical_self": { "type": "boolean" },
         "lang": { "type": ["string", "null"] },
         "hreflang": { "type": "array", "items": { "type": "string" } },
-        "page_type": { "type": "string" },
+        "page_type": { "$ref": "#/$defs/page_type" },
         "page_type_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
         "raw": {
           "type": "object",
@@ -396,6 +405,7 @@
             "anchors": { "type": "array", "items": { "$ref": "#/$defs/anchor" } },
             "links": {
               "type": "array",
+              "maxItems": 500,
               "items": {
                 "type": "object",
                 "additionalProperties": false,
@@ -410,6 +420,7 @@
             },
             "images": {
               "type": "array",
+              "maxItems": 200,
               "items": {
                 "type": "object",
                 "additionalProperties": false,
@@ -465,7 +476,7 @@
           "additionalProperties": false,
           "required": ["visible_excerpt", "word_count", "boilerplate_ratio", "longest_block_words", "heading_density_per_1k"],
           "properties": {
-            "visible_excerpt": { "type": "string" },
+            "visible_excerpt": { "type": "string", "maxLength": 2000 },
             "word_count": { "type": "integer", "minimum": 0 },
             "boilerplate_ratio": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
             "longest_block_words": { "type": "integer", "minimum": 0 },
@@ -510,7 +521,7 @@
           "additionalProperties": false,
           "required": ["layer", "method"],
           "properties": {
-            "layer": { "type": "string" },
+            "layer": { "$ref": "#/$defs/layer" },
             "method": { "enum": ["fetch", "render"] }
           }
         }

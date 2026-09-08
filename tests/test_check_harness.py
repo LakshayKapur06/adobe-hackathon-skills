@@ -145,6 +145,53 @@ class TestEvidenceFieldResolution(unittest.TestCase):
                     resolve_field_path(EVIDENCE, entry, REGISTRY)
 
 
+class TestFindingInvariants(unittest.TestCase):
+    """The rules the finding schema deliberately does not encode.
+
+    The schema allows an empty false_positive_controls_applied so that a
+    proactive recommendation is not forced to write "n/a" in two arrays. That
+    relaxation is only safe because the build gate still requires both arrays on
+    an observed defect, which is the case where they matter.
+    """
+
+    @staticmethod
+    def finding(status, controls, exceptions, severity="medium", priority="P2"):
+        return {
+            "id": "F-001", "rule_id": "IDM-004", "status": status,
+            "severity": severity,
+            "suggested_action": {"priority": priority},
+            "false_positive_controls_applied": controls,
+            "exceptions_checked": exceptions,
+        }
+
+    def test_found_requires_both_arrays(self):
+        self.assertFalse(gate.finding_invariant_problems(
+            self.finding("found", ["price normalisation"], ["quote-on-request"]), "test"))
+        for controls, exceptions in (([], ["x"]), (["x"], []), ([], [])):
+            with self.subTest(controls=controls, exceptions=exceptions):
+                self.assertTrue(gate.finding_invariant_problems(
+                    self.finding("found", controls, exceptions), "test"))
+
+    def test_proactive_may_leave_both_empty(self):
+        self.assertFalse(gate.finding_invariant_problems(
+            self.finding("proactive", [], []), "test"))
+
+    def test_risk_may_leave_both_empty(self):
+        self.assertFalse(gate.finding_invariant_problems(
+            self.finding("risk", [], [], severity="high", priority="P1"), "test"))
+
+    def test_status_semantics_are_rechecked_on_the_emitted_finding(self):
+        self.assertTrue(gate.finding_invariant_problems(
+            self.finding("risk", ["x"], ["y"], severity="critical", priority="P0"), "test"))
+        self.assertTrue(gate.finding_invariant_problems(
+            self.finding("proactive", [], [], severity="high", priority="P2"), "test"))
+
+    def test_every_shipped_fixture_finding_satisfies_them(self):
+        for path in sorted((ROOT / "tests" / "fixtures" / "findings").glob("*.json")):
+            for finding in gate.read_json(str(path)).get("findings", []):
+                self.assertFalse(gate.finding_invariant_problems(finding, path.name))
+
+
 class TestLiteValidator(unittest.TestCase):
     def test_refuses_a_schema_it_cannot_fully_enforce(self):
         with self.assertRaises(UnsupportedKeyword):
@@ -168,7 +215,7 @@ class TestLiteValidator(unittest.TestCase):
             "additionalProperties": False,
             "required": ["a"],
             "properties": {
-                "a": {"type": "string", "minLength": 1, "pattern": "^x"},
+                "a": {"type": "string", "minLength": 1, "maxLength": 4, "pattern": "^x"},
                 "b": {"type": "array", "minItems": 1, "items": {"enum": ["p", "q"]}},
                 "c": {"type": ["integer", "null"], "minimum": 0, "maximum": 3},
             },
@@ -182,6 +229,9 @@ class TestLiteValidator(unittest.TestCase):
         self.assertFalse(v.is_valid({"a": "xy", "b": ["r"]}))
         self.assertFalse(v.is_valid({"a": "xy", "c": 9}))
         self.assertFalse(v.is_valid({"a": "xy", "c": True}))
+        # maxLength is what stops a collector inlining page text into
+        # visible_excerpt and defeating the text-sidecar design.
+        self.assertFalse(v.is_valid({"a": "xyzzy"}))
 
     def test_booleans_are_not_integers(self):
         v = Validator({"type": "integer"})

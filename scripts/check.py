@@ -1,4 +1,4 @@
-"""The build gate. One command, eleven checks, no dependencies.
+"""The build gate. One command, twelve checks, no dependencies.
 
 Run it as ``scripts/check.sh``, ``make check``, or ``python scripts/check.py``.
 
@@ -38,6 +38,10 @@ sys.path.insert(0, HERE)
 
 from jsonschema_lite import Validator, resolve_field_path  # noqa: E402
 
+sys.path.insert(0, os.path.join(os.path.dirname(HERE), "skills", "audit-orchestrator",
+                               "scripts"))
+import severity as sev_mod  # noqa: E402
+
 SKILLS_DIR = os.path.join(ROOT, "skills")
 SCHEMAS_DIR = os.path.join(ROOT, "schemas")
 FIXTURES = os.path.join(ROOT, "tests", "fixtures")
@@ -72,6 +76,19 @@ RULE_FIELDS = [
 ]
 
 MAX_RULES_PER_SKILL = 12
+
+# Every diagnostic emits findings, finding.schema.json requires at least one
+# evidence_ref, and an evidence_ref carries a layer, a method and a retrieved_at.
+# A diagnostic whose allow-list omits their sources cannot construct a valid
+# finding at all, so this is a structural requirement rather than a preference.
+# schema_version is read by step 1 of every diagnostic's Procedure.
+REQUIRED_ALLOW_LIST = (
+    "schema_version",
+    "pages[].url",
+    "pages[].fetched_at",
+    "pages[].provenance.layer",
+    "pages[].provenance.method",
+)
 
 REQUIRED_FRONTMATTER = ("name", "description", "license", "allowed-tools")
 REQUIRED_SECTIONS = ("## When to use", "## Inputs", "## Procedure", "## Output")
@@ -471,6 +488,12 @@ def check_evidence_fields():
                     problems.append(
                         "%s allow-list: %s -> %s" % (rel(path), field_path, exc.args[0])
                     )
+            for field_path in REQUIRED_ALLOW_LIST:
+                if field_path not in allow:
+                    problems.append(
+                        "%s allow-list omits %s, so this skill cannot build a valid "
+                        "evidence_ref or check the bundle version" % (rel(path), field_path)
+                    )
 
         for rule_id, _name, fields in parse_rule_blocks(text):
             for field_path in backticked(fields.get("Evidence read", "")):
@@ -488,6 +511,51 @@ def check_evidence_fields():
                         "%s %s reads %s, which is not in this skill's declared allow-list"
                         % (rel(path), rule_id, field_path)
                     )
+    return problems
+
+
+def finding_invariant_problems(finding, where):
+    """Invariants the schema deliberately does not encode.
+
+    ``false_positive_controls_applied`` and ``exceptions_checked`` are required
+    non-empty for an observed defect and optional otherwise. Encoding that in
+    the schema would mean forcing every proactive recommendation to write "n/a"
+    in two arrays, which is filler that reads as diligence and is not. Encoding
+    it here keeps the requirement real exactly where it matters: a rule that
+    fires on a live site and names no false-positive control is the rule that
+    produces the confidently wrong finding.
+    """
+    problems = []
+    status = finding.get("status")
+    fid = finding.get("id", "<no id>")
+    rule = finding.get("rule_id", "<no rule>")
+    if status == "found":
+        for field in ("false_positive_controls_applied", "exceptions_checked"):
+            if not finding.get(field):
+                problems.append(
+                    "%s finding %s (rule %s) has status 'found' and an empty %s; an observed "
+                    "defect must state what it ruled out before firing" % (where, fid, rule, field)
+                )
+    sev, prio = finding.get("severity"), finding.get("suggested_action", {}).get("priority")
+    if sev and prio and status:
+        for violation in sev_mod.status_violations(sev, prio, status):
+            problems.append("%s finding %s (rule %s): %s" % (where, fid, rule, violation))
+    return problems
+
+
+def check_finding_invariants():
+    """Findings satisfy the rules the schema cannot express."""
+    problems = []
+    findings_dir = os.path.join(FIXTURES, "findings")
+    if os.path.isdir(findings_dir):
+        for name in sorted(os.listdir(findings_dir)):
+            if not name.endswith(".json"):
+                continue
+            doc = read_json(os.path.join(findings_dir, name))
+            for finding in doc.get("findings", []):
+                problems += finding_invariant_problems(finding, "tests/fixtures/findings/" + name)
+    for finding in assemble_fixture_report().get("findings", []):
+        problems += finding_invariant_problems(finding, "assembled report")
     return problems
 
 
@@ -631,6 +699,8 @@ CHECKS = [
     ("rules", "rule-block completeness and rule budget", check_rules),
     ("evidence-fields", "every field a rule reads exists in the evidence schema",
      check_evidence_fields),
+    ("finding-invariants", "rules the finding schema deliberately cannot express",
+     check_finding_invariants),
     ("no-placeholders", "no unfinished-work markers on a graded surface", check_no_placeholders),
     ("determinism", "same fixture twice, identical output except timestamps", check_determinism),
     ("stdlib-only", "the six diagnostics import only the standard library", check_stdlib_only),

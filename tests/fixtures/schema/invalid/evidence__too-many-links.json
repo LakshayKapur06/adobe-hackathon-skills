@@ -1,0 +1,3434 @@
+{
+  "canonical_claims": [],
+  "claim_candidates": [
+    {
+      "extraction_method": "jsonld",
+      "id": "CC-001",
+      "kind": "legal_name",
+      "locator": "jsonld:Organization.name",
+      "observed_count": 4,
+      "source_url": "http://localhost:8000/index.html",
+      "value_normalized": "fixture instruments",
+      "value_raw": "Fixture Instruments"
+    },
+    {
+      "extraction_method": "jsonld",
+      "id": "CC-002",
+      "kind": "founded_year",
+      "locator": "jsonld:Organization.foundingDate",
+      "observed_count": 3,
+      "source_url": "http://localhost:8000/index.html",
+      "value_normalized": "1974",
+      "value_raw": "1974"
+    },
+    {
+      "extraction_method": "visible_text",
+      "id": "CC-003",
+      "kind": "address",
+      "locator": "main > p:nth-of-type(3)",
+      "observed_count": 3,
+      "source_url": "http://localhost:8000/index.html",
+      "value_normalized": "12 laburnum road pune 411001 maharashtra india",
+      "value_raw": "12 Laburnum Road, Pune 411001, Maharashtra, India"
+    }
+  ],
+  "crawl": {
+    "blocked_by_robots": 1,
+    "discovered": 3,
+    "errors": 0,
+    "fetched": 2,
+    "sampling": {
+      "strata": [
+        {
+          "discovered": 1,
+          "page_type": "home",
+          "sampled": 1
+        },
+        {
+          "discovered": 1,
+          "page_type": "about",
+          "sampled": 1
+        }
+      ],
+      "strategy": "stratified:sitemap+nav+linkgraph"
+    }
+  },
+  "errors": [],
+  "external": {
+    "attempted": false,
+    "frontier_size": 0,
+    "hits": [],
+    "method": "none",
+    "origins": [],
+    "truncated": false
+  },
+  "link_graph": {
+    "edges": [
+      [
+        "http://localhost:8000/index.html",
+        "http://localhost:8000/about.html"
+      ],
+      [
+        "http://localhost:8000/about.html",
+        "http://localhost:8000/index.html"
+      ]
+    ],
+    "max_depth_from_home": 1,
+    "orphans": []
+  },
+  "pages": [
+    {
+      "canonical": "http://localhost:8000/index.html",
+      "canonical_self": true,
+      "content_type": "text/html",
+      "dates": {
+        "http_last_modified": null,
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "visible_dates": []
+      },
+      "fetched_at": "2026-09-06T09:00:01Z",
+      "final_url": "http://localhost:8000/index.html",
+      "headers": {
+        "cache_control": null,
+        "last_modified": null,
+        "x_robots_tag": null
+      },
+      "hreflang": [],
+      "jsonld": [
+        {
+          "contradicts_visible_text": false,
+          "errors": [],
+          "fields_present": [
+            "@id",
+            "name",
+            "foundingDate",
+            "url",
+            "address"
+          ],
+          "type": "Organization",
+          "valid": true,
+          "values": {
+            "@id": "http://localhost:8000/#org",
+            "address.addressCountry": "IN",
+            "address.addressLocality": "Pune",
+            "address.postalCode": "411001",
+            "address.streetAddress": "12 Laburnum Road",
+            "foundingDate": "1974",
+            "name": "Fixture Instruments",
+            "url": "http://localhost:8000/"
+          }
+        }
+      ],
+      "lang": "en",
+      "meta_robots": [
+        "index",
+        "follow"
+      ],
+      "microdata_or_rdfa": false,
+      "obstructions": [],
+      "page_type": "home",
+      "page_type_confidence": 0.95,
+      "provenance": {
+        "layer": "first_party",
+        "method": "fetch"
+      },
+      "raw": {
+        "anchors": [
+          {
+            "heading_text": "What we make",
+            "id": "what-we-make"
+          },
+          {
+            "heading_text": "Where to find us",
+            "id": "where-to-find-us"
+          }
+        ],
+        "bytes": 1892,
+        "forms": 0,
+        "headings": [
+          {
+            "level": 1,
+            "text": "Fixture Instruments"
+          },
+          {
+            "level": 2,
+            "text": "What we make"
+          },
+          {
+            "level": 2,
+            "text": "Where to find us"
+          }
+        ],
+        "iframes": 0,
+        "images": [],
+        "links": [
+          {
+            "anchor": "p",
+            "href": "/p/0",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/1",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/2",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/3",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/4",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/5",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/6",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/7",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/8",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/9",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/10",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/11",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/12",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/13",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/14",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/15",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/16",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/17",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/18",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/19",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/20",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/21",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/22",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/23",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/24",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/25",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/26",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/27",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/28",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/29",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/30",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/31",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/32",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/33",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/34",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/35",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/36",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/37",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/38",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/39",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/40",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/41",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/42",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/43",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/44",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/45",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/46",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/47",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/48",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/49",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/50",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/51",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/52",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/53",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/54",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/55",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/56",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/57",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/58",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/59",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/60",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/61",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/62",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/63",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/64",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/65",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/66",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/67",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/68",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/69",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/70",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/71",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/72",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/73",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/74",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/75",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/76",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/77",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/78",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/79",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/80",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/81",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/82",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/83",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/84",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/85",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/86",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/87",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/88",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/89",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/90",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/91",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/92",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/93",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/94",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/95",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/96",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/97",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/98",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/99",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/100",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/101",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/102",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/103",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/104",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/105",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/106",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/107",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/108",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/109",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/110",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/111",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/112",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/113",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/114",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/115",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/116",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/117",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/118",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/119",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/120",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/121",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/122",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/123",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/124",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/125",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/126",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/127",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/128",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/129",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/130",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/131",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/132",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/133",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/134",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/135",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/136",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/137",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/138",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/139",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/140",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/141",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/142",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/143",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/144",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/145",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/146",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/147",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/148",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/149",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/150",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/151",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/152",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/153",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/154",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/155",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/156",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/157",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/158",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/159",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/160",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/161",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/162",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/163",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/164",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/165",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/166",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/167",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/168",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/169",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/170",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/171",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/172",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/173",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/174",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/175",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/176",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/177",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/178",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/179",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/180",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/181",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/182",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/183",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/184",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/185",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/186",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/187",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/188",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/189",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/190",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/191",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/192",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/193",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/194",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/195",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/196",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/197",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/198",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/199",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/200",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/201",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/202",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/203",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/204",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/205",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/206",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/207",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/208",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/209",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/210",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/211",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/212",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/213",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/214",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/215",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/216",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/217",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/218",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/219",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/220",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/221",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/222",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/223",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/224",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/225",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/226",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/227",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/228",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/229",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/230",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/231",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/232",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/233",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/234",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/235",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/236",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/237",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/238",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/239",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/240",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/241",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/242",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/243",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/244",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/245",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/246",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/247",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/248",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/249",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/250",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/251",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/252",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/253",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/254",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/255",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/256",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/257",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/258",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/259",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/260",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/261",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/262",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/263",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/264",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/265",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/266",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/267",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/268",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/269",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/270",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/271",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/272",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/273",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/274",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/275",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/276",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/277",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/278",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/279",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/280",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/281",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/282",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/283",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/284",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/285",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/286",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/287",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/288",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/289",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/290",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/291",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/292",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/293",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/294",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/295",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/296",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/297",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/298",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/299",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/300",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/301",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/302",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/303",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/304",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/305",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/306",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/307",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/308",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/309",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/310",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/311",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/312",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/313",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/314",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/315",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/316",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/317",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/318",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/319",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/320",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/321",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/322",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/323",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/324",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/325",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/326",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/327",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/328",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/329",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/330",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/331",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/332",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/333",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/334",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/335",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/336",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/337",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/338",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/339",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/340",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/341",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/342",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/343",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/344",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/345",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/346",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/347",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/348",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/349",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/350",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/351",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/352",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/353",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/354",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/355",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/356",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/357",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/358",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/359",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/360",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/361",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/362",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/363",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/364",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/365",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/366",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/367",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/368",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/369",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/370",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/371",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/372",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/373",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/374",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/375",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/376",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/377",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/378",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/379",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/380",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/381",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/382",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/383",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/384",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/385",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/386",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/387",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/388",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/389",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/390",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/391",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/392",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/393",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/394",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/395",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/396",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/397",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/398",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/399",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/400",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/401",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/402",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/403",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/404",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/405",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/406",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/407",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/408",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/409",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/410",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/411",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/412",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/413",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/414",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/415",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/416",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/417",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/418",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/419",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/420",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/421",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/422",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/423",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/424",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/425",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/426",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/427",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/428",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/429",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/430",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/431",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/432",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/433",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/434",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/435",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/436",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/437",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/438",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/439",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/440",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/441",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/442",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/443",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/444",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/445",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/446",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/447",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/448",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/449",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/450",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/451",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/452",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/453",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/454",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/455",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/456",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/457",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/458",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/459",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/460",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/461",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/462",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/463",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/464",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/465",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/466",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/467",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/468",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/469",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/470",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/471",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/472",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/473",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/474",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/475",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/476",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/477",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/478",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/479",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/480",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/481",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/482",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/483",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/484",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/485",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/486",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/487",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/488",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/489",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/490",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/491",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/492",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/493",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/494",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/495",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/496",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/497",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/498",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/499",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "p",
+            "href": "/p/500",
+            "internal": true,
+            "rel": null
+          }
+        ],
+        "tables": 0,
+        "text_hash": "sha256:a35b9e1573e854ff011f1aa0354569851e46b3c9d06d8ccaa891d77a4b9c217e",
+        "text_len": 678,
+        "text_path": "evidence/pages/a35b9e1573e854ff011f1aa0354569851e46b3c9d06d8ccaa891d77a4b9c217e.txt"
+      },
+      "redirect_chain": [],
+      "rendered": {
+        "available": false,
+        "delta_ratio": null,
+        "headings": [],
+        "text_hash": null,
+        "text_len": null,
+        "text_path": null
+      },
+      "status": 200,
+      "text": {
+        "boilerplate_ratio": 0.18,
+        "heading_density_per_1k": 25.4,
+        "longest_block_words": 41,
+        "visible_excerpt": "Fixture Instruments has made precision tuning forks in Pune, India since 1974.",
+        "word_count": 107
+      },
+      "timing": {
+        "fetch_ms": 5,
+        "render_ms": null,
+        "ttfb_ms": 3
+      },
+      "url": "http://localhost:8000/index.html"
+    },
+    {
+      "canonical": "http://localhost:8000/about.html",
+      "canonical_self": true,
+      "content_type": "text/html",
+      "dates": {
+        "http_last_modified": null,
+        "schema_date_modified": "2026-08-01",
+        "schema_date_published": null,
+        "visible_dates": [
+          "2026-08-01"
+        ]
+      },
+      "fetched_at": "2026-09-06T09:00:02Z",
+      "final_url": "http://localhost:8000/about.html",
+      "headers": {
+        "cache_control": null,
+        "last_modified": null,
+        "x_robots_tag": null
+      },
+      "hreflang": [],
+      "jsonld": [
+        {
+          "contradicts_visible_text": false,
+          "errors": [],
+          "fields_present": [
+            "name",
+            "dateModified",
+            "publisher"
+          ],
+          "type": "AboutPage",
+          "valid": true,
+          "values": {
+            "dateModified": "2026-08-01",
+            "name": "About Fixture Instruments",
+            "publisher": "http://localhost:8000/#org"
+          }
+        }
+      ],
+      "lang": "en",
+      "meta_robots": [
+        "index",
+        "follow"
+      ],
+      "microdata_or_rdfa": false,
+      "obstructions": [],
+      "page_type": "about",
+      "page_type_confidence": 0.88,
+      "provenance": {
+        "layer": "first_party",
+        "method": "fetch"
+      },
+      "raw": {
+        "anchors": [
+          {
+            "heading_text": "Calibration",
+            "id": "calibration"
+          },
+          {
+            "heading_text": "Who does it",
+            "id": "who-does-it"
+          }
+        ],
+        "bytes": 1604,
+        "forms": 0,
+        "headings": [
+          {
+            "level": 1,
+            "text": "About Fixture Instruments"
+          },
+          {
+            "level": 2,
+            "text": "Calibration"
+          },
+          {
+            "level": 2,
+            "text": "Who does it"
+          }
+        ],
+        "iframes": 0,
+        "images": [],
+        "links": [
+          {
+            "anchor": "Fixture Instruments",
+            "href": "/index.html",
+            "internal": true,
+            "rel": null
+          },
+          {
+            "anchor": "About",
+            "href": "/about.html",
+            "internal": true,
+            "rel": null
+          }
+        ],
+        "tables": 0,
+        "text_hash": "sha256:94a6516fd6e66e5da04e34e9d1598909ffadf102db3758ab40220a74e9bda934",
+        "text_len": 607,
+        "text_path": "evidence/pages/94a6516fd6e66e5da04e34e9d1598909ffadf102db3758ab40220a74e9bda934.txt"
+      },
+      "redirect_chain": [],
+      "rendered": {
+        "available": false,
+        "delta_ratio": null,
+        "headings": [],
+        "text_hash": null,
+        "text_len": null,
+        "text_path": null
+      },
+      "status": 200,
+      "text": {
+        "boilerplate_ratio": 0.16,
+        "heading_density_per_1k": 24.8,
+        "longest_block_words": 52,
+        "visible_excerpt": "Every fork is compared against a reference oscillator traceable to a national standard.",
+        "word_count": 95
+      },
+      "timing": {
+        "fetch_ms": 4,
+        "render_ms": null,
+        "ttfb_ms": 2
+      },
+      "url": "http://localhost:8000/about.html"
+    }
+  ],
+  "robots": {
+    "ai_agents": {
+      "CCBot": "unspecified",
+      "ClaudeBot": "unspecified",
+      "GPTBot": "unspecified",
+      "Google-Extended": "unspecified",
+      "Googlebot": "unspecified",
+      "OAI-SearchBot": "unspecified",
+      "PerplexityBot": "unspecified"
+    },
+    "fetched": true,
+    "groups": [
+      {
+        "allow": [
+          "/"
+        ],
+        "crawl_delay": null,
+        "disallow": [
+          "/cart"
+        ],
+        "user_agent": "*"
+      }
+    ],
+    "sitemaps": [
+      "http://localhost:8000/sitemap.xml"
+    ],
+    "status": 200,
+    "url": "http://localhost:8000/robots.txt"
+  },
+  "run_context": {
+    "budgets": {
+      "crawl_s": 90,
+      "external_s": 90,
+      "global_s": 300,
+      "render_s": 60
+    },
+    "capabilities": {
+      "egress": false,
+      "js_render": false,
+      "renderer": null
+    },
+    "corroboration": {
+      "method": "none",
+      "provider_unavailable": []
+    },
+    "degradations": [
+      {
+        "impact": "render-delta rules not assessed",
+        "reason": "no browser found",
+        "what": "render"
+      },
+      {
+        "impact": "corroboration rules not assessed",
+        "reason": "egress disabled for the fixture run",
+        "what": "external"
+      }
+    ],
+    "finished_at": "2026-09-06T09:00:07Z",
+    "started_at": "2026-09-06T09:00:00Z"
+  },
+  "schema_version": "1.0.0",
+  "site": {
+    "detected_locales": [
+      "en"
+    ],
+    "input": "http://localhost:8000",
+    "registrable_domain": "localhost",
+    "resolved_origin": "http://localhost:8000"
+  },
+  "sitemaps": [
+    {
+      "lastmod_present_ratio": 1.0,
+      "parse_ok": true,
+      "status": 200,
+      "url": "http://localhost:8000/sitemap.xml",
+      "url_count": 2
+    }
+  ],
+  "ua_probe": [
+    {
+      "status": 200,
+      "text_hash": "sha256:a35b9e1573e854ff011f1aa0354569851e46b3c9d06d8ccaa891d77a4b9c217e",
+      "text_len": 678,
+      "url": "http://localhost:8000/index.html",
+      "user_agent": "ClaudeBot"
+    },
+    {
+      "status": 200,
+      "text_hash": "sha256:a35b9e1573e854ff011f1aa0354569851e46b3c9d06d8ccaa891d77a4b9c217e",
+      "text_len": 678,
+      "url": "http://localhost:8000/index.html",
+      "user_agent": "GPTBot"
+    },
+    {
+      "status": 200,
+      "text_hash": "sha256:94a6516fd6e66e5da04e34e9d1598909ffadf102db3758ab40220a74e9bda934",
+      "text_len": 607,
+      "url": "http://localhost:8000/about.html",
+      "user_agent": "ClaudeBot"
+    },
+    {
+      "status": 200,
+      "text_hash": "sha256:94a6516fd6e66e5da04e34e9d1598909ffadf102db3758ab40220a74e9bda934",
+      "text_len": 607,
+      "url": "http://localhost:8000/about.html",
+      "user_agent": "GPTBot"
+    }
+  ]
+}

@@ -46,6 +46,10 @@ directions, which is what makes fabricated evidence impossible.
 - `pages[].jsonld[].type`
 - `crawl.sampling`
 - `crawl.sampling.strata`
+- `schema_version`
+- `pages[].fetched_at`
+- `pages[].provenance.layer`
+- `pages[].provenance.method`
 
 ## Rule budget
 

@@ -60,6 +60,14 @@ directions, which is what makes fabricated evidence impossible.
 - `sitemaps[].lastmod_present_ratio`
 - `run_context.capabilities.egress`
 - `run_context.corroboration`
+- `schema_version`
+- `pages[].fetched_at`
+- `pages[].provenance.layer`
+- `pages[].provenance.method`
+- `pages[].url`
+- `sitemaps[].url`
+- `external.hits[].url`
+- `external.origins[].urls`
 
 ## Rule budget
 

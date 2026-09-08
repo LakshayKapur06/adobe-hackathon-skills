@@ -12,7 +12,7 @@ Supported keywords, which is exactly what schemas/*.json use and no more:
     $ref (local "#/$defs/x" and sibling-file "name.schema.json"), type, enum,
     const, properties, required, additionalProperties (false, closing the
     object, or a schema every unlisted property must satisfy), items, minItems,
-    maxItems, minLength, minimum, maximum, exclusiveMinimum, pattern
+    maxItems, minLength, maxLength, minimum, maximum, exclusiveMinimum, pattern
 
 Anything else in a schema raises UnsupportedKeyword rather than being ignored.
 A validator that silently skips a constraint is worse than no validator, since
@@ -24,8 +24,8 @@ import re
 SUPPORTED = {
     "$schema", "$id", "$defs", "title", "description", "$ref",
     "type", "enum", "const", "properties", "required", "additionalProperties",
-    "items", "minItems", "maxItems", "minLength", "minimum", "maximum",
-    "exclusiveMinimum", "pattern",
+    "items", "minItems", "maxItems", "minLength", "maxLength", "minimum",
+    "maximum", "exclusiveMinimum", "pattern",
 }
 
 TYPES = {
@@ -136,6 +136,9 @@ class Validator:
         if isinstance(value, str):
             if "minLength" in schema and len(value) < schema["minLength"]:
                 out.append("%s: string shorter than minLength %d" % (path, schema["minLength"]))
+            if "maxLength" in schema and len(value) > schema["maxLength"]:
+                out.append("%s: string is %d characters, over maxLength %d"
+                           % (path, len(value), schema["maxLength"]))
             if "pattern" in schema and not re.search(schema["pattern"], value):
                 out.append("%s: %r does not match %s" % (path, value, schema["pattern"]))
 

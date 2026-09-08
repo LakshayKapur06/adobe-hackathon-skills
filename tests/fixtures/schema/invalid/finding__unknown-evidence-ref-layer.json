@@ -4,7 +4,7 @@
   "evidence": "Examined 2 pages; the single Organization node at http://localhost:8000/#org declares @id, name, foundingDate, url and address, and no sameAs. No off-site profile is therefore linked from the entity the site publishes.",
   "evidence_refs": [
     {
-      "layer": "first_party",
+      "layer": "firstParty",
       "method": "fetch",
       "observation": "jsonld[0].fields_present is [@id, name, foundingDate, url, address]; sameAs absent",
       "retrieved_at": "2026-09-06T09:00:01Z",
@@ -14,7 +14,10 @@
   "exceptions_checked": [
     "brands with no off-site presence to point at, for which the recommendation is to establish one first rather than to fabricate links"
   ],
-  "false_positive_controls_applied": [],
+  "false_positive_controls_applied": [
+    "checked every JSON-LD block on every sampled page, not only the home page",
+    "treated the node as anchored if sameAs appeared on any page, since one site-wide declaration is sufficient"
+  ],
   "id": "F-001",
   "impact": {
     "blocking": false,
@@ -25,7 +28,7 @@
   "scope": {
     "page_types": [
       "home",
-      "informational"
+      "about"
     ],
     "pages_affected": 2,
     "pages_examined": 2

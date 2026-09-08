@@ -155,6 +155,43 @@ specific claims, not for carrying the document. On overflow the collector keeps
 the shortest values first and truncates the map, since the fields worth checking
 against visible text are short ones — a name, a price, a date — not prose.
 
+### Closed vocabularies
+
+`additionalProperties: false` stops an invented *field*. It does not stop an
+invented *value*, and a rule branching on `page_type == "product"` fails
+silently and permanently if the collector writes `"products"`. These four are
+therefore closed enums, and adding a member is a contract change:
+
+| Field | Permitted values |
+|---|---|
+| `pages[].page_type` | `home`, `product`, `category`, `article`, `about`, `contact`, `policy`, `doc`, `other` |
+| `pages[].provenance.layer` | `first_party`, `third_party` |
+| `external.origins[].source_type` | `encyclopedic`, `retailer`, `directory`, `news`, `review`, `forum`, `social` |
+| Finding `evidence_refs[].layer` | `first_party`, `third_party` |
+
+`other` is a real classification, not a failure marker: a page the classifier
+cannot place is `other` with a low `page_type_confidence`, and every rule that
+branches on page type must state what it does with `other` rather than assuming
+the case away.
+
+### Bounds, and what truncation means
+
+Four collections are capped so that one pathological page cannot make the bundle
+unreadable or push page text back into it.
+
+| Field | Cap | What is kept |
+|---|---|---|
+| `pages[].text.visible_excerpt` | 2000 characters | The leading excerpt, cut at a word boundary. This field exists to be quoted inside a finding, not to carry the text; the full extracted text is in the `text_path` sidecar. Without this cap a collector could inline whole pages here and defeat the sidecar design entirely. |
+| `pages[].raw.links` | 500 per page | Document order. Position in the document is what distinguishes navigation from body links, so keeping a prefix preserves the distinction a truncated random sample would destroy. |
+| `pages[].raw.images` | 200 per page | Document order, same reasoning. |
+| `link_graph.edges` | 5000 site-wide | Edges incident to a sampled page first, since those are the only edges a finding can cite with evidence, then remaining edges in discovery order. |
+
+**Truncation is never silent.** Whenever a cap bites, the collector appends an
+entry to `errors[]` with `stage: "extract"` and a message naming the field, the
+URL and the true count. A rule must be able to tell a genuinely short list from
+a truncated one; without that record, "this page has no images" and "this page
+has more images than we recorded" would be the same observation.
+
 **Rule:** if a diagnostic needs a field that is not in this schema, that is a
 contract change. Stop and ask. Do not invent the field.
 
@@ -253,7 +290,7 @@ def severity(impact, confidence):
     if blocking and breadth == "site" and primary:      base = "critical"
     elif blocking and (breadth in ("site", "section")): base = "high"
     elif not blocking and breadth == "site" and primary:base = "high"
-    elif breadth == "section":                          base = "medium"
+    elif breadth in ("site", "section"):                base = "medium"
     else:                                               base = "low"
 
     cap = {"high": "critical", "medium": "high", "low": "medium"}[confidence]
@@ -263,6 +300,16 @@ def severity(impact, confidence):
 ```
 
 Only a high-confidence finding can ever be `critical`.
+
+The ladder is monotonic in all three impact inputs, and must stay that way:
+widening `breadth` from `page` to `section` to `site` never lowers severity,
+`blocking` is never less severe than non-blocking, and `primary` is never less
+severe than `secondary`, all else held equal. Branch four reads
+`breadth in ("site", "section")` rather than `breadth == "section"` for exactly
+this reason — the narrower form scored a non-blocking site-wide secondary
+problem *below* the same problem confined to one section. Three property tests
+in `tests/test_severity.py` enforce all three monotonicity directions across the
+whole table, so a future edit to the ladder cannot reintroduce an inversion.
 
 ```python
 def priority(sev, effort, status):

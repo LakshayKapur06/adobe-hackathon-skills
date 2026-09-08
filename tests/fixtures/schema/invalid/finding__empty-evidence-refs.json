@@ -20,7 +20,7 @@
   "scope": {
     "page_types": [
       "home",
-      "informational"
+      "about"
     ],
     "pages_affected": 2,
     "pages_examined": 2

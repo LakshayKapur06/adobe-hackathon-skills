@@ -56,6 +56,10 @@ directions, which is what makes fabricated evidence impossible.
 - `run_context.capabilities.js_render`
 - `run_context.degradations`
 - `crawl.sampling`
+- `schema_version`
+- `pages[].fetched_at`
+- `pages[].provenance.layer`
+- `pages[].provenance.method`
 
 ## Rule budget
 

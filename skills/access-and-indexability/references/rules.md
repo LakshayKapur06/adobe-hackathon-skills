@@ -62,6 +62,10 @@ directions, which is what makes fabricated evidence impossible.
 - `site.resolved_origin`
 - `site.registrable_domain`
 - `site.detected_locales`
+- `schema_version`
+- `pages[].fetched_at`
+- `pages[].provenance.layer`
+- `pages[].provenance.method`
 
 ## Rule budget
 

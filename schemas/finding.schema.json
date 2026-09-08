@@ -99,7 +99,7 @@
         "properties": {
           "url": { "type": "string" },
           "observation": { "type": "string", "minLength": 1 },
-          "layer": { "type": "string" },
+          "layer": { "$ref": "#/$defs/layer" },
           "method": { "enum": ["fetch", "render"] },
           "retrieved_at": { "$ref": "#/$defs/timestamp" }
         }
@@ -107,19 +107,22 @@
     },
 
     "false_positive_controls_applied": {
+      "description": "Required non-empty for status \"found\", which the build gate enforces rather than the schema. A proactive recommendation observed no defect, so it has no false positive to control for, and forcing an entry there would only produce the word \"n/a\".",
       "type": "array",
-      "minItems": 1,
+      "minItems": 0,
       "items": { "type": "string", "minLength": 1 }
     },
     "exceptions_checked": {
+      "description": "Required non-empty for status \"found\", enforced by the build gate for the same reason as false_positive_controls_applied.",
       "type": "array",
-      "minItems": 1,
+      "minItems": 0,
       "items": { "type": "string", "minLength": 1 }
     }
   },
 
   "$defs": {
     "severity": { "enum": ["critical", "high", "medium", "low"] },
+    "layer": { "enum": ["first_party", "third_party"] },
     "confidence": { "enum": ["high", "medium", "low"] },
     "effort": { "enum": ["low", "medium", "high"] },
     "timestamp": {
