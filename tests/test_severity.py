@@ -93,6 +93,17 @@ class TestSeverityTruthTable(unittest.TestCase):
             ranks = [RANK[sev_mod.severity(impact, c)] for c in ("high", "medium", "low")]
             self.assertEqual(ranks, sorted(ranks), (impact, ranks))
 
+    def test_rejects_unknown_values(self):
+        good = {"blocking": True, "breadth": "site", "content_importance": "primary"}
+        with self.assertRaises(ValueError):
+            sev_mod.severity(good, "very-high")
+        with self.assertRaises(ValueError):
+            sev_mod.severity({**good, "breadth": "everything"}, "high")
+        with self.assertRaises(ValueError):
+            sev_mod.severity({**good, "content_importance": "tertiary"}, "high")
+        with self.assertRaises(ValueError):
+            sev_mod.severity({**good, "blocking": "yes"}, "high")
+
 
 class TestSeverityIsMonotonic(unittest.TestCase):
     """Severity must never move backwards when an impact input gets worse.
@@ -147,17 +158,6 @@ class TestSeverityIsMonotonic(unittest.TestCase):
                             self.sev(blocking, breadth, "primary", confidence),
                             self.sev(blocking, breadth, "secondary", confidence),
                         )
-
-    def test_rejects_unknown_values(self):
-        good = {"blocking": True, "breadth": "site", "content_importance": "primary"}
-        with self.assertRaises(ValueError):
-            sev_mod.severity(good, "very-high")
-        with self.assertRaises(ValueError):
-            sev_mod.severity({**good, "breadth": "everything"}, "high")
-        with self.assertRaises(ValueError):
-            sev_mod.severity({**good, "content_importance": "tertiary"}, "high")
-        with self.assertRaises(ValueError):
-            sev_mod.severity({**good, "blocking": "yes"}, "high")
 
 
 class TestPriorityTruthTable(unittest.TestCase):
