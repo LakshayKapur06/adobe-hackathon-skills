@@ -2,3 +2,4 @@
 # conversion on checkout would change those bytes and break the bundle's own hashes,
 # so these files are always LF on every platform.
 tests/fixtures/evidence/pages/*.txt text eol=lf
+docs/HANDOFF.md export-ignore
