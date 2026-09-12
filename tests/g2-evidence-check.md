@@ -22,10 +22,19 @@ Run in this order. Site 1 is the calibration site: it is the one expected to be
 unremarkable, so a surprise there is a collector bug rather than a property of
 the site.
 
-    python scripts/run_audit.py --url https://www.gadgets360.com --out runs/gadgets360/ --summary
+    python scripts/run_audit.py --url https://indianexpress.com --out runs/indianexpress/ --summary
     python scripts/run_audit.py --url https://iflexbtw.in       --out runs/iflexbtw/   --summary
     python scripts/run_audit.py --url https://www.poco.in       --out runs/poco/       --summary
     python scripts/run_audit.py --url https://www.poco.in       --out runs/poco-norender/ --no-render --summary
+
+`www.gadgets360.com` was the original calibration site. It answers **403 to
+every request**, so it cannot calibrate anything; it is kept as the
+blocked-crawler specimen in site 4 below, and `indianexpress.com` replaced it.
+Selected by probing candidates with the collector's own fetcher and user agent,
+since the question is whether a site serves *this* client content: of ten
+candidates it was the only one combining rich server-rendered text, real
+heading anchors, several JSON-LD blocks per page, and AI crawlers disallowed by
+name (which makes check 4 a real test rather than a row of "allowed").
 
 **Before reading anything else, read the summary line.** If `js_render=false`
 when a browser is installed, stop and resolve that first: seven of the ten
@@ -51,11 +60,11 @@ then deciding it was what we expected all along.
 
 | # | Prediction | If wrong, it means |
 |---|---|---|
-| P1 | Gadgets360: `parse_ok: true`, a real `*` group | We are misreading a normal robots.txt |
-| P2 | Gadgets360: article pages classify as `article`, not `other` | `page_type` is undertrained on the commonest page shape on the web |
-| P3 | Gadgets360: `delta_ratio` low on articles (server-rendered text) | Either extraction is dropping raw body text, or ads/embeds inflate the rendered side |
-| P4 | Gadgets360: at least one article page has heading `id=` attributes, and `raw.anchors` is non-empty there | The anchors extractor has never been proven to fire at all (see check 6) |
-| P5 | Gadgets360: an article page carries **more than one** `ld+json` block, and `jsonld[]` has an entry for each | The extractor reads only the first block — the open question from Day 2 |
+| P1 | indianexpress: `parse_ok: true`, a real `*` group, and `ClaudeBot`/`PerplexityBot` `disallowed` by name | We are misreading a normal robots.txt, or the named-group logic does not beat `*` |
+| P2 | indianexpress: article pages classify as `article`, not `other` | `page_type` is undertrained on the commonest page shape on the web |
+| P3 | indianexpress: `delta_ratio` low on articles (server-rendered text) | Either extraction is dropping raw body text, or ads/embeds inflate the rendered side |
+| P4 | indianexpress: at least one page has heading `id=` attributes, and `raw.anchors` is non-empty there (29 were seen on the home page during selection) | The anchors extractor has never been proven to fire at all (see check 6) |
+| P5 | **Settled before the run, artifact-to-artifact.** Across ten real pages the count of `<script type="application/ld+json">` blocks in the raw bytes matched `len(jsonld_scripts)` exactly, including a 4-block article and a 5-block home page. The Day-2 "reads only the first block" worry is dead | — |
 | P6 | iflexbtw: `parse_ok: true`; Shopify's default robots.txt, server-rendered product text, low `delta_ratio` | Shopify's default template is not what we think it is |
 | P7 | POCO **with** render: `soft_404.detected: true`, `baseline_text_hash` set, `delta_ratio` very high (raw text near zero) | The two-attempt render fix does not survive a hydration-only page — the single most important open validation in the build (D13) |
 | P8 | POCO **without** render: the shell copies collapse, `discovery.collapsed_duplicate_text` > 0, and a `page-content` degradation says no page-level content exists in the server response | The capability-dependent dedupe split (D15) does not work |
@@ -73,16 +82,16 @@ Do not copy them into this sheet:**
   and only one of them is right here. Expect `parse_ok: false`,
   `parse_reason: not_plausibly_robots`, and all 7 agents `unspecified`.
 
-Note also that Gadgets360 is a news publisher, and publishers increasingly
-disallow AI crawlers by name. If GPTBot or CCBot comes back `disallowed`, that
-is **not** a FAIL — check 4 asks only whether the bundle matches the literal
-file. It would make Gadgets360 a more useful calibration site, not a broken one.
+Publishers increasingly disallow AI crawlers by name, and the candidate probe
+confirmed it: TechCrunch disallows four of the seven tracked crawlers, The Verge
+four, GSMArena four, indianexpress two. A `disallowed` verdict is **not** a FAIL
+— check 4 asks only whether the bundle matches the literal file.
 
 ---
 
-## Site 1: www.gadgets360.com — cited aggregator, calibration site
+## Site 1: indianexpress.com — content-rich publisher, calibration site
 
-    run directory:  runs/gadgets360/
+    run directory:  runs/indianexpress/
     date:
     pages fetched / discovered:      /
     capabilities:  js_render=    egress=    renderer=
@@ -202,13 +211,53 @@ wrong, and that must be resolved before a single detection rule is written.
 
 ---
 
+## Site 4: www.gadgets360.com — blocked-crawler specimen
+
+    run directory:  runs/gadgets360-refused/
+
+Not a calibration site: every request is answered **403**, so no extractor ever
+sees the real page. It is kept because it is a live instance of fixture
+archetype 7, and because the first run against it found the worst bug in the
+build so far — the block page was recorded as the home page's content, and the
+run reported a clean crawl of a thin site. Fixed in `e061299`.
+
+The collector now reports, and this was verified after the fix:
+
+| # | Check | Verdict | Note |
+|---|---|---|---|
+| 1 | `pages[0].status` is 403 and `raw.text_len` is 0 | PASS | verified |
+| 2 | The block page's text appears nowhere in the bundle | PASS | verified |
+| 3 | `crawl.errors` is 1 and `discovered == fetched` | PASS | verified |
+| 4 | A `crawl` degradation names the 403 | PASS | verified |
+| 5 | `well_known` is empty — not probed, rather than falsely absent | PASS | verified |
+| 6 | `robots.status` 403, `parse_reason: absent_4xx` | PASS | RFC 9309: a 4xx means no restrictions apply |
+
+The one check that still needs a person, because only a browser can settle it:
+
+| # | Check | Verdict | Note |
+|---|---|---|---|
+| 7 | Open the site in a normal browser. Does it serve **you** the real page? | PASS / FAIL | If yes, this is user-agent-conditional serving, and the site is a live specimen for the `ua_probe` work |
+
+**SURPRISES** (observation and theory kept separate):
+
+- Observed: `ndtv.com` returns 403 to the same client. Unverified theory: same
+  owner, same edge policy, so this is a corporate decision rather than one
+  site's configuration.
+- Observed: the raw and rendered sidecars from the *pre-fix* run had different
+  hashes, because the block page carries a fresh `Reference #` in every
+  response. On a site like this the bundle was not byte-reproducible between
+  runs. The determinism test runs against fixtures and did not see it.
+
+---
+
 ## Summary for the agent
 
 | Site | FAILs | Surprises |
 |---|---|---|
-| gadgets360 | | |
+| indianexpress | | |
 | iflexbtw | | |
 | poco (render) | | |
+| gadgets360 (blocked) | 0 after e061299 | see above |
 | poco (--no-render) | | |
 
 Predictions falsified (P1-P8), and what each one turned out to be:

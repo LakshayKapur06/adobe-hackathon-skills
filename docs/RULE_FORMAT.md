@@ -28,6 +28,12 @@ build failure. That check is what makes fabricated evidence impossible.
   for the number.** An unexplained threshold is a build failure.
 - **Minimum evidence:** what must be observed before this rule may fire at all.
   If unmet, emit nothing (not a low-confidence finding).
+  **Every rule that reads page content states a 2xx status among its minimum
+  evidence.** A page we were refused, or that errored, is recorded with its
+  status and a deliberately empty body, so on `text_len`, `links`, `headings`,
+  `jsonld` and `anchors` it is indistinguishable from a thin page. A rule that
+  does not gate on status reports a CDN block page as a content defect. This is
+  not hypothetical: it is what the first real G2 run did before `e061299`.
 - **False-positive controls:** the specific checks applied before firing.
 - **Legitimate exceptions:** cases where the signal is present and the site is
   fine. Each must be detectable, or the rule is gated tighter.
