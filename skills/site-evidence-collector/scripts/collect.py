@@ -25,6 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import claims  # noqa: E402
 import discover  # noqa: E402
+import external  # noqa: E402
 import extract  # noqa: E402
 import fetch  # noqa: E402
 import render  # noqa: E402
@@ -419,9 +420,9 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
     if not js_render:
         run.degrade("render", render_note or "no browser available",
                     "raw-versus-rendered comparisons are not assessed")
-    run.degrade("external",
-                egress_note or "off-site corroboration is collector pass 2, not yet built",
-                "corroboration rules are not assessed")
+    if not egress:
+        run.degrade("external", egress_note or "no third-party egress",
+                    "corroboration rules are not assessed: nothing off-site could be reached")
     # Stages not yet built leave their arrays empty. Say so, so that an empty
     # array can never be read as a measurement that found nothing.
     frontier = discover.Frontier(urls.netloc(resolved_origin) if resolved_origin else input_netloc)
@@ -793,14 +794,68 @@ def _link_graph(frontier, kept, pages, run):
     return {"edges": edges, "orphans": orphans, "max_depth_from_home": depth}
 
 
+def corroborate(workdir, no_egress=False, budgets=None):
+    """Pass 2: merge the promoted claims into the bundle and ask the world.
+
+    Separate from pass 1 because it depends on identity's promotion step, which
+    depends on pass 1 (D9). The collector stays the single writer of
+    evidence.json; identity hands it a sidecar and this merges it.
+    """
+    budgets = dict(BUDGETS, **(budgets or {}))
+    evidence_dir = os.path.join(workdir, "evidence")
+    evidence_path = os.path.join(evidence_dir, "evidence.json")
+    with open(evidence_path, encoding="utf-8") as handle:
+        evidence = json.load(handle)
+    claims_path = os.path.join(evidence_dir, "canonical_claims.json")
+    canonical = []
+    if os.path.isfile(claims_path):
+        with open(claims_path, encoding="utf-8") as handle:
+            canonical = json.load(handle)
+    evidence["canonical_claims"] = canonical
+
+    run = Run(fetch.Fetcher())
+    run.errors = list(evidence.get("errors") or [])
+    run.degradations = [d for d in evidence["run_context"]["degradations"]
+                        if d["what"] not in ("external", "claims")]
+    egress, egress_note = _probe_egress(no_egress)
+    if egress:
+        result, reason = external.probe_external(
+            run, evidence, canonical, time.monotonic() + budgets["external_s"], _utc())
+        if reason:
+            run.degrade("external", reason, "corroboration rules are not assessed")
+        elif result["truncated"]:
+            run.degrade("external", "the %ss external budget ran out" % budgets["external_s"],
+                        "corroboration breadth is partial; frontier_size states what was reached")
+        evidence["external"] = result
+    else:
+        run.degrade("external", egress_note or "no third-party egress",
+                    "corroboration rules are not assessed: nothing off-site could be reached")
+    if not canonical:
+        run.degrade("claims", "no claim was promoted from the candidates observed",
+                    "canonical_claims is empty, so corroboration had nothing to ask about")
+    evidence["errors"] = run.errors
+    evidence["run_context"]["degradations"] = run.degradations
+    with open(evidence_path, "w", encoding="utf-8", newline="\n") as handle:
+        json.dump(evidence, handle, indent=2, ensure_ascii=False)
+        handle.write("\n")
+    return evidence
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Collect a website's evidence bundle (read-only).")
-    parser.add_argument("--url", required=True)
+    parser.add_argument("--corroborate", action="store_true",
+                        help="pass 2: seed from canonical_claims.json and probe off-site")
+    parser.add_argument("--url")
     parser.add_argument("--workdir", required=True)
     parser.add_argument("--max-pages", type=int, default=DEFAULT_MAX_PAGES)
     parser.add_argument("--no-render", action="store_true")
     parser.add_argument("--no-egress", action="store_true")
     args = parser.parse_args(argv)
+    if args.corroborate:
+        corroborate(args.workdir, no_egress=args.no_egress)
+        return 0
+    if not args.url:
+        parser.error("--url is required unless --corroborate is given")
     collect(args.url, args.workdir, max_pages=args.max_pages,
             no_render=args.no_render, no_egress=args.no_egress)
     return 0

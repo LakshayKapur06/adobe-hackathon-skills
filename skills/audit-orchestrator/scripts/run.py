@@ -28,6 +28,7 @@ from jsonschema_lite import Validator  # noqa: E402
 
 SCHEMAS = os.path.join(ROOT, "schemas")
 COLLECTOR = os.path.join(ROOT, "skills", "site-evidence-collector", "scripts", "collect.py")
+PROMOTER = os.path.join(ROOT, "skills", "identity-and-markup", "scripts", "promote.py")
 GLOBAL_DEADLINE_S = 300
 DIAGNOSIS_RESERVE_S = 40       # the diagnosis-and-synthesis stage budget
 
@@ -71,6 +72,31 @@ def run(url, workdir, collect_only=False, no_render=False, no_egress=False, max_
     problems = _validate(evidence, "evidence.schema.json", registry)
     if problems:
         return _fail("the evidence bundle is not schema-valid; no diagnostic will read it", problems)
+    # -- pass 2 -----------------------------------------------------------------
+    # D9's split, sequenced here because it is the only place that may compose
+    # skills: the collector observed candidate strings, identity decides which
+    # of them the site is actually asserting, and only then is there anything
+    # worth asking the world about. The collector stays the single writer of
+    # evidence.json; identity hands it a sidecar.
+    claims_path = os.path.join(workdir, "evidence", "canonical_claims.json")
+    remaining = GLOBAL_DEADLINE_S - DIAGNOSIS_RESERVE_S - (time.monotonic() - started)
+    if remaining > 5:
+        try:
+            subprocess.run([sys.executable, PROMOTER, "--evidence", evidence_path,
+                            "--out", claims_path], timeout=remaining, check=True)
+            subprocess.run([sys.executable, COLLECTOR, "--corroborate", "--workdir", workdir]
+                           + (["--no-egress"] if no_egress else []),
+                           timeout=max(5, remaining), check=True)
+        except (subprocess.TimeoutExpired, subprocess.CalledProcessError) as exc:
+            # Pass 2 is corroboration, not observation. Losing it costs breadth
+            # and must never cost the run: pass 1 already stands on its own.
+            sys.stderr.write("audit-orchestrator: pass 2 did not complete (%s)\n" % exc)
+        with open(evidence_path, encoding="utf-8") as handle:
+            evidence = json.load(handle)
+        problems = _validate(evidence, "evidence.schema.json", registry)
+        if problems:
+            return _fail("the evidence bundle is not schema-valid after pass 2", problems)
+
     if collect_only:
         return 0
 
