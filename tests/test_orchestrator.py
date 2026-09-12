@@ -96,10 +96,12 @@ class TestAssembly(unittest.TestCase):
             finding("ACC-005", "access-and-indexability", "site", blocking=False, importance="secondary",
                     url="http://localhost:8000/a"),
         ])
-        order = [f["rule_id"] for f in report["findings"] if f["status"] != "proactive"]
+        order = [f["rule_id"] for f in report["findings"]]
         self.assertEqual(order[0], "RND-002")
         self.assertLess(order.index("ACC-005"), order.index("IDM-001"),
                         "equal priority and severity: the unconditional finding comes first")
+        self.assertLess(order.index("IDM-001"), order.index("PRO-001"),
+                        "a proactive idea never reads above an observed defect in the same priority")
 
     def test_an_authoring_error_is_withheld_not_fatal(self):
         bad = finding("ACC-006", "access-and-indexability", "site", status="risk")

@@ -129,14 +129,17 @@ def build_run_context(evidence, extra_degradations=()):
 
 
 def report_order(finding):
-    """Priority first, then unconditional before conditional, then severity.
+    """Priority, then observed before proactive, then unconditional before conditional.
 
-    A conditional finding keeps its own severity, but within a priority band it
-    is listed after the findings it does not depend on, so a reader working
-    down the list meets the upstream fix before the work it conditions.
+    Within one priority band an observed defect or risk is always listed before
+    a proactive recommendation, so a speculative idea never reads as more urgent
+    than something actually wrong. A conditional finding keeps its own severity
+    but follows the findings it does not depend on, so a reader working down the
+    list meets the upstream fix before the work it conditions.
     """
     key = sev_mod.sort_key(finding)
-    return (key[0], 1 if finding.get("conditional_on") else 0) + key[1:]
+    return (key[0], 1 if finding["status"] == "proactive" else 0,
+            1 if finding.get("conditional_on") else 0) + key[1:]
 
 
 def assemble(evidence, findings, not_assessed, checks_passed, extra_degradations=()):
