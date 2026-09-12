@@ -31,6 +31,7 @@ path in this list must exist in the evidence schema — CI enforces both
 directions, which is what makes fabricated evidence impossible.
 
 - `pages[].url`
+- `pages[].status`
 - `pages[].jsonld`
 - `pages[].jsonld[].type`
 - `pages[].jsonld[].valid`

@@ -500,3 +500,17 @@ run, which is accurate to within the robots stage: robots.txt is the collector's
 first request and the sitemaps follow it inside the same 15-second budget. The
 schema is unchanged; only the allow-list grew, and the citation rule is written
 into the skill's `references/rules.md` so a reader does not have to infer it.
+
+### D19 — `contracts-v5`: identity may read page status
+
+`docs/RULE_FORMAT.md` requires a 2xx status in the minimum evidence of every
+rule that reads page content, because a refused page is recorded with an empty
+body and no JSON-LD. `identity-and-markup`'s allow-list had no
+`pages[].status`, so every identity rule would have read a CDN block page as a
+home page with no organization markup. `pages[].status` is added to that
+allow-list. The schema is unchanged.
+
+The same work corrected the skill's `SKILL.md`, which still described promotion
+as writing `canonical_claims` into `evidence.json`. It writes the sidecar
+`evidence/canonical_claims.json`, which the collector merges in pass 2, as D2
+and the promotion script already required.
