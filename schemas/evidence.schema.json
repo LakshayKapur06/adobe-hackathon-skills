@@ -19,6 +19,7 @@
     "external",
     "ua_probe",
     "well_known",
+    "discovery",
     "errors"
   ],
   "properties": {
@@ -92,9 +93,17 @@
     "robots": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["fetched", "url", "status", "groups", "ai_agents", "sitemaps"],
+      "required": ["fetched", "url", "status", "parse_ok", "parse_reason", "groups", "ai_agents", "sitemaps"],
       "properties": {
         "fetched": { "type": "boolean" },
+        "parse_ok": {
+          "type": "boolean",
+          "description": "True only when a real robots.txt was parsed, including an empty one. Separates a valid file with no rules from a webpage served at /robots.txt, which the groups alone cannot."
+        },
+        "parse_reason": {
+          "description": "Why parse_ok has its value. not_plausibly_robots and absent_4xx mean no restrictions apply; unreachable, server_error and rate_limited mean nothing may be crawled. The two families have opposite crawl semantics, so a finding must be able to say which it saw.",
+          "enum": ["ok", "not_plausibly_robots", "absent_4xx", "unreachable", "server_error", "rate_limited"]
+        },
         "url": { "type": ["string", "null"] },
         "status": { "type": ["integer", "null"] },
         "groups": {
@@ -294,6 +303,27 @@
           "text_len": { "type": ["integer", "null"], "minimum": 0 },
           "text_hash": { "type": "string", "minLength": 1 }
         }
+      }
+    },
+
+    "discovery": {
+      "type": "object",
+      "description": "Structured record of how discovery treated duplicates. errors[] holds free-text diagnostics and is not rule-readable; every fact a rule needs about soft-404 behaviour and collapsed URLs is here.",
+      "additionalProperties": false,
+      "required": ["soft_404", "collapsed_duplicate_text", "collapsed_redirect_target"],
+      "properties": {
+        "soft_404": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["detected", "baseline_text_hash", "probe_paths"],
+          "properties": {
+            "detected": { "type": "boolean" },
+            "baseline_text_hash": { "type": ["string", "null"] },
+            "probe_paths": { "type": "array", "maxItems": 2, "items": { "type": "string" } }
+          }
+        },
+        "collapsed_duplicate_text": { "type": "integer", "minimum": 0 },
+        "collapsed_redirect_target": { "type": "integer", "minimum": 0 }
       }
     },
 

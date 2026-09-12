@@ -36,6 +36,7 @@ A diagnostic still fetches nothing.
   },
   "robots": {
     "fetched": true, "url": "https://example.com/robots.txt", "status": 200,
+    "parse_ok": true, "parse_reason": "ok",
     "groups": [ { "user_agent": "*", "allow": [], "disallow": ["/cart"], "crawl_delay": null } ],
     "ai_agents": { "GPTBot": "disallowed", "ClaudeBot": "unspecified", "PerplexityBot": "unspecified",
                    "Google-Extended": "unspecified", "OAI-SearchBot": "unspecified", "CCBot": "unspecified",
@@ -47,6 +48,11 @@ A diagnostic still fetches nothing.
     "discovered": 412, "fetched": 24, "blocked_by_robots": 3, "errors": 1,
     "sampling": { "strategy": "stratified:sitemap+nav+linkgraph",
                   "strata": [ { "page_type": "product", "discovered": 300, "sampled": 12 } ] }
+  },
+  "discovery": {
+    "soft_404": { "detected": true, "baseline_text_hash": "sha256:...",
+                  "probe_paths": ["/5d41402abc4b2a76", "/7e240de74fb1ed08"] },
+    "collapsed_duplicate_text": 3, "collapsed_redirect_target": 1
   },
   "pages": [ /* PageEvidence, see below */ ],
   "link_graph": { "edges": [["/", "/shoes"]], "orphans": ["/legacy/x"], "max_depth_from_home": 4 },
@@ -91,6 +97,43 @@ user agents — which is the only comparison that detects conditional serving.
 under the same `sha256:` convention as `raw.text_hash`; when no body comes back
 it is the hash of the empty string, so the field stays comparable rather than
 absent. Two agents receiving the same status and different hashes is the signal.
+
+**`robots.parse_ok` and `robots.parse_reason`.** `parse_ok` is true only when a
+real robots.txt was parsed, an empty one included. Without it, "a valid
+robots.txt with no rules" and "we were served a webpage at /robots.txt" are the
+same observation: both have no groups and every AI crawler `unspecified`.
+`parse_reason` says why, and its six values fall into two families with opposite
+crawl semantics, so a finding must be able to say which one it saw:
+
+| `parse_reason` | Meaning | Crawl |
+|---|---|---|
+| `ok` | A robots.txt was parsed | Its rules apply |
+| `not_plausibly_robots` | A 2xx whose body is not a robots file, such as an HTML shell | No restrictions |
+| `absent_4xx` | A 4xx; also a redirect chain longer than five hops, which RFC 9309 treats as unavailable | No restrictions |
+| `unreachable` | No response: timeout, DNS or connection failure | Nothing may be crawled |
+| `server_error` | A 5xx | Nothing may be crawled |
+| `rate_limited` | A 429 | Nothing may be crawled |
+
+**`discovery`.** How discovery treated duplicates, as structured fields a rule
+can read.
+
+- `soft_404.detected` is true when two paths that cannot exist both answered 2xx
+  with a substantive body. `soft_404.baseline_text_hash` is the hash of their
+  extracted text when the two bodies are identical, and null otherwise: a site
+  that echoes the requested path into its not-found page is detected but has no
+  single baseline. `soft_404.probe_paths` are the paths requested, derived from
+  the host so that two runs over one site ask the same questions.
+- `collapsed_duplicate_text` counts URLs dropped because their text matched the
+  soft-404 baseline or an already-kept page.
+- `collapsed_redirect_target` counts URLs dropped because their final URL after
+  redirects was already held. Pages are keyed on that final URL: a URL that is
+  itself a held final URL is never fetched, and a redirect onto one is never
+  followed.
+
+**`errors[]` is free text, and no rule reads it.** It holds diagnostics for a
+human reader. A rule that parses message strings is exactly the fragility this
+contract is designed against, so every fact a rule needs is a structured field in
+the bundle, as `discovery` is.
 
 ### PageEvidence
 
@@ -161,7 +204,7 @@ against visible text are short ones — a name, a price, a date — not prose.
 
 `additionalProperties: false` stops an invented *field*. It does not stop an
 invented *value*, and a rule branching on `page_type == "product"` fails
-silently and permanently if the collector writes `"products"`. These five are
+silently and permanently if the collector writes `"products"`. These six are
 therefore closed enums, and adding a member is a contract change:
 
 | Field | Permitted values |
@@ -171,6 +214,7 @@ therefore closed enums, and adding a member is a contract change:
 | `external.origins[].source_type` | `encyclopedic`, `retailer`, `directory`, `news`, `review`, `forum`, `social` |
 | Finding `evidence_refs[].layer` | `first_party`, `third_party` |
 | `well_known[].path` | `/llms.txt`, `/agents.md`, `/.well-known/ucp` |
+| `robots.parse_reason` | `ok`, `not_plausibly_robots`, `absent_4xx`, `unreachable`, `server_error`, `rate_limited` |
 
 `other` is a real classification, not a failure marker: a page the classifier
 cannot place is `other` with a low `page_type_confidence`, and every rule that
@@ -196,7 +240,7 @@ there or not. Absence is an observation, not an error, so a 404 is written to
 |---|---|
 | `path` | One of the three closed values above. Nothing else is ever probed under this key. |
 | `status` | The HTTP status received, or `null` when the request was made and no response came back — timeout, DNS or connection failure. |
-| `present` | `true` only for a 2xx response with a non-empty body. A 200 serving an empty file is not present. |
+| `present` | `true` only for a 2xx response, a non-empty body, and an extracted-text hash that does not equal `discovery.soft_404.baseline_text_hash`. A 200 serving an empty file is not present, and neither is a 200 serving the site's soft-404 shell. The first definition lacked the third condition: a site that returns one shell at every path answers `/llms.txt` with 200, and a file that does not exist was recorded as present. |
 | `content_type` | The `Content-Type` header as received, or `null` when there was none or no response. |
 
 **robots.txt is respected per path.** A path robots.txt disallows us from is

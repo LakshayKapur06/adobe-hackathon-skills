@@ -64,14 +64,22 @@ answered from the evidence without re-fetching.
 
 ## What the fetch outcome means
 
-| Outcome | Meaning | Effect |
-|---|---|---|
-| 2xx, a real robots file | Parsed | Rules apply as above |
-| 2xx, not a robots file | Treated as absent | No restrictions; reason recorded in `errors[]` with stage `robots` |
-| 4xx | Absent (RFC 9309 2.3.1.3) | No restrictions; every AI crawler recorded `unspecified` |
-| 429 | Unreachable | Full disallow. A rate-limit signal is not permission to crawl freely |
-| 5xx, timeout, no response | Unreachable (RFC 9309 2.3.1.4) | Full disallow. The crawl does not start, and the report says it could not proceed |
-| More than five redirects | Absent (RFC 9309 2.3.1.2) | No restrictions |
+| Outcome | `parse_ok` | `parse_reason` | Effect |
+|---|---|---|---|
+| 2xx, a real robots file (an empty one included) | true | `ok` | Rules apply as above |
+| 2xx, not a robots file | false | `not_plausibly_robots` | No restrictions |
+| 4xx | false | `absent_4xx` | No restrictions (RFC 9309 2.3.1.3); every AI crawler `unspecified` |
+| More than five redirects | false | `absent_4xx` | No restrictions: unavailable, the same semantics as a 4xx (RFC 9309 2.3.1.2) |
+| 429 | false | `rate_limited` | Full disallow. A rate-limit signal is not permission to crawl freely |
+| 5xx | false | `server_error` | Full disallow (RFC 9309 2.3.1.4) |
+| Timeout, no response | false | `unreachable` | Full disallow |
+
+Under full disallow the crawl does not start, and the report says it could not
+proceed. `parse_ok` exists because two very different observations otherwise
+look identical: a real robots.txt with no rules, and a webpage served at
+`/robots.txt`, both leave no groups and every AI crawler `unspecified`. Rules
+read `parse_ok` and `parse_reason`; the free-text reason in `errors[]` is for a
+human reader, and no rule parses it.
 
 **"Not a robots file"** exists because some sites answer every path with the
 same HTML shell, `/robots.txt` included. The body decides:

@@ -60,6 +60,13 @@ directions, which is what makes fabricated evidence impossible.
 - `pages[].fetched_at`
 - `pages[].provenance.layer`
 - `pages[].provenance.method`
+- `discovery`
+- `discovery.soft_404`
+- `discovery.soft_404.detected`
+- `discovery.soft_404.baseline_text_hash`
+- `discovery.soft_404.probe_paths`
+- `discovery.collapsed_duplicate_text`
+- `discovery.collapsed_redirect_target`
 
 ## Rule budget
 

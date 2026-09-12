@@ -253,5 +253,101 @@ class TestUnreachableRobots(unittest.TestCase):
         self.assertTrue(any("full disallow" in m for m in errors(evidence, "robots")))
 
 
+class TestDiscoveryRecord(unittest.TestCase):
+    """discovery is the structured record rules read; errors[] stays free text."""
+
+    def test_normal_404s_mean_no_soft_404(self):
+        evidence, *_ = run(fixture_site, no_render=True)
+        soft = evidence["discovery"]["soft_404"]
+        self.assertFalse(soft["detected"])
+        self.assertIsNone(soft["baseline_text_hash"])
+        self.assertEqual(len(soft["probe_paths"]), 2)
+        for path in soft["probe_paths"]:
+            self.assertRegex(path, r"^/[0-9a-f]{16}$")
+        # One collapse, and not from soft-404: /index.html has the same text as
+        # / and / names it as canonical, so it is the same document twice.
+        self.assertEqual(evidence["discovery"]["collapsed_duplicate_text"], 1)
+        self.assertEqual(evidence["discovery"]["collapsed_redirect_target"], 0)
+
+    def test_probe_paths_are_the_same_on_every_run(self):
+        first, *_ = run(fixture_site, no_render=True)
+        second, *_ = run(fixture_site, no_render=True)
+        self.assertEqual(first["discovery"]["soft_404"]["probe_paths"],
+                         second["discovery"]["soft_404"]["probe_paths"])
+
+    def test_echo_site_without_rendering(self):
+        evidence, *_ = run(echo_site, no_render=True)
+        soft = evidence["discovery"]["soft_404"]
+        self.assertTrue(soft["detected"])
+        self.assertEqual(soft["baseline_text_hash"], evidence["pages"][0]["raw"]["text_hash"])
+        self.assertEqual(evidence["discovery"]["collapsed_duplicate_text"], 3)
+        self.assertEqual(evidence["discovery"]["collapsed_redirect_target"], 0)
+
+    def test_echo_site_with_rendering_collapses_nothing(self):
+        evidence, *_ = run(echo_site, renderer=StubRenderer())
+        self.assertTrue(evidence["discovery"]["soft_404"]["detected"])
+        self.assertEqual(evidence["discovery"]["collapsed_duplicate_text"], 0)
+
+    def test_well_known_files_that_are_the_shell_are_not_present(self):
+        evidence, *_ = run(echo_site, no_render=True)
+        for entry in evidence["well_known"]:
+            with self.subTest(path=entry["path"]):
+                self.assertEqual(entry["status"], 200)
+                self.assertFalse(entry["present"])
+
+    def test_robots_parse_fields(self):
+        fixture, *_ = run(fixture_site, no_render=True)
+        self.assertEqual((fixture["robots"]["parse_ok"], fixture["robots"]["parse_reason"]), (True, "ok"))
+        echo, *_ = run(echo_site, no_render=True)
+        self.assertEqual((echo["robots"]["parse_ok"], echo["robots"]["parse_reason"]),
+                         (False, "not_plausibly_robots"))
+        down, *_ = run(robots_503, no_render=True)
+        self.assertEqual((down["robots"]["parse_ok"], down["robots"]["parse_reason"]), (False, "server_error"))
+
+
+def redirect_site(path, base):
+    """/a and /b both redirect to /target; the home page links to all three."""
+    if path == "/robots.txt":
+        return 200, "text/plain", b"User-agent: *\nDisallow:\n"
+    if path == "/":
+        return 200, "text/html", (b'<html><body><h1>Home</h1><a href="/a">A</a> <a href="/b">B</a> '
+                                  b'<a href="/target">Target</a></body></html>')
+    if path in ("/a", "/b"):
+        return 301, "text/html", b""
+    if path == "/target":
+        return 200, "text/html", b"<html><body><h1>Target</h1><p>The one real page.</p></body></html>"
+    return 404, "text/html", b"<html><body>Not found</body></html>"
+
+
+class RedirectServer(Server):
+    """Server, plus the Location header a 301 needs."""
+
+    def __init__(self, respond):
+        super().__init__(respond)
+        handler = self.httpd.RequestHandlerClass
+        original_send = handler.send_response
+
+        def send_response(this, code, message=None):
+            original_send(this, code, message)
+            if code == 301:
+                this.send_header("Location", "/target")
+        handler.send_response = send_response
+
+
+class TestRedirectKey(unittest.TestCase):
+    def test_a_final_url_already_held_is_never_fetched_again(self):
+        with RedirectServer(redirect_site) as server, tempfile.TemporaryDirectory() as workdir:
+            evidence = collect.collect(server.base, workdir, no_render=True, no_egress=True)
+            requested = list(server.requested)
+        self.assertEqual([p["url"].rsplit("/", 1)[-1] for p in evidence["pages"]], ["", "a"])
+        self.assertEqual(evidence["pages"][1]["final_url"], server.base + "/target")
+        # /a is fetched and lands on /target. /b redirects there too, and the hop
+        # is refused rather than followed; /target itself is never requested
+        # directly. Both are counted.
+        self.assertEqual(evidence["discovery"]["collapsed_redirect_target"], 2)
+        self.assertEqual(requested.count("/target"), 1)
+        self.assertEqual(EVIDENCE_SCHEMA.errors(evidence), [])
+
+
 if __name__ == "__main__":
     unittest.main()

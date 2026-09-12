@@ -22,6 +22,13 @@ DIRECTIVES = ("user-agent", "allow", "disallow", "crawl-delay", "sitemap")
 AI_AGENTS = ("GPTBot", "ClaudeBot", "PerplexityBot", "Google-Extended",
              "OAI-SearchBot", "CCBot", "Googlebot")
 
+# The closed vocabulary of robots.parse_reason. The first two outcomes that are
+# not "ok" mean no restrictions apply; the last three mean nothing may be
+# crawled. A finding must be able to say which one it saw, because they have
+# opposite crawl semantics.
+PARSE_REASONS = ("ok", "not_plausibly_robots", "absent_4xx", "unreachable",
+                 "server_error", "rate_limited")
+
 # RFC 9309 section 2.2.1 asks crawlers to choose tokens of letters, underscores
 # and hyphens. Digits are accepted as well, because real crawlers carry them
 # (MJ12bot, 360Spider) and a line that names one means that crawler: reading
@@ -222,39 +229,57 @@ def looks_like_robots(body, content_type):
 def interpret(status, body, content_type):
     """Turn a robots.txt fetch outcome into a crawl policy.
 
-    Returns ``(mode, robots, reason)``, where mode is one of:
+    Returns ``(mode, robots, reason, parse_reason)``. ``mode`` is one of:
 
-    - ``parsed``: a real file; ``robots`` holds it.
-    - ``absent``: no restrictions apply (RFC 9309 2.3.1.3). 4xx responses, an
-      unfollowable redirect, and a 2xx response that is not a robots file.
-    - ``unreachable``: nothing may be crawled (RFC 9309 2.3.1.4). 5xx
-      responses, no response at all, and 429.
+    - ``parsed``: a real file; ``robots`` holds it. parse_reason ``ok``.
+    - ``absent``: no restrictions apply (RFC 9309 2.3.1.3). A 4xx
+      (``absent_4xx``), or a 2xx that is not a robots file
+      (``not_plausibly_robots``).
+    - ``unreachable``: nothing may be crawled (RFC 9309 2.3.1.4). A 5xx
+      (``server_error``), a 429 (``rate_limited``), or no response at all
+      (``unreachable``).
 
     429 is read as unreachable rather than as a 4xx. It is a rate-limit signal,
     and reading it as "crawl freely" would answer "slow down" by speeding up.
-    Google's crawlers make the same call.
+
+    A final status that is none of these, in practice a redirect chain longer
+    than five hops, is unavailable under RFC 9309 2.3.1.2 and so has exactly the
+    semantics of a 4xx. The parse_reason vocabulary is closed, and it is
+    recorded as ``absent_4xx``, the value whose meaning it shares.
     """
     if status is None:
-        return "unreachable", None, "robots.txt could not be fetched (no response); treated as full disallow per RFC 9309"
-    if status == 429 or 500 <= status <= 599:
-        return "unreachable", None, "robots.txt returned %d; treated as full disallow per RFC 9309" % status
+        return ("unreachable", None,
+                "robots.txt could not be fetched (no response); treated as full disallow per RFC 9309",
+                "unreachable")
+    if status == 429:
+        return ("unreachable", None,
+                "robots.txt returned 429; a rate limit is treated as full disallow", "rate_limited")
+    if 500 <= status <= 599:
+        return ("unreachable", None,
+                "robots.txt returned %d; treated as full disallow per RFC 9309" % status, "server_error")
     if 400 <= status <= 499:
-        return "absent", None, "robots.txt returned %d; no restrictions apply" % status
+        return "absent", None, "robots.txt returned %d; no restrictions apply" % status, "absent_4xx"
     if 200 <= status <= 299:
         plausible, reason = looks_like_robots(body or "", content_type)
         if not plausible:
-            return "absent", None, reason
+            return "absent", None, reason, "not_plausibly_robots"
         groups, sitemaps = parse(body or "")
-        return "parsed", Robots(groups, sitemaps), reason
-    return "absent", None, "robots.txt returned %d; no restrictions apply" % status
+        return "parsed", Robots(groups, sitemaps), reason, "ok"
+    return ("absent", None,
+            "robots.txt ended on status %d; treated as unavailable, no restrictions" % status,
+            "absent_4xx")
 
 
-def evidence_block(url, status, fetched, mode, robots):
+def evidence_block(url, status, fetched, mode, robots, parse_reason):
     """The ``robots`` object of the evidence bundle.
 
     Groups are recorded verbatim, one entry per user-agent line, so a rule can
     ask any question the verdicts do not answer. Comments are not recorded.
+    ``parse_ok`` separates "a real robots.txt, perhaps with no rules" from
+    "we were served something else", which the groups alone cannot.
     """
+    if parse_reason not in PARSE_REASONS:
+        raise ValueError("unknown parse_reason %r" % (parse_reason,))
     groups = []
     if robots is not None:
         for group in robots.groups:
@@ -275,6 +300,8 @@ def evidence_block(url, status, fetched, mode, robots):
         "fetched": fetched,
         "url": url,
         "status": status,
+        "parse_ok": parse_reason == "ok",
+        "parse_reason": parse_reason,
         "groups": groups,
         "ai_agents": verdicts,
         "sitemaps": list(robots.sitemaps) if robots is not None else [],

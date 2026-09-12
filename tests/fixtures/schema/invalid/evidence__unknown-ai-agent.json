@@ -53,6 +53,18 @@
       "strategy": "stratified:sitemap+nav+linkgraph"
     }
   },
+  "discovery": {
+    "collapsed_duplicate_text": 0,
+    "collapsed_redirect_target": 0,
+    "soft_404": {
+      "baseline_text_hash": null,
+      "detected": false,
+      "probe_paths": [
+        "/ab8a8684ac2d59e9",
+        "/f2d1cd358648e1ca"
+      ]
+    }
+  },
   "errors": [],
   "external": {
     "attempted": false,
@@ -338,13 +350,13 @@
   "robots": {
     "ai_agents": {
       "BingBot": "allowed",
-      "CCBot": "unspecified",
-      "ClaudeBot": "unspecified",
-      "GPTBot": "unspecified",
-      "Google-Extended": "unspecified",
-      "Googlebot": "unspecified",
-      "OAI-SearchBot": "unspecified",
-      "PerplexityBot": "unspecified"
+      "CCBot": "allowed",
+      "ClaudeBot": "allowed",
+      "GPTBot": "allowed",
+      "Google-Extended": "allowed",
+      "Googlebot": "allowed",
+      "OAI-SearchBot": "allowed",
+      "PerplexityBot": "allowed"
     },
     "fetched": true,
     "groups": [
@@ -359,6 +371,8 @@
         "user_agent": "*"
       }
     ],
+    "parse_ok": true,
+    "parse_reason": "ok",
     "sitemaps": [
       "http://localhost:8000/sitemap.xml"
     ],

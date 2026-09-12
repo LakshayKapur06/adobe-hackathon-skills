@@ -17,7 +17,6 @@ import datetime
 import hashlib
 import json
 import os
-import secrets
 import socket
 import sys
 import time
@@ -69,10 +68,11 @@ class Run:
             return self.robots[netloc]
         url = "%s://%s/robots.txt" % (scheme, netloc)
         response = self.fetcher.get(url, deadline=deadline)
-        mode, parsed, reason = robots.interpret(response.status, response.text, response.content_type)
+        mode, parsed, reason, parse_reason = robots.interpret(
+            response.status, response.text, response.content_type)
         entry = {"url": url, "status": response.status, "fetched": response.status is not None,
-                 "mode": mode, "robots": parsed, "reason": reason}
-        if mode == "unreachable" or (mode == "absent" and response.ok):
+                 "mode": mode, "robots": parsed, "reason": reason, "parse_reason": parse_reason}
+        if mode == "unreachable" or parse_reason == "not_plausibly_robots":
             self.error(url, "robots", reason)
         self.robots[netloc] = entry
         if parsed is not None:
@@ -123,38 +123,69 @@ def _same_site(run, origin, deadline):
     return lambda u: urls.origin(urls.normalise(u) or u) == origin and run.allowed(u, deadline)
 
 
+def probe_paths(host):
+    """Two paths that cannot exist, derived from the host.
+
+    Derived rather than random because they are recorded in the bundle, and two
+    runs over the same site must produce the same bundle (CLAUDE.md rule 10).
+    Sixteen hex digits of a hash name no real resource on any site.
+    """
+    return ["/" + hashlib.sha256(("agent-readiness-audit soft-404 probe %d %s" % (i, host))
+                                 .encode("utf-8")).hexdigest()[:16] for i in (1, 2)]
+
+
 def _soft404_probe(run, origin, deadline):
-    """Fetch two paths that cannot exist. Returns the baseline raw-text hash or None."""
-    results = []
-    for _ in range(2):
-        url = "%s/%s" % (origin, secrets.token_hex(8))
+    """Request the two probe paths. Returns the discovery.soft_404 record.
+
+    ``detected`` means both paths answered 2xx with a substantive body, so the
+    site does not return real 404s. ``baseline_text_hash`` is set only when the
+    two bodies are also identical: a site that echoes the requested path into
+    its not-found page is detected but has no single baseline to dedupe against.
+    """
+    record = {"detected": False, "baseline_text_hash": None, "probe_paths": []}
+    responses = []
+    for path in probe_paths(urls.host(origin)):
+        url = origin + path
         if not run.allowed(url, deadline):
-            return None
-        results.append(run.fetcher.get(url, may_follow=_same_site(run, origin, deadline), deadline=deadline))
-    if not all(r.ok and len(r.body) >= SOFT404_MIN_BYTES for r in results):
-        return None
-    hashes = [_parse(r, r.final_url)["text_hash"] for r in results]
+            continue
+        record["probe_paths"].append(path)
+        responses.append(run.fetcher.get(url, may_follow=_same_site(run, origin, deadline), deadline=deadline))
+    if len(responses) < 2 or not all(r.ok and len(r.body) >= SOFT404_MIN_BYTES for r in responses):
+        return record
+    record["detected"] = True
+    hashes = [extract.parse_document(r.text, r.final_url)["text_hash"] for r in responses]
     if hashes[0] != hashes[1]:
         run.error(origin + "/", "discovery",
                   "soft-404: two paths that cannot exist both returned 2xx with substantive bodies, "
                   "but the bodies differ (the page echoes the requested path), so no single "
                   "baseline exists and URL-level deduplication is not possible")
-        return None
+        return record
+    record["baseline_text_hash"] = hashes[0]
     run.error(origin + "/", "discovery",
               "soft-404 baseline %s: two paths that cannot exist both returned status %d "
-              "with this identical body" % (hashes[0], results[0].status))
-    return hashes[0]
+              "with this identical body" % (hashes[0], responses[0].status))
+    return record
 
 
-def _well_known(run, origin, deadline):
+def _well_known(run, origin, deadline, baseline):
+    """The agent-facing discovery files, present or not.
+
+    ``present`` requires a 2xx, a non-empty body, and text that is not the
+    soft-404 baseline. A site that serves one shell at every path answers
+    /llms.txt with 200 and that shell; without the third condition, a file that
+    does not exist would be recorded as present.
+    """
     entries = []
     for path in WELL_KNOWN_PATHS:
         url = origin + path
         if not run.allowed(url, deadline):
             continue                      # not probed: no entry, by contract
         response = run.fetcher.get(url, may_follow=_same_site(run, origin, deadline), deadline=deadline)
-        entries.append({"path": path, "status": response.status,
-                        "present": bool(response.ok and response.body.strip()),
+        present = bool(response.ok and response.body.strip())
+        if present and baseline and \
+                extract.parse_document(response.text, response.final_url)["text_hash"] == baseline:
+            present = False
+        entries.append({"path": path, "status": response.status, "present": present,
                         "content_type": response.content_type})
     return entries
 
@@ -280,15 +311,18 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
                 "makes no claims; identity and corroboration rules are not assessed")
 
     frontier = discover.Frontier(urls.netloc(resolved_origin) if resolved_origin else input_netloc)
-    kept, collapsed, aliases, crawl_errors = [], 0, [], 0
-    well_known, sitemap_records, baseline, render_results = [], [], None, {}
+    kept, collapsed_shell, aliases, redirected, crawl_errors = [], 0, [], [], 0
+    well_known, sitemap_records, render_results = [], [], {}
+    soft404 = {"detected": False, "baseline_text_hash": None, "probe_paths": []}
+    baseline = None
 
     if home is not None:
         origin = resolved_origin
         home_key = frontier.add(home.final_url, "nav") or urls.normalise(home.final_url)
         # -- 3. soft-404, agent-facing files, sitemaps -------------------------------
-        baseline = _soft404_probe(run, origin, robots_deadline + budgets["well_known_s"])
-        well_known = _well_known(run, origin, time.monotonic() + budgets["well_known_s"])
+        soft404 = _soft404_probe(run, origin, robots_deadline + budgets["well_known_s"])
+        baseline = soft404["baseline_text_hash"]
+        well_known = _well_known(run, origin, time.monotonic() + budgets["well_known_s"], baseline)
         sitemap_records = _sitemaps(run, origin, governing, frontier, robots_deadline)
         home_doc = _parse(home, home.final_url)
         for link in home_doc["resolved_links"]:
@@ -302,25 +336,39 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
                     frontier.add(link, "nav")
 
         # -- 4. stratified crawl -------------------------------------------------------
+        # Pages are keyed on their final URL after redirects. A URL that is
+        # itself the final form of a page already held is never fetched, and a
+        # redirect hop onto one is never followed.
+        held = {home_key}
         sampler = discover.Sampler(frontier)
         sampler.mark(home_key)
         kept.append((home_key, home, home_doc))
         crawl_deadline = time.monotonic() + budgets["crawl_s"]
         in_scope = (frontier.origin, frontier.twin)
+
+        def follow(hop):
+            normal = urls.normalise(hop)
+            return (normal is not None and urls.netloc(normal) in in_scope and normal not in held
+                    and run.allowed(hop, crawl_deadline))
+
         while len(kept) < max_pages and time.monotonic() < crawl_deadline:
             target = sampler.next()
             if target is None:
                 break
+            if target in held:
+                redirected.append((target, target))
+                continue
             if not run.allowed(target, crawl_deadline):
                 continue
-            response = run.fetcher.get(
-                target, deadline=crawl_deadline,
-                may_follow=lambda u: urls.netloc(urls.normalise(u) or "") in in_scope
-                and run.allowed(u, crawl_deadline))
+            response = run.fetcher.get(target, deadline=crawl_deadline, may_follow=follow)
             if response.status is None:
                 if "budget" not in (response.error or ""):
                     crawl_errors += 1
                     run.error(target, "fetch", response.error or "no response")
+                continue
+            final = urls.normalise(response.final_url) or target
+            if final in held:
+                redirected.append((target, final))
                 continue
             if 500 <= response.status <= 599:
                 crawl_errors += 1
@@ -328,7 +376,7 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
             if not js_render and baseline and response.ok and doc["text_hash"] == baseline:
                 # Rendering is unavailable, so this copy of the shell adds no
                 # distinct content: it is not a page and not a stratum member.
-                collapsed += 1
+                collapsed_shell += 1
                 continue
             alias = None if js_render else _alias_of(target, response, doc, kept)
             if alias:
@@ -337,20 +385,25 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
             for link in doc["resolved_links"]:
                 frontier.add(link, "linkgraph")
             kept.append((target, response, doc))
+            held.add(final)
         if time.monotonic() >= crawl_deadline and len(kept) < max_pages and sampler.next() is not None:
             run.degrade("crawl", "the %ss crawl budget ran out after %d pages" % (budgets["crawl_s"], len(kept)),
                         "fewer pages were sampled than requested; every finding states its denominator")
-        if collapsed:
+        if collapsed_shell:
             run.error(origin + "/", "discovery",
                       "collapsed %d of %d fetched URLs whose server response matched the soft-404 "
                       "baseline %s; with rendering unavailable they contribute no distinct content "
                       "and are not counted in crawl.fetched or any stratum"
-                      % (collapsed, collapsed + len(kept), baseline))
+                      % (collapsed_shell, collapsed_shell + len(kept), baseline))
         if aliases:
             run.error(origin + "/", "discovery",
                       "collapsed %d URLs that are the same document as an earlier page (identical "
                       "extracted text and a canonical link between the two): %s"
                       % (len(aliases), "; ".join("%s = %s" % pair for pair in aliases[:5])))
+        if redirected:
+            run.error(origin + "/", "discovery",
+                      "collapsed %d URLs whose final URL after redirects was already held: %s"
+                      % (len(redirected), "; ".join("%s -> %s" % pair for pair in redirected[:5])))
 
         # -- 5. rendering ----------------------------------------------------------
         if js_render:
@@ -391,6 +444,11 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
         run.error((resolved_origin or "") + "/", "discovery",
                   "collapsed %d fetched pages whose rendered text duplicated an earlier page: %s"
                   % (len(render_duplicates), "; ".join("%s = %s" % pair for pair in render_duplicates[:5])))
+    fallbacks = list(getattr(renderer, "fallbacks", None) or []) if js_render else []
+    if fallbacks:
+        run.error((resolved_origin or "") + "/", "render",
+                  "%d pages never settled in virtual time and were rendered with the navigation cap "
+                  "instead, without a quiet period: %s" % (len(fallbacks), "; ".join(fallbacks[:5])))
     if render_failed:
         run.degrade("render", "%d of %d pages failed to render (browser error or timeout)" % (render_failed, len(kept)),
                     "those pages are fetch-only and their raw-versus-rendered comparison is not assessed")
@@ -398,12 +456,12 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
         run.degrade("render", "%d pages were not reached within the %ss render budget" % (render_skipped, budgets["render_s"]),
                     "those pages are fetch-only and their raw-versus-rendered comparison is not assessed")
     html_pages = [p for p in pages if p["status"] and 200 <= p["status"] <= 299]
-    if collapsed and len(html_pages) == 1 and html_pages[0]["raw"]["text_hash"] == baseline:
+    if collapsed_shell and len(html_pages) == 1 and html_pages[0]["raw"]["text_hash"] == baseline:
         run.degrade("page-content",
                     "every one of %d sampled URLs returned the same server response as a path that cannot "
-                    "exist, and rendering is unavailable" % (collapsed + 1),
+                    "exist, and rendering is unavailable" % (collapsed_shell + 1),
                     "no page-level content exists in the server response at all: the bundle holds one "
-                    "representative page, not %d" % (collapsed + 1))
+                    "representative page, not %d" % (collapsed_shell + 1))
 
     evidence = {
         "schema_version": SCHEMA_VERSION,
@@ -423,7 +481,7 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
             "corroboration": {"method": "none", "provider_unavailable": []},
         },
         "robots": robots.evidence_block(governing["url"], governing["status"], governing["fetched"],
-                                        governing["mode"], governing["robots"]),
+                                        governing["mode"], governing["robots"], governing["parse_reason"]),
         "sitemaps": sitemap_records,
         "crawl": {
             "discovered": len(frontier),
@@ -435,6 +493,11 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
                                                       if s in frontier.sources) or "none"),
                 "strata": _strata(frontier, pages),
             },
+        },
+        "discovery": {
+            "soft_404": soft404,
+            "collapsed_duplicate_text": collapsed_shell + len(aliases) + len(render_duplicates),
+            "collapsed_redirect_target": len(redirected),
         },
         "pages": pages,
         "link_graph": _link_graph(frontier, kept, pages, run),

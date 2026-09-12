@@ -43,6 +43,8 @@
     "fetched": true,
     "url": "http://localhost:8000/robots.txt",
     "status": 200,
+    "parse_ok": true,
+    "parse_reason": "ok",
     "groups": [
       {
         "user_agent": "*",
@@ -97,6 +99,18 @@
         }
       ]
     }
+  },
+  "discovery": {
+    "soft_404": {
+      "detected": false,
+      "baseline_text_hash": null,
+      "probe_paths": [
+        "/ab8a8684ac2d59e9",
+        "/f2d1cd358648e1ca"
+      ]
+    },
+    "collapsed_duplicate_text": 0,
+    "collapsed_redirect_target": 0
   },
   "pages": [
     {

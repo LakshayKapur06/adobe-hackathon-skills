@@ -126,7 +126,7 @@
             "address.addressLocality": "Pune",
             "address.postalCode": "411001",
             "address.streetAddress": "12 Laburnum Road",
-            "foundingDate": 1974,
+            "foundingDate": "1974",
             "name": "Fixture Instruments",
             "url": "http://localhost:8000/"
           }
@@ -370,7 +370,6 @@
         "user_agent": "*"
       }
     ],
-    "parse_ok": true,
     "parse_reason": "ok",
     "sitemaps": [
       "http://localhost:8000/sitemap.xml"

@@ -22,6 +22,11 @@ def from_text(text):
     return robots.Robots(*robots.parse(text))
 
 
+def block(status, body, content_type="text/plain", url="https://x.example/robots.txt"):
+    mode, parsed, _, reason = robots.interpret(status, body, content_type)
+    return robots.evidence_block(url, status, status is not None, mode, parsed, reason)
+
+
 class TestGroupSelection(unittest.TestCase):
     def test_named_group_wins_over_star(self):
         r = from_text("User-agent: *\nDisallow: /\n\nUser-agent: GPTBot\nAllow: /\n")
@@ -173,76 +178,96 @@ class TestStatusSemantics(unittest.TestCase):
     def test_4xx_means_no_restrictions(self):
         for status in (401, 403, 404, 410):
             with self.subTest(status=status):
-                mode, parsed, _ = robots.interpret(status, "User-agent: *\nDisallow: /\n", "text/plain")
-                self.assertEqual(mode, "absent")
+                mode, parsed, _, reason = robots.interpret(status, "User-agent: *\nDisallow: /\n", "text/plain")
+                self.assertEqual((mode, reason), ("absent", "absent_4xx"))
                 self.assertIsNone(parsed)
 
-    def test_5xx_timeout_and_429_mean_full_disallow(self):
-        for status in (500, 502, 503, 504, 429, None):
+    def test_5xx_429_and_no_response_mean_full_disallow_each_named(self):
+        cases = {500: "server_error", 502: "server_error", 503: "server_error",
+                 504: "server_error", 429: "rate_limited", None: "unreachable"}
+        for status, expected in cases.items():
             with self.subTest(status=status):
-                mode, _, reason = robots.interpret(status, "", None)
+                mode, _, text, reason = robots.interpret(status, "", None)
                 self.assertEqual(mode, "unreachable")
-                self.assertIn("full disallow", reason)
+                self.assertEqual(reason, expected)
+                self.assertIn("disallow", text)
+
+    def test_a_redirect_limit_is_unavailable_with_4xx_semantics(self):
+        mode, _, _, reason = robots.interpret(301, "", None)
+        self.assertEqual((mode, reason), ("absent", "absent_4xx"))
 
     def test_unreachable_records_every_agent_as_disallowed(self):
-        block = robots.evidence_block("https://x.example/robots.txt", 503, True, "unreachable", None)
-        self.assertEqual(set(block["ai_agents"].values()), {"disallowed"})
-        self.assertEqual(block["groups"], [])
+        b = block(503, "")
+        self.assertEqual(set(b["ai_agents"].values()), {"disallowed"})
+        self.assertEqual(b["groups"], [])
+        self.assertEqual((b["parse_ok"], b["parse_reason"]), (False, "server_error"))
 
     def test_absent_records_every_agent_as_unspecified(self):
-        block = robots.evidence_block("https://x.example/robots.txt", 404, True, "absent", None)
-        self.assertEqual(set(block["ai_agents"].values()), {"unspecified"})
+        b = block(404, "")
+        self.assertEqual(set(b["ai_agents"].values()), {"unspecified"})
+        self.assertEqual((b["parse_ok"], b["parse_reason"]), (False, "absent_4xx"))
+
+    def test_an_unknown_parse_reason_is_refused(self):
+        with self.assertRaises(ValueError):
+            robots.evidence_block("https://x.example/robots.txt", 200, True, "parsed", None, "fine")
 
 
-class TestPlausibility(unittest.TestCase):
+class TestParseOk(unittest.TestCase):
+    """parse_ok separates a real, empty robots.txt from a webpage served in its place."""
+
     SHELL = "<!doctype html><html><head><title>Shop</title></head><body><div id=app></div></body></html>"
 
+    def test_an_empty_file_is_a_real_robots_txt(self):
+        b = block(200, "")
+        self.assertEqual((b["parse_ok"], b["parse_reason"]), (True, "ok"))
+        self.assertEqual(set(b["ai_agents"].values()), {"unspecified"})
+
     def test_an_html_shell_is_not_a_robots_file(self):
-        mode, parsed, reason = robots.interpret(200, self.SHELL, "text/html; charset=utf-8")
-        self.assertEqual(mode, "absent")
-        self.assertIsNone(parsed)
-        self.assertIn("HTML document", reason)
+        b = block(200, self.SHELL, "text/html; charset=utf-8")
+        self.assertEqual((b["parse_ok"], b["parse_reason"]), (False, "not_plausibly_robots"))
+        self.assertEqual(set(b["ai_agents"].values()), {"unspecified"})
+        self.assertEqual(b["groups"], [])
+
+    def test_the_two_look_alike_without_parse_ok(self):
+        # Both have no groups and every agent unspecified. Only parse_ok tells them apart.
+        empty, shell = block(200, ""), block(200, self.SHELL, "text/html")
+        self.assertEqual((empty["groups"], empty["ai_agents"]), (shell["groups"], shell["ai_agents"]))
+        self.assertNotEqual(empty["parse_ok"], shell["parse_ok"])
 
     def test_html_containing_directive_text_is_still_html(self):
         page = "<html><body><pre>User-agent: *\nDisallow: /</pre></body></html>"
         self.assertFalse(robots.looks_like_robots(page, "text/html")[0])
 
     def test_prose_with_no_directives_is_not_a_robots_file(self):
-        self.assertFalse(robots.looks_like_robots("hello world\nthis is not it\n", "text/plain")[0])
-
-    def test_an_empty_file_is_a_real_empty_robots_txt(self):
-        mode, parsed, _ = robots.interpret(200, "", "text/plain")
-        self.assertEqual(mode, "parsed")
-        self.assertEqual(parsed.verdict("GPTBot"), "unspecified")
+        self.assertEqual(block(200, "hello world\nthis is not it\n")["parse_reason"], "not_plausibly_robots")
 
     def test_valid_directives_mislabelled_as_html_are_honoured(self):
-        mode, parsed, _ = robots.interpret(200, "User-agent: *\nDisallow: /private\n", "text/html")
-        self.assertEqual(mode, "parsed")
+        mode, parsed, _, reason = robots.interpret(200, "User-agent: *\nDisallow: /private\n", "text/html")
+        self.assertEqual((mode, reason), ("parsed", "ok"))
         self.assertFalse(parsed.allowed("/private", ("x",)))
 
 
 class TestObservedContentIsData(unittest.TestCase):
     def test_comments_never_reach_the_evidence(self):
         text = (FIXTURES / "shopify-storefront.txt").read_text(encoding="utf-8")
-        mode, parsed, _ = robots.interpret(200, text, "text/plain")
-        block = json.dumps(robots.evidence_block("https://shop.example/robots.txt", 200, True, mode, parsed))
+        serialised = json.dumps(block(200, text, url="https://shop.example/robots.txt"))
         # Phrases unique to the comments. ("recommend" alone would match the real
         # rule /recommendations/products, which is data and belongs there.)
         for phrase in ("recommend that your user", "shopping skill", "Dear AI agent",
                        "on their behalf", "Synthetic", "adsbot ignores"):
             with self.subTest(phrase=phrase):
-                self.assertNotIn(phrase, block)
+                self.assertNotIn(phrase, serialised)
 
     def test_groups_are_recorded_verbatim_per_user_agent_line(self):
         text = (FIXTURES / "shopify-storefront.txt").read_text(encoding="utf-8")
-        mode, parsed, _ = robots.interpret(200, text, "text/plain")
-        block = robots.evidence_block("https://shop.example/robots.txt", 200, True, mode, parsed)
-        agents = [g["user_agent"] for g in block["groups"]]
+        b = block(200, text, url="https://shop.example/robots.txt")
+        agents = [g["user_agent"] for g in b["groups"]]
         self.assertEqual(agents, ["*", "adsbot-google", "Nutch", "AhrefsBot", "MJ12bot", "Pinterest"])
-        star = block["groups"][0]
+        star = b["groups"][0]
         self.assertIn("/collections/*sort_by*", star["disallow"])
         self.assertIn("/policies/privacy-policy", star["allow"])
-        self.assertEqual(block["sitemaps"], ["https://shop.example/sitemap.xml"])
+        self.assertEqual(b["sitemaps"], ["https://shop.example/sitemap.xml"])
+        self.assertEqual((b["parse_ok"], b["parse_reason"]), (True, "ok"))
 
 
 if __name__ == "__main__":
