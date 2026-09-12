@@ -1,10 +1,46 @@
 {
-  "findings": [],
-  "not_assessed": [],
   "checks_passed": [
     {
       "rule_id": "ACC-001",
-      "summary": "No AI crawler is disallowed in robots.txt; all seven tracked agents fall under the wildcard group, which allows /"
+      "summary": "No answer-time retrieval crawler (OAI-SearchBot, PerplexityBot, Claude-SearchBot, Googlebot) is shut out by the * group in robots.txt"
+    },
+    {
+      "rule_id": "ACC-002",
+      "summary": "robots.txt answered HTTP 200, which lets compliant crawlers proceed"
+    },
+    {
+      "rule_id": "ACC-003",
+      "summary": "No primary page template carries noindex or none (2 primary 2xx pages examined)"
+    },
+    {
+      "rule_id": "ACC-004",
+      "summary": "No primary page template carries nosnippet or max-snippet:0 (2 primary 2xx pages examined)"
+    },
+    {
+      "rule_id": "ACC-008",
+      "summary": "No answer-time retrieval crawler is excluded by name in robots.txt"
+    },
+    {
+      "rule_id": "ACC-009",
+      "summary": "Every assessable sitemap declared in robots.txt returned a readable sitemap (1 file)"
+    }
+  ],
+  "findings": [],
+  "not_assessed": [
+    {
+      "enable_hint": "re-run with a larger sample; a site declaring no canonicals has nothing for this rule to check",
+      "reason": "fewer than 2 non-root 2xx pages declare a canonical (1 found)",
+      "rule_id": "ACC-005"
+    },
+    {
+      "enable_hint": "the probe needs the home page to answer this client with 2xx",
+      "reason": "no probed URL has both a 2xx browser-ua response and a named-agent response to compare",
+      "rule_id": "ACC-006"
+    },
+    {
+      "enable_hint": "needs at least 5 sampled URLs behind a home page that answers this client",
+      "reason": "the sample holds 2 URLs, fewer than 5",
+      "rule_id": "ACC-007"
     }
   ]
 }

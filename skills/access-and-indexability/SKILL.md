@@ -40,6 +40,15 @@ Principally: `robots`, `pages[].status`, `pages[].headers.x_robots_tag`,
 
 ## Procedure
 
+The steps below are implemented, one function per rule, in
+`scripts/diagnose.py`:
+
+    python scripts/diagnose.py --evidence evidence/evidence.json --out findings/access-and-indexability.json
+
+It needs only a Python 3 standard library. A host that cannot run scripts
+follows the same steps by hand against `references/rules.md`, which is the
+specification the script implements.
+
 1. Load `evidence/evidence.json` and confirm `schema_version` is compatible.
 2. For each rule in `references/rules.md`, check its **minimum evidence** clause
    first. If unmet, emit a `not_assessed` entry with the reason. Never convert

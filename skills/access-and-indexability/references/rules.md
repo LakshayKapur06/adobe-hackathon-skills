@@ -130,6 +130,18 @@ page we cannot place could not name what was lost.
 errored page is recorded with its status and an empty body, so every rule that
 reads page content counts only 2xx pages.
 
+**How a finding cites its evidence.** Every finding carries `evidence_refs`, and
+each one names a URL, the layer and method that observed it, and when. A
+page-level observation cites the page's `pages[].url`, `pages[].provenance.layer`,
+`pages[].provenance.method` and `pages[].fetched_at`. A robots.txt or sitemap
+observation cites `robots.url` or the sitemap's `sitemaps[].url`, as a
+first-party fetch, retrieved at `run_context.started_at`: robots.txt is the
+collector's first request and sitemaps follow it within the same stage, and
+when robots.txt fails no page is ever fetched, so a page timestamp would not
+exist for the one finding that most needs a citation. A `ua_probe` observation
+cites the page timestamp for the same URL. The rules implement these blocks in
+`scripts/diagnose.py`, one function per rule, in the order written here.
+
 ## Rules
 
 ### ACC-001 — Answer-time retrieval crawler shut out by a wildcard robots.txt group
@@ -144,7 +156,8 @@ reads page content counts only 2xx pages.
   `PerplexityBot`, `Claude-SearchBot`, `Googlebot`) has the verdict `disallowed`, and no entry in
   `robots.groups` names that crawler, so the verdict comes from the `*` group.
 - **Evidence read:** `robots.parse_ok`, `robots.parse_reason`,
-  `robots.ai_agents`, `robots.groups`, `site.resolved_origin`.
+  `robots.ai_agents`, `robots.groups`, `robots.url`, `site.resolved_origin`,
+  `pages[].final_url`, `pages[].page_type`.
 - **Threshold:** one retrieval crawler is enough. Justification: the verdict is
   a literal reading of one file, not a sample, so there is no variance to
   average out; a single disallowed retrieval crawler already removes the whole
@@ -212,7 +225,7 @@ reads page content counts only 2xx pages.
 - **Signal:** `robots.parse_reason` is `server_error` (a 5xx) or `rate_limited`
   (a 429).
 - **Evidence read:** `robots.fetched`, `robots.status`, `robots.parse_reason`,
-  `site.resolved_origin`.
+  `robots.url`, `site.resolved_origin`, `run_context.started_at`.
 - **Threshold:** a single observed 5xx or 429 on robots.txt. Justification: the
   collector requests robots.txt once per host, so there is no second
   observation to require; the uncertainty this leaves about whether the error
@@ -261,7 +274,8 @@ reads page content counts only 2xx pages.
   once, which is a configuration error rather than an editorial choice.
 - **Signal:** 2xx pages of a primary page type carry `noindex` or `none` in
   `meta_robots`, or in `headers.x_robots_tag` either unscoped or scoped to a
-  retrieval crawler (`googlebot`, `oai-searchbot`, `perplexitybot`).
+  retrieval crawler (`googlebot`, `oai-searchbot`, `perplexitybot`,
+  `claude-searchbot`).
 - **Evidence read:** `pages[].url`, `pages[].final_url`, `pages[].status`,
   `pages[].page_type`, `pages[].meta_robots`, `pages[].headers.x_robots_tag`,
   `pages[].canonical`, `pages[].canonical_self`.
@@ -554,7 +568,8 @@ reads page content counts only 2xx pages.
   `PerplexityBot`, `Claude-SearchBot`, `Googlebot`) has the verdict
   `disallowed`, and an entry in `robots.groups` names that crawler.
 - **Evidence read:** `robots.parse_ok`, `robots.parse_reason`,
-  `robots.ai_agents`, `robots.groups`, `site.resolved_origin`.
+  `robots.ai_agents`, `robots.groups`, `robots.url`, `site.resolved_origin`,
+  `pages[].final_url`, `pages[].page_type`.
 - **Threshold:** one retrieval crawler is enough. Justification: as in ACC-001,
   the verdict is a literal reading of one file with nothing to average, and one
   excluded retrieval crawler already removes the site from one assistant's
