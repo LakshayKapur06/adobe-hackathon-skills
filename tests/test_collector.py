@@ -362,6 +362,20 @@ class TestPageTypeRefinement(unittest.TestCase):
         self.assertEqual(discover.refine("about", 0.6, ["WebPage", "BreadcrumbList", "ItemList"])[0],
                          "category")
 
+    def test_g2_client_rendered_storefront_urls_classify_without_markup(self):
+        # G2, site 3: with no JSON-LD in the server response the URL is the only
+        # evidence, and all four of these read as "other" before the fix. The
+        # user judged them about, policy, policy and policy.
+        for path, expected in (("/aboutus", "about"), ("/warranty", "policy"),
+                               ("/extended-warranty", "policy"), ("/grievance", "policy"),
+                               ("/about_us", "about"), ("/contactus", "contact")):
+            with self.subTest(path=path):
+                self.assertEqual(discover.classify_url("https://www.shop.example" + path)[0], expected)
+
+    def test_a_policy_word_never_outranks_an_explicit_product_segment(self):
+        self.assertEqual(discover.classify_url("https://x.com/products/warranty-extension-pack")[0], "product")
+        self.assertEqual(discover.classify_url("https://x.com/products/privacy-screen")[0], "product")
+
     def test_a_real_about_page_stays_an_about_page(self):
         self.assertEqual(discover.refine("about", 0.6, ["WebPage", "BreadcrumbList"])[0], "about")
 

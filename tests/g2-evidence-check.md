@@ -234,10 +234,10 @@ file, or in `report.json`.
 | # | Check | Verdict | Note |
 |---|---|---|---|
 | 1 | `raw.text_len` vs JS-off view-source — expect near-zero body text | PASS | the user's source for `/` and `/aboutus` is 1,708 bytes with an empty `<div id="root">` and no text; bundle `raw.text_len` 0 on every page |
-| 2 | `rendered.text_len` — is the **real** content there? value: 269 (home), 1,246 to 4,038 (inner pages) | PENDING | the user's JavaScript-on copies were saved through view-source, which always shows the server response, so they are byte-identical to the JavaScript-off copies and cannot show rendered content. Needs a re-save through Elements, Copy outerHTML |
+| 2 | `rendered.text_len` — is the **real** content there? value: 269 (home), 1,246 to 4,038 (inner pages) | PASS | against the user's rendered DOM, saved through Elements, Copy outerHTML (the first attempt went through view-source and only showed the server response): home 304 visible characters against 269, `/aboutus` 1,275 against 1,246, and every text node of 40 characters or more on both pages found verbatim in the rendered sidecar. The small gap is a "Phones Pad Accessories" menu and two extra slider dots in the user's copy |
 | 2b | `rendered.delta_ratio` — value: 1.0 on all 5 ; expect very high | PASS | follows from check 1's verified empty server text and a non-zero rendered length |
 | 2c | `render.fallbacks` — how many pages needed the capped second attempt? | N/A | not recorded as a typed field in the bundle |
-| 3 | `page_type` correctness | PENDING | the user left the POCO rows unmarked; confirmation requested for `/aboutus`, classified `other` |
+| 3 | `page_type` correctness — first pass 1 of 5 correct; after the fix 5 of 5 | FAIL, fixed and re-verified | the user judged `/aboutus` about, `/warranty` and `/extended-warranty` policy, `/grievance` policy (or doc); all four were `other`. Cause: the classifier reads only the URL and JSON-LD, POCO serves no JSON-LD, and `aboutus`, `warranty` and `grievance` were not in its vocabulary. Fixed in `discover.py` with whole-segment additions and a word-level policy match tried only after every other match fails, with tests that a product URL containing "warranty" or "privacy" stays a product. Re-run `runs/g2-poco-fix`: home, about, policy, policy, policy |
 | 4 | `robots.ai_agents` — expect all 8 `unspecified`, **not** `allowed` | PASS | all 8 unspecified; the user's saved `/robots.txt` is the application's HTML page, not a robots file |
 | 4b | `parse_ok: false` and `parse_reason: not_plausibly_robots` | PASS | as served |
 | 5 | `discovery.soft_404` — `detected`: true ; `baseline_text_hash`: the empty-text hash | PASS | the user's copy of a path that cannot exist is byte-identical to the home page's server response |
@@ -248,8 +248,14 @@ file, or in `report.json`.
 **SURPRISES**
 
 - Observed: the rendered home page carries 269 characters while inner pages carry
-  1,246 to 4,038. Theory: the home page is mostly imagery. Check 2 will settle
-  whether rendering is missing home-page text, which is the open part of P7.
+  1,246 to 4,038. Theory: the home page is mostly imagery. Tested against the
+  user's rendered DOM, which carries 304 characters: confirmed. Rendering does
+  recover this client-rendered site; its home page simply has little text.
+- Observed: after the classifier fix, ACC-005 on POCO rises from medium to high.
+  Cause: `/aboutus` is now a primary page type, and it is one of the pages
+  declaring the home page as its canonical URL. This is the more accurate
+  severity, and it is the kind of downstream change a classifier fix must be
+  re-verified for.
 
 ---
 
@@ -313,25 +319,27 @@ probed identities, `browser-ua` included, refused with 403.
 |---|---|---|
 | indianexpress | 0 | strata vocabulary disagrees with page_type; render coverage collapses under CPU contention; entity tag pages are ambiguous as categories |
 | iflexbtw | 0 | login redirect sampled; hidden review text excluded by design |
-| poco (render) | 0, 2 checks pending | home page renders only 269 characters |
+| poco (render) | 1, fixed and re-verified (page_type vocabulary) | home page renders only 269 characters, confirmed as genuine |
 | gadgets360 (blocked) | 0 | a real browser is served while every probed identity is refused |
 | poco (--no-render) | 0 | P8's collapse count falsified, behaviour correct |
 
 Predictions falsified (P1-P8), and what each one turned out to be:
 
 - P1, P2, P3, P6: held.
-- P7: held for detection, soft-404 and delta; whether rendering recovers the
-  home page's full text is pending check 3.2.
+- P7: held. Detection, soft-404 and delta as predicted, and rendering recovers
+  the site's content, verified against the user's rendered DOM.
 - P8: `collapsed_duplicate_text` is 0, not greater than 0, because a shell with
   no links yields one discovered URL; the page-content degradation is present.
 
-Cross-site patterns: page types were confirmed 52 of 60 on the two sites the user
-checked, with no row marked wrong and 8 marked ambiguous on the publisher.
+Cross-site patterns: page types were confirmed 52 of 60 on the publisher and the
+storefront, with 8 marked ambiguous and none wrong; on the client-rendered site,
+where the URL is the only evidence, 4 of 5 were wrong until the vocabulary fix,
+and 5 of 5 after it. The classifier is weakest exactly where JSON-LD is absent.
 
 Fix list, in priority order:
 
-1. Complete site 3 checks 2 and 3: the user re-saves POCO's rendered pages
-   through Elements, Copy outerHTML, and confirms the POCO page types.
+1. Done: the page-type vocabulary fix for URL-only classification, re-verified on
+   POCO.
 2. Decide whether `crawl.sampling.strata` should use content page types rather
    than URL-pattern types, since the two disagree on the same page and the
    strata are the denominators W4 relies on.

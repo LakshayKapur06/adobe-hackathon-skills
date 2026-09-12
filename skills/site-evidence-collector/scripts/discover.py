@@ -23,7 +23,8 @@ _SEGMENTS = (
     ("policy", {"privacy", "privacy-policy", "terms", "terms-of-service", "terms-and-conditions",
                 "tos", "legal", "cookie-policy", "cookies", "cookie", "policies", "policy",
                 "returns", "return-policy", "refund", "refund-policy", "refunds", "shipping",
-                "shipping-policy", "disclaimer", "imprint", "impressum"}),
+                "shipping-policy", "disclaimer", "imprint", "impressum", "warranty", "grievance",
+                "grievances", "grievance-redressal"}),
     ("product", {"product", "products", "p", "item", "items", "dp", "sku"}),
     ("category", {"collections", "collection", "category", "categories", "c", "catalog",
                   "catalogue", "department", "departments", "browse", "shop"}),
@@ -32,14 +33,22 @@ _SEGMENTS = (
     ("doc", {"docs", "doc", "documentation", "help", "guide", "guides", "api", "reference",
              "manual", "faq", "faqs", "kb", "knowledge-base", "support", "learn", "tutorial",
              "tutorials"}),
-    ("about", {"about", "about-us", "company", "who-we-are", "our-story", "team", "our-team",
-               "mission"}),
+    ("about", {"about", "about-us", "aboutus", "about_us", "company", "who-we-are", "our-story",
+               "team", "our-team", "mission"}),
     ("contact", {"contact", "contact-us", "contactus", "locations", "store-locator", "find-us"}),
 )
 # Segments whose leading word is enough: /about-fixture-instruments is an about page.
 _PREFIX_WORDS = {"about": "about", "contact": "contact", "privacy": "policy", "terms": "policy",
                  "blog": "article", "faq": "doc", "help": "doc", "docs": "doc",
                  "shipping": "policy", "returns": "policy", "refund": "policy"}
+# Words that settle a page type wherever they sit inside a single segment, tried
+# only after every whole-segment and leading-word match has failed, so that
+# /products/privacy-screen stays a product. Kept to words that name a policy
+# page in any position: /extended-warranty and /special-warranty-terms are both
+# warranty policies. Added after the G2 check, where a client-rendered
+# storefront with no JSON-LD had /warranty, /extended-warranty and /grievance
+# all classified as other.
+_POLICY_WORDS = frozenset({"warranty", "grievance", "grievances"})
 _HOME_PATHS = {"/", "/index.html", "/index.htm", "/index.php", "/home", "/default.aspx"}
 _LOCALE = re.compile(r"^[a-z]{2}(?:[-_][a-z]{2})?$")
 _DATED = re.compile(r"/(?:19|20)\d{2}/(?:0?[1-9]|1[0-2])(?:/|$)")
@@ -84,6 +93,9 @@ def classify_url(url):
         word = s.split("-", 1)[0]
         if word in _PREFIX_WORDS:
             return _PREFIX_WORDS[word], 0.6
+    for s in segments:
+        if _POLICY_WORDS.intersection(re.split(r"[-_]", s)):
+            return "policy", 0.6
     if _DATED.search(path):
         return "article", 0.6
     return "other", 0.3
