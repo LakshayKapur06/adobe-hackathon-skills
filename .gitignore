@@ -4,5 +4,9 @@ __pycache__/
 build/
 dist/
 *.zip
-out/
-evidence/
+
+# Audit output. Anchored to the repo root on purpose: a bare "evidence/" once
+# matched tests/fixtures/evidence/ and kept the fixture bundle out of git.
+/audit-run/
+/runs/
+/out/

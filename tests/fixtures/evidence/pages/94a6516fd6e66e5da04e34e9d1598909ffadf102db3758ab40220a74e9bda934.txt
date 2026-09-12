@@ -1,0 +1,7 @@
+About Fixture Instruments
+Last updated 1 August 2026.
+Calibration
+Every fork is compared against a reference oscillator traceable to a national standard. The measured frequency is recorded on the certificate shipped with the fork, along with the ambient temperature at the time of measurement, because frequency drifts by roughly one part in ten thousand per degree Celsius.
+Who does it
+The workshop employs four machinists and one metrologist. The company was founded in 1974 by Asha Kulkarni and has been at the Laburnum Road address since 1981.
+Fixture Instruments, 12 Laburnum Road, Pune 411001, India.

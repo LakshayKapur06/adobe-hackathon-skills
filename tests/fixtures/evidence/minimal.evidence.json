@@ -1,0 +1,466 @@
+{
+  "schema_version": "1.0.0",
+  "site": {
+    "input": "http://localhost:8000",
+    "resolved_origin": "http://localhost:8000",
+    "registrable_domain": "localhost",
+    "detected_locales": [
+      "en"
+    ]
+  },
+  "run_context": {
+    "started_at": "2026-09-06T09:00:00Z",
+    "finished_at": "2026-09-06T09:00:07Z",
+    "capabilities": {
+      "js_render": false,
+      "egress": false,
+      "renderer": null
+    },
+    "budgets": {
+      "global_s": 300,
+      "crawl_s": 90,
+      "render_s": 60,
+      "external_s": 90
+    },
+    "degradations": [
+      {
+        "what": "render",
+        "reason": "no browser found",
+        "impact": "render-delta rules not assessed"
+      },
+      {
+        "what": "external",
+        "reason": "egress disabled for the fixture run",
+        "impact": "corroboration rules not assessed"
+      }
+    ],
+    "corroboration": {
+      "method": "none",
+      "provider_unavailable": []
+    }
+  },
+  "robots": {
+    "fetched": true,
+    "url": "http://localhost:8000/robots.txt",
+    "status": 200,
+    "groups": [
+      {
+        "user_agent": "*",
+        "allow": [
+          "/"
+        ],
+        "disallow": [
+          "/cart"
+        ],
+        "crawl_delay": null
+      }
+    ],
+    "ai_agents": {
+      "GPTBot": "unspecified",
+      "ClaudeBot": "unspecified",
+      "PerplexityBot": "unspecified",
+      "Google-Extended": "unspecified",
+      "OAI-SearchBot": "unspecified",
+      "CCBot": "unspecified",
+      "Googlebot": "unspecified"
+    },
+    "sitemaps": [
+      "http://localhost:8000/sitemap.xml"
+    ]
+  },
+  "sitemaps": [
+    {
+      "url": "http://localhost:8000/sitemap.xml",
+      "status": 200,
+      "url_count": 2,
+      "lastmod_present_ratio": 1.0,
+      "parse_ok": true
+    }
+  ],
+  "crawl": {
+    "discovered": 3,
+    "fetched": 2,
+    "blocked_by_robots": 1,
+    "errors": 0,
+    "sampling": {
+      "strategy": "stratified:sitemap+nav+linkgraph",
+      "strata": [
+        {
+          "page_type": "home",
+          "discovered": 1,
+          "sampled": 1
+        },
+        {
+          "page_type": "about",
+          "discovered": 1,
+          "sampled": 1
+        }
+      ]
+    }
+  },
+  "pages": [
+    {
+      "url": "http://localhost:8000/index.html",
+      "final_url": "http://localhost:8000/index.html",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html",
+      "fetched_at": "2026-09-06T09:00:01Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [
+        "index",
+        "follow"
+      ],
+      "canonical": "http://localhost:8000/index.html",
+      "canonical_self": true,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "home",
+      "page_type_confidence": 0.95,
+      "raw": {
+        "bytes": 1892,
+        "text_len": 678,
+        "text_hash": "sha256:a35b9e1573e854ff011f1aa0354569851e46b3c9d06d8ccaa891d77a4b9c217e",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Fixture Instruments"
+          },
+          {
+            "level": 2,
+            "text": "What we make"
+          },
+          {
+            "level": 2,
+            "text": "Where to find us"
+          }
+        ],
+        "links": [
+          {
+            "href": "/index.html",
+            "rel": null,
+            "anchor": "Fixture Instruments",
+            "internal": true
+          },
+          {
+            "href": "/about.html",
+            "rel": null,
+            "anchor": "About",
+            "internal": true
+          },
+          {
+            "href": "/cart",
+            "rel": null,
+            "anchor": "Cart",
+            "internal": true
+          }
+        ],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0,
+        "text_path": "evidence/pages/a35b9e1573e854ff011f1aa0354569851e46b3c9d06d8ccaa891d77a4b9c217e.txt",
+        "anchors": [
+          {
+            "id": "what-we-make",
+            "heading_text": "What we make"
+          },
+          {
+            "id": "where-to-find-us",
+            "heading_text": "Where to find us"
+          }
+        ]
+      },
+      "rendered": {
+        "available": false,
+        "text_len": null,
+        "text_hash": null,
+        "headings": [],
+        "delta_ratio": null,
+        "text_path": null
+      },
+      "jsonld": [
+        {
+          "type": "Organization",
+          "valid": true,
+          "errors": [],
+          "fields_present": [
+            "@id",
+            "name",
+            "foundingDate",
+            "url",
+            "address"
+          ],
+          "contradicts_visible_text": false,
+          "values": {
+            "@id": "http://localhost:8000/#org",
+            "name": "Fixture Instruments",
+            "foundingDate": "1974",
+            "url": "http://localhost:8000/",
+            "address.addressLocality": "Pune",
+            "address.addressCountry": "IN",
+            "address.postalCode": "411001",
+            "address.streetAddress": "12 Laburnum Road"
+          }
+        }
+      ],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "Fixture Instruments has made precision tuning forks in Pune, India since 1974.",
+        "word_count": 107,
+        "boilerplate_ratio": 0.18,
+        "longest_block_words": 41,
+        "heading_density_per_1k": 25.4
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 3,
+        "fetch_ms": 5,
+        "render_ms": null
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "fetch"
+      }
+    },
+    {
+      "url": "http://localhost:8000/about.html",
+      "final_url": "http://localhost:8000/about.html",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html",
+      "fetched_at": "2026-09-06T09:00:02Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [
+        "index",
+        "follow"
+      ],
+      "canonical": "http://localhost:8000/about.html",
+      "canonical_self": true,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "about",
+      "page_type_confidence": 0.88,
+      "raw": {
+        "bytes": 1604,
+        "text_len": 607,
+        "text_hash": "sha256:94a6516fd6e66e5da04e34e9d1598909ffadf102db3758ab40220a74e9bda934",
+        "headings": [
+          {
+            "level": 1,
+            "text": "About Fixture Instruments"
+          },
+          {
+            "level": 2,
+            "text": "Calibration"
+          },
+          {
+            "level": 2,
+            "text": "Who does it"
+          }
+        ],
+        "links": [
+          {
+            "href": "/index.html",
+            "rel": null,
+            "anchor": "Fixture Instruments",
+            "internal": true
+          },
+          {
+            "href": "/about.html",
+            "rel": null,
+            "anchor": "About",
+            "internal": true
+          }
+        ],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0,
+        "text_path": "evidence/pages/94a6516fd6e66e5da04e34e9d1598909ffadf102db3758ab40220a74e9bda934.txt",
+        "anchors": [
+          {
+            "id": "calibration",
+            "heading_text": "Calibration"
+          },
+          {
+            "id": "who-does-it",
+            "heading_text": "Who does it"
+          }
+        ]
+      },
+      "rendered": {
+        "available": false,
+        "text_len": null,
+        "text_hash": null,
+        "headings": [],
+        "delta_ratio": null,
+        "text_path": null
+      },
+      "jsonld": [
+        {
+          "type": "AboutPage",
+          "valid": true,
+          "errors": [],
+          "fields_present": [
+            "name",
+            "dateModified",
+            "publisher"
+          ],
+          "contradicts_visible_text": false,
+          "values": {
+            "name": "About Fixture Instruments",
+            "dateModified": "2026-08-01",
+            "publisher": "http://localhost:8000/#org"
+          }
+        }
+      ],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "Every fork is compared against a reference oscillator traceable to a national standard.",
+        "word_count": 95,
+        "boilerplate_ratio": 0.16,
+        "longest_block_words": 52,
+        "heading_density_per_1k": 24.8
+      },
+      "dates": {
+        "visible_dates": [
+          "2026-08-01"
+        ],
+        "schema_date_modified": "2026-08-01",
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 2,
+        "fetch_ms": 4,
+        "render_ms": null
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "fetch"
+      }
+    }
+  ],
+  "link_graph": {
+    "edges": [
+      [
+        "http://localhost:8000/index.html",
+        "http://localhost:8000/about.html"
+      ],
+      [
+        "http://localhost:8000/about.html",
+        "http://localhost:8000/index.html"
+      ]
+    ],
+    "orphans": [],
+    "max_depth_from_home": 1
+  },
+  "claim_candidates": [
+    {
+      "id": "CC-001",
+      "kind": "legal_name",
+      "value_raw": "Fixture Instruments",
+      "value_normalized": "fixture instruments",
+      "source_url": "http://localhost:8000/index.html",
+      "locator": "jsonld:Organization.name",
+      "extraction_method": "jsonld",
+      "observed_count": 4
+    },
+    {
+      "id": "CC-002",
+      "kind": "founded_year",
+      "value_raw": "1974",
+      "value_normalized": "1974",
+      "source_url": "http://localhost:8000/index.html",
+      "locator": "jsonld:Organization.foundingDate",
+      "extraction_method": "jsonld",
+      "observed_count": 3
+    },
+    {
+      "id": "CC-003",
+      "kind": "address",
+      "value_raw": "12 Laburnum Road, Pune 411001, Maharashtra, India",
+      "value_normalized": "12 laburnum road pune 411001 maharashtra india",
+      "source_url": "http://localhost:8000/index.html",
+      "locator": "main > p:nth-of-type(3)",
+      "extraction_method": "visible_text",
+      "observed_count": 3
+    }
+  ],
+  "canonical_claims": [],
+  "external": {
+    "attempted": false,
+    "method": "none",
+    "frontier_size": 0,
+    "truncated": false,
+    "origins": [],
+    "hits": []
+  },
+  "well_known": [
+    {
+      "path": "/llms.txt",
+      "status": 404,
+      "present": false,
+      "content_type": "text/html"
+    },
+    {
+      "path": "/agents.md",
+      "status": 404,
+      "present": false,
+      "content_type": "text/html"
+    },
+    {
+      "path": "/.well-known/ucp",
+      "status": 404,
+      "present": false,
+      "content_type": "text/html"
+    }
+  ],
+  "errors": [],
+  "ua_probe": [
+    {
+      "url": "http://localhost:8000/index.html",
+      "user_agent": "ClaudeBot",
+      "status": 200,
+      "text_len": 678,
+      "text_hash": "sha256:a35b9e1573e854ff011f1aa0354569851e46b3c9d06d8ccaa891d77a4b9c217e"
+    },
+    {
+      "url": "http://localhost:8000/index.html",
+      "user_agent": "GPTBot",
+      "status": 200,
+      "text_len": 678,
+      "text_hash": "sha256:a35b9e1573e854ff011f1aa0354569851e46b3c9d06d8ccaa891d77a4b9c217e"
+    },
+    {
+      "url": "http://localhost:8000/about.html",
+      "user_agent": "ClaudeBot",
+      "status": 200,
+      "text_len": 607,
+      "text_hash": "sha256:94a6516fd6e66e5da04e34e9d1598909ffadf102db3758ab40220a74e9bda934"
+    },
+    {
+      "url": "http://localhost:8000/about.html",
+      "user_agent": "GPTBot",
+      "status": 200,
+      "text_len": 607,
+      "text_hash": "sha256:94a6516fd6e66e5da04e34e9d1598909ffadf102db3758ab40220a74e9bda934"
+    }
+  ]
+}

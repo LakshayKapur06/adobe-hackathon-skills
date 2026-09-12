@@ -1,0 +1,4 @@
+# Extracted-text sidecars are addressed by the sha256 of their bytes. Line-ending
+# conversion on checkout would change those bytes and break the bundle's own hashes,
+# so these files are always LF on every platform.
+tests/fixtures/evidence/pages/*.txt text eol=lf
