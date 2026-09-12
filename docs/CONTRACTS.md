@@ -211,6 +211,19 @@ channel a site has for putting instructions in front of one; recording the fact
 of the file without its text keeps that channel out of the evidence bundle
 entirely.
 
+The array holds an entry only for a path that was actually probed. **A missing
+entry means "not probed" — it never means "the file is absent."** Absence is an
+entry with `present: false`. A path that robots.txt disallows is not probed and
+so gets no entry, which is why the array holds at most three. A rule reading
+`well_known` must handle both cases and must never treat a short array as
+evidence that a file does not exist.
+
+Only existence is recorded, never contents. These files are written to be read
+by agents, which makes them the most direct channel a site has for addressing
+one, and no finding we make needs their text. Not carrying it is a stronger
+guarantee than carrying it and promising not to act on it.
+
+
 ### Bounds, and what truncation means
 
 Four collections are capped so that one pathological page cannot make the bundle
