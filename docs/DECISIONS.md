@@ -225,7 +225,7 @@ make us crawl something forbidden. `looks_like_robots()` holds this test and
 zero rules" and "we were served a web page" are not the same observation in the
 bundle.
 
-### D13 — The render timeout: two attempts, not a longer budget
+### D13 — The render wait: one real-time capped attempt (revised)
 
 Waiting for the `load` event hung on pages with one resource that never
 settles; the `www.python.org` home page is a live example. The obvious fix,
@@ -237,26 +237,54 @@ alongside it as a safety net, is measured on that same paused clock and so
 never fires either. The two flags together wait forever; python.org hung until
 killed at 20s.
 
-The replacement is two attempts per page, described in full in
-`render.py`'s module docstring. Attempt 1 settles: `--virtual-time-budget` for
-a quiet period after load, killed at 5s of *real* time from outside the
-browser, which is the guarantee the flags themselves do not provide. Attempt 2
-runs only if the first returned nothing: a real-time `--timeout` and no virtual
-clock at all, which stops navigation, fires the lifecycle events and dumps
-whatever DOM exists. Pages rendered the second way are listed in `fallbacks`
-so the evidence can say they had no quiet period rather than implying a clean
-render.
+The first replacement was two attempts per page: a settling attempt using
+`--virtual-time-budget`, killed at 5s of real time from outside the browser,
+and a real-time `--timeout` attempt only if the first returned nothing. The
+per-page cap dropped from 20s to 10s.
 
-The per-page cap dropped from 20s to 10s as a result. A page that cannot be
-rendered in 10s is recorded as a render failure, which is an honest
-observation; the alternative of waiting longer spends the global deadline on
-the pages least likely to repay it.
+**Revised on the first G2 calibration run.** The settling attempt does not
+merely fail on pathological pages; it fails on ordinary ones. On an
+ad-supported publisher it returned no DOM on **every** sampled page, 15 of 30,
+each killed at 5s — and because it ran first, it spent half of each page's
+budget before the attempt that works. Only 1 of 30 pages was rendered, and that
+one via the fallback.
 
-**Known and not yet closed:** this was validated against python.org and a local
-page whose iframe never responds. It has *not* been proven on a page whose real
-content only arrives after full client-side hydration, which is the exact case
-the whole raw-versus-rendered mechanism exists to detect. That validation is
-the first thing G2 must settle.
+The strategies were then measured the way D13 was originally decided, on a
+topic page, an article and a client-rendered storefront:
+
+| strategy | publisher topic page | article | storefront |
+|---|---|---|---|
+| virtual-time 2s, killed at 5s | no DOM | no DOM | 269 chars, 4.2s |
+| real `--timeout=3000`, killed at 5s | no DOM | 10999, 5.2s | 269 chars, 2.1s |
+| real `--timeout=8000`, killed at 10s | **11660, 7.9s** | **10999, 8.6s** | 269 chars, 2.1s |
+| load event only, killed at 10s | 11660, 7.9s | 10999, 9.0s | 269 chars, 2.1s |
+
+Two conclusions. The 5s kill, not the flag, was what failed: these pages need
+about eight seconds to assemble. And the virtual-time attempt never wins
+anywhere — it loses outright twice and is slower for an identical result on the
+third. So it is gone, and with it the second attempt, which existed only
+because the first could hang without producing anything.
+
+**One attempt per page:** `--timeout=8000` in real time, with a wall-clock kill
+at 11s outside the browser as the guard of last resort. Re-verified on
+python.org, the original hang (2.2s, 7055 characters), on the local
+never-responding-iframe fixture that `tests/test_render.py` pins, and on the
+publisher: render failures went from 15 of 30 to **zero**, and coverage from 1
+page to 17. The pairing that caused the hang stays pinned by a test, so it
+cannot be revived by accident.
+
+Which pages get rendered is now chosen rather than incidental: one page of
+every `page_type` first, then the remainder. The budget cannot cover a large
+sample either way, and a raw-versus-rendered baseline is worth most when every
+template has one. 12 of 29 pages were still not reached inside the 60s render
+budget, which is reported as a degradation naming the denominator. Raising that
+budget would mean taking seconds from another stage and amending the split, and
+the coverage it buys is not worth reopening the contract for.
+
+**Still not closed:** the storefront returned 269 characters under every
+strategy, so rendering may not recover a fully client-rendered site's content
+at all. That is P7, the most important open validation in the build, and the
+POCO pair of runs settles it.
 
 ### D14 — Pages are keyed on their final URL after redirects
 

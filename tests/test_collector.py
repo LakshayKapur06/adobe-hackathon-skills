@@ -21,6 +21,7 @@ sys.path.insert(0, str(ROOT / "skills" / "site-evidence-collector" / "scripts"))
 sys.path.insert(0, str(ROOT / "skills" / "audit-orchestrator" / "scripts"))
 
 import collect  # noqa: E402
+import discover  # noqa: E402
 import render  # noqa: E402
 from jsonschema_lite import Validator  # noqa: E402
 
@@ -251,6 +252,66 @@ class TestUnreachableRobots(unittest.TestCase):
         self.assertEqual(evidence["robots"]["status"], 503)
         self.assertIn("crawl", [d["what"] for d in evidence["run_context"]["degradations"]])
         self.assertTrue(any("full disallow" in m for m in errors(evidence, "robots")))
+
+
+def site_with_a_feed(path, base):
+    """A normal site that links a sitemap, as most sites do."""
+    if path == "/robots.txt":
+        return 200, "text/plain", b"User-agent: *\nDisallow:\n"
+    if path == "/":
+        return 200, "text/html", (b'<html><body><h1>Home</h1><a href="/feed.xml">Feed</a>'
+                                  b'<a href="/story/one/">One</a></body></html>')
+    if path == "/feed.xml":
+        return 200, "application/xml", (b"<?xml version='1.0'?><urlset><url><loc>/story/one/</loc>"
+                                        b"</url></urlset>")
+    if path == "/story/one/":
+        return 200, "text/html", b"<html><body><h1>One</h1><p>A story worth reading.</p></body></html>"
+    return 404, "text/html", b"<html><body>Not found</body></html>"
+
+
+class TestNonPageResources(unittest.TestCase):
+    """The frontier is a frontier of pages, and only pages are rendered."""
+
+    def test_an_xml_resource_is_never_a_page_and_is_never_rendered(self):
+        scripted = StubRenderer()
+        evidence, _, _, requested = run(site_with_a_feed, renderer=scripted)
+        self.assertEqual([p["url"] for p in evidence["pages"] if p["url"].endswith(".xml")], [])
+        self.assertNotIn("/feed.xml", requested)
+        rendered = [re.sub(r"^https?://[^/]+", "", u) for u in scripted.calls]
+        self.assertNotIn("/feed.xml", rendered)
+        # The real page is still crawled, so the exclusion is not a blanket skip.
+        self.assertIn("/story/one/", [re.sub(r"^https?://[^/]+", "", p["url"]) for p in evidence["pages"]])
+
+
+class TestPageTypeRefinement(unittest.TestCase):
+    """What a page declares beats what its address implies."""
+
+    def test_a_resource_address_never_enters_the_frontier(self):
+        frontier = discover.Frontier("example.com")
+        for path in ("/sitemap.xml", "/news-sitemap.xml", "/feed.rss", "/data.json",
+                     "/brochure.pdf", "/logo.png", "/style.css"):
+            with self.subTest(path=path):
+                self.assertIsNone(frontier.add("https://example.com" + path, "nav"))
+        self.assertEqual(len(frontier), 0)
+        self.assertIsNotNone(frontier.add("https://example.com/about/", "nav"))
+
+    def test_a_topic_archive_is_a_listing_not_an_about_page(self):
+        # /about/<topic>/ reads as an about page from the URL alone, and 131 of
+        # them on one real site outranked 789 articles in the sample.
+        self.assertEqual(discover.classify_url("https://x.com/about/brics/")[0], "about")
+        self.assertEqual(discover.refine("about", 0.6, ["WebPage", "BreadcrumbList", "ItemList"])[0],
+                         "category")
+
+    def test_a_real_about_page_stays_an_about_page(self):
+        self.assertEqual(discover.refine("about", 0.6, ["WebPage", "BreadcrumbList"])[0], "about")
+
+    def test_a_listicle_is_an_article_whatever_the_block_order(self):
+        for types in (["ItemList", "NewsArticle"], ["NewsArticle", "ItemList"]):
+            with self.subTest(types=types):
+                self.assertEqual(discover.refine("article", 0.6, types)[0], "article")
+
+    def test_a_product_outranks_a_listing_too(self):
+        self.assertEqual(discover.refine("other", 0.3, ["ItemList", "Product"])[0], "product")
 
 
 def refusing_site(path, base):

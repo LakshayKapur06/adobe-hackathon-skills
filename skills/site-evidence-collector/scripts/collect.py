@@ -438,8 +438,20 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
 
         # -- 5. rendering ----------------------------------------------------------
         if js_render:
-            pending = [key for key, _, _ in kept if key not in render_results]
-            render_results.update(render.render_many(renderer, pending, budgets["render_s"]))
+            # One page of every type first, then the rest. The budget cannot
+            # cover every page of a large sample, so what it does cover is
+            # chosen rather than whatever the crawl happened to reach first:
+            # a raw-versus-rendered baseline is worth most when every template
+            # has one, and worth least when nine pages of one template have it.
+            pending = [(key, doc) for key, response, doc in kept
+                       if key not in render_results and response.ok and _is_html(response)]
+            first_of_type, rest, seen = [], [], set()
+            for key, _ in pending:
+                bucket = first_of_type if frontier.kind.get(key) not in seen else rest
+                seen.add(frontier.kind.get(key))
+                bucket.append(key)
+            render_results.update(render.render_many(renderer, first_of_type + rest,
+                                                    budgets["render_s"]))
 
     if refused_home is not None:
         # Recorded, not crawled. The refusal is a fact about the site, and
@@ -459,11 +471,13 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
         rendered = {"available": False, "text_len": None, "text_hash": None, "text_path": None,
                     "headings": [], "delta_ratio": None}
         render_ms = None
-        if js_render and response.ok:
-            # A non-2xx page is not rendered either: the browser would assemble
-            # the error document, and a rendered block page against an empty raw
-            # body is a delta_ratio near 1.0 — "the content is JavaScript-only"
-            # is precisely the wrong conclusion to hand a rule.
+        if js_render and response.ok and _is_html(response):
+            # Neither a non-2xx page nor a non-HTML resource is rendered. The
+            # browser would assemble the error document, or its own viewer for
+            # the XML — a sitemap rendered this way yielded 762,313 characters
+            # of tree view against an empty raw body, a delta_ratio of 1.0, and
+            # "all of this content is JavaScript-only" is both the strongest
+            # claim the render mechanism can make and entirely an artifact.
             html, failure, render_ms = render_results.get(key, (None, "not reached within the render budget", None))
             if html:
                 rdoc = extract.parse_document(html, response.final_url)
@@ -489,11 +503,6 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
         run.error((resolved_origin or "") + "/", "discovery",
                   "collapsed %d fetched pages whose rendered text duplicated an earlier page: %s"
                   % (len(render_duplicates), "; ".join("%s = %s" % pair for pair in render_duplicates[:5])))
-    fallbacks = list(getattr(renderer, "fallbacks", None) or []) if js_render else []
-    if fallbacks:
-        run.error((resolved_origin or "") + "/", "render",
-                  "%d pages never settled in virtual time and were rendered with the navigation cap "
-                  "instead, without a quiet period: %s" % (len(fallbacks), "; ".join(fallbacks[:5])))
     if render_failed:
         run.degrade("render", "%d of %d pages failed to render (browser error or timeout)" % (render_failed, len(kept)),
                     "those pages are fetch-only and their raw-versus-rendered comparison is not assessed")

@@ -6,30 +6,38 @@ type, submit a form or inject script, and the page's own scripts are the only
 scripts that run. Images are not loaded, which lightens the load on the audited
 site without changing the text a page assembles.
 
-When the DOM is taken, and why it takes two attempts. Each flag has a failure
-mode, established against Chrome 153 on python.org's home page and on a local
-page whose iframe never responds:
+When the DOM is taken. One attempt per page: ``--timeout=NAVIGATION_CAP_MS``,
+which runs in real time, stops the navigation at the cap, fires
+DOMContentLoaded and load, and dumps the DOM as it stands. A wall-clock kill at
+PAGE_TIMEOUT_S sits outside the browser as the guard of last resort.
 
-- ``--dump-dom`` alone dumps at the load event. That is fast on an ordinary
-  page (python.org's home page: 1.1s), but a page with a resource that never
-  finishes never reaches load, and content a client-rendered page assembles
-  just after load can be missed.
-- ``--virtual-time-budget`` adds a quiet period, letting the page's timers and
-  fetches settle before the dump. But virtual time stops advancing while a
-  network request is pending, so on a page with a request that never settles it
-  never expires, and ``--timeout`` set alongside it, measured in the same
-  virtual time, never fires either. python.org's home page hung this way until
-  killed at 20s.
-- ``--timeout`` without a virtual-time budget runs in real time: it stops the
-  navigation, fires DOMContentLoaded and load, and the DOM is dumped as it
-  stands. The never-responding page returned in under 4s, with text written at
-  DOMContentLoaded and again 800ms later.
+Two flags were measured and rejected, against Chrome 153 on python.org, on an
+ad-supported publisher's article and topic pages, and on a local page whose
+iframe never responds:
 
-So each page gets up to PAGE_TIMEOUT_S in two attempts. The first settles: load
-plus QUIET_PERIOD_MS of virtual quiet, killed at SETTLE_ATTEMPT_S of real time.
-If that returns nothing, the second is capped: ``--timeout=NAVIGATION_CAP_MS``
-and no virtual clock. A page rendered the second way is listed in ``fallbacks``,
-so the evidence can say that it had no quiet period.
+- ``--dump-dom`` alone dumps at the load event. Fast on an ordinary page
+  (python.org's home page: 1.1s), but a page with one resource that never
+  finishes never reaches load at all, so nothing is dumped until the outer kill.
+- ``--virtual-time-budget`` was meant to add a quiet period after load. Virtual
+  time stops advancing while any network request is pending, so on a page with
+  a request that never settles it never expires — and ``--timeout`` alongside
+  it, measured on the same paused clock, never fires either. python.org hung
+  this way until killed at 20s.
+
+That much was known. What a real publisher then showed is that the quiet-period
+attempt does not merely fail on pathological pages, it fails on ordinary ones:
+on every sampled page of an ad-supported news site it returned no DOM within
+5s, while a real-time cap returned the full text in 7.9s. Its pages need about
+eight seconds to assemble, and third-party ad and tracker requests keep virtual
+time from ever advancing. Measured on one topic page and one article, the
+real-time cap, the load event and the two flags combined all extracted
+identical text (11660 and 10999 characters); the virtual-time attempt extracted
+nothing. On a client-rendered storefront it was slower for the same result
+(4.2s against 2.1s).
+
+So it never wins, and it used to run first, spending half of each page's budget
+before the attempt that works. Hence one attempt, and a cap sized from what
+real pages need rather than from what an unloaded one does.
 
 Discovery is portable: an explicit override first, then the PATH, then each
 platform's usual install locations. If nothing is found, rendering is simply
@@ -49,10 +57,8 @@ import time
 ENV_OVERRIDES = ("CHROME_PATH", "CHROMIUM_PATH", "BROWSER_PATH")
 PATH_NAMES = ("google-chrome", "google-chrome-stable", "chromium", "chromium-browser", "chrome",
               "msedge", "microsoft-edge", "microsoft-edge-stable", "brave-browser", "brave")
-PAGE_TIMEOUT_S = 10.0          # wall clock for one page, both attempts together
-SETTLE_ATTEMPT_S = 5.0         # attempt 1 is killed at this point if it has not returned
-QUIET_PERIOD_MS = 2000         # attempt 1: --virtual-time-budget after load
-NAVIGATION_CAP_MS = 3000       # attempt 2: --timeout, in real time
+NAVIGATION_CAP_MS = 8000       # --timeout, in real time: a publisher's pages need ~8s
+PAGE_TIMEOUT_S = 11.0          # wall-clock kill, outside the browser, above the cap
 MAX_CONCURRENT = 3
 
 
@@ -119,27 +125,23 @@ class Renderer:
         self.page_timeout = page_timeout
         self.available = False
         self.unavailable_reason = None
-        self.fallbacks = []                 # URLs rendered by the capped attempt
         self._lock = threading.Lock()
         name = os.path.splitext(os.path.basename(binary))[0] if binary else None
         self.label = "system-chromium:%s" % name if name else None
 
-    def _command(self, url, profile, settle):
+    def _command(self, url, profile):
         command = [self.binary, "--headless=new", "--disable-gpu", "--no-first-run",
                    "--no-default-browser-check", "--disable-extensions", "--disable-sync",
                    "--disable-background-networking", "--mute-audio", "--hide-scrollbars",
                    "--blink-settings=imagesEnabled=false",
-                   "--user-agent=%s" % self.user_agent, "--user-data-dir=%s" % profile]
-        if settle:
-            command.append("--virtual-time-budget=%d" % QUIET_PERIOD_MS)
-        else:
-            command.append("--timeout=%d" % NAVIGATION_CAP_MS)
+                   "--user-agent=%s" % self.user_agent, "--user-data-dir=%s" % profile,
+                   "--timeout=%d" % NAVIGATION_CAP_MS]
         command += ["--dump-dom", url]
         if os.name != "nt" and hasattr(os, "geteuid") and os.geteuid() == 0:
             command.insert(1, "--no-sandbox")     # Chromium refuses to sandbox as root
         return command
 
-    def _attempt(self, url, settle, limit_s):
+    def _attempt(self, url, limit_s):
         """One browser run. Returns ``(html or None, error or None)``."""
         profile = tempfile.mkdtemp(prefix="ara-render-")    # a fresh, throwaway browser profile
         try:
@@ -149,7 +151,7 @@ class Renderer:
             else:
                 kwargs["start_new_session"] = True
             try:
-                process = subprocess.Popen(self._command(url, profile, settle), **kwargs)
+                process = subprocess.Popen(self._command(url, profile), **kwargs)
             except OSError as exc:
                 return None, "browser failed to start: %s" % exc
             try:
@@ -167,16 +169,7 @@ class Renderer:
     def render(self, url):
         """Return ``(html or None, error or None, render_ms)`` within PAGE_TIMEOUT_S."""
         started = time.monotonic()
-        html, error = self._attempt(url, True, min(SETTLE_ATTEMPT_S, self.page_timeout))
-        if html is None:
-            remaining = self.page_timeout - (time.monotonic() - started)
-            if remaining > 1.0:
-                html, second = self._attempt(url, False, remaining)
-                if html is not None:
-                    with self._lock:
-                        self.fallbacks.append(url)
-                else:
-                    error = "settled attempt: %s; capped attempt: %s" % (error, second)
+        html, error = self._attempt(url, self.page_timeout)
         elapsed = round((time.monotonic() - started) * 1000, 1)
         if html is None:
             return None, "render failed within %.0fs (%s)" % (self.page_timeout, error), elapsed
@@ -188,8 +181,6 @@ class Renderer:
         self.available = bool(html and "render-probe-ok" in html)
         if not self.available:
             self.unavailable_reason = "browser found but failed its render probe: %s" % (error or "no output")
-        with self._lock:
-            self.fallbacks = []
         return self.available
 
 

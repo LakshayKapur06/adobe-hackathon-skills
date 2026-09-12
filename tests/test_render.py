@@ -72,74 +72,63 @@ class TestRenderCommand(unittest.TestCase):
     def setUp(self):
         self.renderer = render.Renderer("chrome", fetch.USER_AGENT)
 
-    def test_the_settled_attempt_uses_virtual_time_and_no_navigation_cap(self):
-        command = self.renderer._command("https://x.example/", "/tmp/p", settle=True)
-        self.assertIn("--virtual-time-budget=%d" % render.QUIET_PERIOD_MS, command)
-        self.assertFalse(any(flag.startswith("--timeout") for flag in command))
-
-    def test_the_capped_attempt_uses_real_time_and_no_virtual_clock(self):
-        # --timeout runs in virtual time when a virtual-time budget is set, so
-        # the two must never be combined: that pairing hangs on a page whose
-        # requests never settle.
-        command = self.renderer._command("https://x.example/", "/tmp/p", settle=False)
+    def test_the_navigation_cap_runs_in_real_time_with_no_virtual_clock(self):
+        # --timeout is measured in virtual time whenever a virtual-time budget
+        # is set, so the two must never appear together: that pairing waits
+        # forever on a page whose requests never settle. The budget is not used
+        # at all now, having returned no DOM on any sampled page of a real
+        # ad-supported site, but the combination stays pinned against a revival.
+        command = self.renderer._command("https://x.example/", "/tmp/p")
         self.assertIn("--timeout=%d" % render.NAVIGATION_CAP_MS, command)
         self.assertFalse(any(flag.startswith("--virtual-time-budget") for flag in command))
 
-    def test_both_attempts_fit_inside_the_page_cap(self):
-        self.assertLessEqual(render.PAGE_TIMEOUT_S, 10.0)
-        self.assertLess(render.SETTLE_ATTEMPT_S + render.NAVIGATION_CAP_MS / 1000.0 + 1.0,
-                        render.PAGE_TIMEOUT_S)
+    def test_the_wall_clock_kill_sits_above_the_navigation_cap(self):
+        # The kill is the guard of last resort: if it fired first it would end
+        # navigations the cap was about to dump cleanly.
+        self.assertGreater(render.PAGE_TIMEOUT_S, render.NAVIGATION_CAP_MS / 1000.0 + 1.0)
+
+    def test_the_cap_allows_the_time_real_pages_need(self):
+        # Measured: an ad-supported publisher's pages produced a DOM at 7.9s and
+        # nothing at 5s. A cap below that silently renders less than the page has.
+        self.assertGreaterEqual(render.NAVIGATION_CAP_MS, 8000)
 
     def test_the_browser_is_given_nothing_but_a_url(self):
-        for settle in (True, False):
-            command = self.renderer._command("https://x.example/", "/tmp/p", settle=settle)
-            self.assertEqual(command[-2:], ["--dump-dom", "https://x.example/"])
-            for flag in command[1:]:
-                self.assertFalse(flag.startswith("--remote-debugging"), flag)
-                self.assertFalse(flag.startswith("--js-flags"), flag)
+        command = self.renderer._command("https://x.example/", "/tmp/p")
+        self.assertEqual(command[-2:], ["--dump-dom", "https://x.example/"])
+        for flag in command[1:]:
+            self.assertFalse(flag.startswith("--remote-debugging"), flag)
+            self.assertFalse(flag.startswith("--js-flags"), flag)
 
 
-class ScriptedAttempts(render.Renderer):
-    """A Renderer whose browser runs are scripted, to test the fallback logic anywhere."""
+class ScriptedAttempt(render.Renderer):
+    """A Renderer whose single browser run is scripted, to test render() anywhere."""
 
-    def __init__(self, settled, capped):
+    def __init__(self, outcome):
         super().__init__("chrome", fetch.USER_AGENT)
-        self.outcomes = {True: settled, False: capped}
+        self.outcome = outcome
         self.attempts = []
 
-    def _attempt(self, url, settle, limit_s):
-        self.attempts.append((settle, limit_s))
-        return self.outcomes[settle]
+    def _attempt(self, url, limit_s):
+        self.attempts.append(limit_s)
+        return self.outcome
 
 
-class TestFallback(unittest.TestCase):
-    def test_a_page_that_settles_is_rendered_once(self):
-        renderer = ScriptedAttempts(("<html>settled</html>", None), ("<html>capped</html>", None))
+class TestOneAttempt(unittest.TestCase):
+    def test_a_page_is_rendered_in_exactly_one_attempt(self):
+        renderer = ScriptedAttempt(("<html>dumped</html>", None))
         html, error, _ = renderer.render("https://x.example/")
-        self.assertEqual((html, error), ("<html>settled</html>", None))
-        self.assertEqual([s for s, _ in renderer.attempts], [True])
-        self.assertEqual(renderer.fallbacks, [])
+        self.assertEqual((html, error), ("<html>dumped</html>", None))
+        self.assertEqual(renderer.attempts, [render.PAGE_TIMEOUT_S])
 
-    def test_a_page_that_never_settles_is_rendered_with_the_cap_and_recorded(self):
-        renderer = ScriptedAttempts((None, "no DOM within 5.0s"), ("<html>capped</html>", None))
-        html, error, _ = renderer.render("https://x.example/")
-        self.assertEqual((html, error), ("<html>capped</html>", None))
-        self.assertEqual([s for s, _ in renderer.attempts], [True, False])
-        self.assertEqual(renderer.fallbacks, ["https://x.example/"])
-        # The settled attempt is capped at SETTLE_ATTEMPT_S; the capped attempt
-        # gets whatever real time remains of PAGE_TIMEOUT_S. These scripted
-        # attempts take no time, so nearly all of it remains. Elapsed wall
-        # clock is pinned by the real-browser test below.
-        (_, first), (_, second) = renderer.attempts
-        self.assertEqual(first, render.SETTLE_ATTEMPT_S)
-        self.assertLessEqual(second, render.PAGE_TIMEOUT_S)
-
-    def test_both_attempts_failing_is_an_error_not_an_exception(self):
-        renderer = ScriptedAttempts((None, "no DOM within 5.0s"), (None, "browser exited with status 1"))
+    def test_a_failure_is_not_retried_and_not_an_exception(self):
+        # A second attempt used to exist because the first could hang without
+        # producing anything. Nothing hangs now, and a retry would spend another
+        # page's worth of the render budget for a page that just produced none.
+        renderer = ScriptedAttempt((None, "browser exited with status 1"))
         html, error, _ = renderer.render("https://x.example/")
         self.assertIsNone(html)
-        self.assertIn("settled attempt", error)
-        self.assertIn("capped attempt", error)
+        self.assertEqual(len(renderer.attempts), 1)
+        self.assertIn("browser exited with status 1", error)
 
 
 @unittest.skipUnless(render.find_browser()[0], "no Chromium-family browser on this machine")
@@ -153,8 +142,11 @@ class TestRealBrowser(unittest.TestCase):
         self.assertIsNone(error, error)
         self.assertIn("written-at-dcl", html)
         self.assertIn("written-after-800ms", html)
-        self.assertEqual(renderer.fallbacks, [site.base + "/"])
         self.assertLess(elapsed, render.PAGE_TIMEOUT_S + 1.0)
+        # The regression this guards: with a virtual-time budget set, neither
+        # the budget nor --timeout ever expires on this page, and the run had to
+        # be killed from outside with nothing to show. The real-time cap dumps
+        # both scripts' output instead.
 
 
 if __name__ == "__main__":

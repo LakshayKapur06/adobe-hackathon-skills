@@ -45,13 +45,30 @@ _LOCALE = re.compile(r"^[a-z]{2}(?:[-_][a-z]{2})?$")
 _DATED = re.compile(r"/(?:19|20)\d{2}/(?:0?[1-9]|1[0-2])(?:/|$)")
 _EXTENSION = re.compile(r"\.(?:html?|php|aspx?|jsp)$")
 
+# Addresses that are resources, not pages. The frontier is a frontier of pages:
+# a sitemap is already catalogued in sitemaps[], and a PDF or an image extracted
+# as a page yields an empty document that looks exactly like a thin one. They
+# stay visible to any rule that wants them, as entries in raw.links.
+_NON_PAGE = re.compile(r"\.(?:xml|xml\.gz|rss|atom|json|txt|gz|zip|pdf|docx?|xlsx?|csv"
+                       r"|jpe?g|png|gif|svg|webp|avif|ico|mp[34]|m4a|webm|mov|css|js)$")
+
 # schema.org types that settle the question when the URL does not.
 _SCHEMA_TYPES = {
     "Product": "product", "ProductGroup": "product", "IndividualProduct": "product",
     "Article": "article", "NewsArticle": "article", "BlogPosting": "article", "Report": "article",
     "CollectionPage": "category", "AboutPage": "about", "ContactPage": "contact",
     "FAQPage": "doc", "HowTo": "doc", "TechArticle": "doc",
+    # A page whose declared entity is a list of other things is a listing page,
+    # whatever its address says. Topic archives are the commonest page shape a
+    # URL cannot classify: /about/<topic>/ reads as an about page and is an
+    # archive of articles about that topic.
+    "ItemList": "category",
 }
+
+# Types that name what the page is *about*, as opposed to how it is laid out.
+# A listicle declares ItemList and NewsArticle both, and it is an article: the
+# subject outranks the structure, and neither may depend on array order.
+_SUBJECT_TYPES = ("product", "article")
 
 
 def classify_url(url):
@@ -75,22 +92,25 @@ def classify_url(url):
 def refine(url_type, url_confidence, jsonld_types):
     """Combine the URL's verdict with the page's own structured data.
 
-    The home page stays home whatever it declares. Otherwise the first
-    declared type that maps to a page type wins: agreement with the URL raises
-    confidence, and a disagreement is resolved in favour of the markup at
-    reduced confidence, because the page's own declaration is more direct
-    evidence than its address.
+    The home page stays home whatever it declares. Otherwise a declared type
+    that maps to a page type wins: agreement with the URL raises confidence, and
+    a disagreement is resolved in favour of the markup at reduced confidence,
+    because the page's own declaration is more direct evidence than its address.
+
+    Among several declared types, one naming the page's subject beats one
+    describing its structure, so that a listicle carrying both ItemList and
+    NewsArticle is an article rather than a category. Otherwise the verdict
+    would depend on the order the blocks happen to appear in.
     """
     if url_type == "home":
         return url_type, url_confidence
-    for declared in jsonld_types:
-        mapped = _SCHEMA_TYPES.get(declared)
-        if mapped is None:
-            continue
-        if mapped == url_type:
-            return mapped, 0.9
-        return mapped, 0.8 if url_type == "other" else 0.7
-    return url_type, url_confidence
+    mapped = [_SCHEMA_TYPES[d] for d in jsonld_types if d in _SCHEMA_TYPES]
+    if not mapped:
+        return url_type, url_confidence
+    chosen = next((m for m in mapped if m in _SUBJECT_TYPES), mapped[0])
+    if chosen == url_type:
+        return chosen, 0.9
+    return chosen, 0.8 if url_type == "other" else 0.7
 
 
 def parse_sitemap(body, content_type, url):
@@ -157,6 +177,8 @@ class Frontier:
     def add(self, url, source):
         normal = urls.normalise(url)
         if normal is None:
+            return None
+        if _NON_PAGE.search(urllib.parse.urlsplit(normal).path.lower()):
             return None
         where = urls.netloc(normal)
         if self.twin and where == self.twin:
