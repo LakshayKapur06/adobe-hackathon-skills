@@ -82,10 +82,13 @@ overrun behaviour are fixed in `references/budgets.md`.
    overflows is recorded in `errors[]`, never truncated silently.
 
 6. **Render, read-only, where a browser works.** Navigate, wait, dump the DOM:
-   at most three pages at once, 20s per page, 60s for the stage. The browser is
-   given nothing but a URL, so it cannot click, type, submit or inject. A page
-   that fails or times out is fetch-only and counted in a degradation; a render
-   failure never fails the run.
+   at most three pages at once, 10s per page, 60s for the stage. Each page
+   first gets a short quiet period after it loads, so content a client-rendered
+   page assembles just after load is captured; a page whose requests never
+   settle is rendered again under a hard navigation cap rather than waited on.
+   The browser is given nothing but a URL, so it cannot click, type, submit or
+   inject. A page that still fails is fetch-only and counted in a degradation; a
+   render failure never fails the run.
 
 7. **Probe user-agent-conditional serving, twice and no more.** Request the
    home page and one deep page under each named AI crawler's user agent and
