@@ -510,12 +510,24 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
         run.degrade("render", "%d pages were not reached within the %ss render budget" % (render_skipped, budgets["render_s"]),
                     "those pages are fetch-only and their raw-versus-rendered comparison is not assessed")
     html_pages = [p for p in pages if p["status"] and 200 <= p["status"] <= 299]
-    if collapsed_shell and len(html_pages) == 1 and html_pages[0]["raw"]["text_hash"] == baseline:
+    shells = [p for p in html_pages if p["raw"]["text_hash"] == baseline] if baseline else []
+    if shells and len(shells) == len(html_pages) and not js_render:
+        # Every page we hold is the document a path that cannot exist returns,
+        # and there is no browser to look past it. The count of collapsed
+        # copies is not what makes this true: a shell carrying no links
+        # discovers nothing to collapse, so the degenerate case arrives as one
+        # page rather than many, and it is the worst case, not the mildest.
+        #
+        # Only without a browser is this a degradation. With one, raw text of
+        # zero against rendered text of thousands is not something we failed to
+        # assess -- it is the observation itself, and a rule reads it.
+        total = collapsed_shell + len(html_pages)
         run.degrade("page-content",
-                    "every one of %d sampled URLs returned the same server response as a path that cannot "
-                    "exist, and rendering is unavailable" % (collapsed_shell + 1),
-                    "no page-level content exists in the server response at all: the bundle holds one "
-                    "representative page, not %d" % (collapsed_shell + 1))
+                    "every one of %d sampled URL%s returned the same server response as a path that "
+                    "cannot exist, and rendering is unavailable"
+                    % (total, "" if total == 1 else "s"),
+                    "no page-level content exists in the server response at all: nothing on this site "
+                    "is readable without executing JavaScript, and no page-level rule can be assessed")
 
     evidence = {
         "schema_version": SCHEMA_VERSION,
