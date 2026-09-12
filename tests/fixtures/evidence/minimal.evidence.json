@@ -56,13 +56,13 @@
       }
     ],
     "ai_agents": {
-      "GPTBot": "unspecified",
-      "ClaudeBot": "unspecified",
-      "PerplexityBot": "unspecified",
-      "Google-Extended": "unspecified",
-      "OAI-SearchBot": "unspecified",
-      "CCBot": "unspecified",
-      "Googlebot": "unspecified"
+      "GPTBot": "allowed",
+      "ClaudeBot": "allowed",
+      "PerplexityBot": "allowed",
+      "Google-Extended": "allowed",
+      "OAI-SearchBot": "allowed",
+      "CCBot": "allowed",
+      "Googlebot": "allowed"
     },
     "sitemaps": [
       "http://localhost:8000/sitemap.xml"

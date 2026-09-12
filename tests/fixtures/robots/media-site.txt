@@ -1,0 +1,28 @@
+# Modelled fixture for a large media and news site: leading-wildcard and
+# end-anchored patterns, a literal bracket segment leaked from a web framework's
+# route syntax, per-crawler AI groups, and three sitemaps including a news
+# sitemap. Not a verbatim copy of any live file.
+
+User-agent: *
+Disallow: /*.json$
+Disallow: /*?*utm_
+Disallow: /search/
+Disallow: /*/amp$
+Disallow: /[slug]/
+Disallow: /*[preview]*
+Disallow: *.pdf$
+Allow: /api/public/
+Disallow: /api/
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+Sitemap: https://media.example/sitemap-index.xml
+Sitemap: https://media.example/news-sitemap.xml
+Sitemap: https://media.example/video-sitemap.xml
