@@ -2,7 +2,7 @@
 
 Written 2026-09-13 at commit `4c7b9c2`, roughly six hours into a 24-hour
 deadline, and brought up to date at `d4ee898` once step 1 of section 4 was
-done. Section 3a is the newer state; section 3 is kept as it was. If you are a fresh agent reading this, the previous one ran out of
+done, and again after step 2. Section 3a is the newer state; section 3 is kept as it was. If you are a fresh agent reading this, the previous one ran out of
 budget or access. Everything you need is in this repository.
 
 ---
@@ -186,10 +186,18 @@ indianexpress took 41 s, 77 s and 106 s wall-clock, each report schema-valid,
 and `tests/test_runner.py` asserts that every rule defined in any `rules.md`
 reaches the end-to-end report as exactly one outcome.
 
-**Known, not yet done:** the orchestrator does not yet arbitrate. On POCO,
-IDM-001 (no organization markup in the server response) is conditional on
-RND-001 (nothing is in the server response) and should be marked so. That is
-step 2.
+**Step 2 landed after this section was written** (`46e3314` contracts-v8,
+`e18488b`, and an ordering fix): arbitration marks `conditional_on` from a
+three-row table in `composition.md`; PRO-001 and PRO-002 are the orchestrator's
+proactive recommendations, specified in `references/proactive.md`, with
+observed site text kept out of PRO-002's prompts; one diagnostic failing now
+costs only its own rules. Live POCO report order: RND-001 critical P0, ACC-005
+medium, IDM-001 medium marked conditional on RND-001, PRO-001 low.
+
+**In flight with the user:** completing `tests/g2-evidence-check.md` from files
+the user saves into the gitignored `runs/g2-inputs/` (see its README), compared
+against the re-runs `runs/g2-ie`, `g2-iflex`, `g2-poco`, `g2-poco-norender`,
+`g2-g360`.
 
 ---
 
@@ -216,7 +224,7 @@ satisfy the consolidation rule, and a ninth would be the padding trap D5 names.
 | # | Step | Notes |
 |---|---|---|
 | 1 | **Detection rules, 6 skills** — done at `d4ee898`, see 3a | Dependency order: access -> render -> identity -> answerability -> freshness -> arrival. Access and render come first because their failures condition everything downstream. Surface the first skill's rule set for human review before writing the other five, so a systematic problem is caught once rather than six times |
-| 2 | Orchestrator depth | Dedup by `(rule_id, scope.page_types, evidence_refs[].url)`; arbitration keeping the upstream-most finding; proactive recommendations as real work; `checks_passed[]` and `not_assessed[]`; full `run_context`; final schema validation |
+| 2 | Orchestrator depth — done, see 3a | Dedup by `(rule_id, scope.page_types, evidence_refs[].url)`; arbitration keeping the upstream-most finding; proactive recommendations as real work; `checks_passed[]` and `not_assessed[]`; full `run_context`; final schema validation |
 | 3 | 5 fixture archetypes | With pass/fail assertions. The only evidence for the generalization rubric row, which is currently asserted and unproven - this is where spare time should go before anywhere else |
 | 4 | **Adjudication, 6 sites** | The step that decides the score. Human-only. See section 5 |
 | 5 | Remediation-quality pass | Read only `what/where/why/how/success_criteria`, ignoring detection logic. Anything paste-able into an unrelated case study gets rewritten |
