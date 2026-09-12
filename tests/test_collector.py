@@ -35,14 +35,17 @@ SHELL = (ROOT / "tests" / "fixtures" / "echo-site" / "shell.html").read_bytes()
 class Server:
     """A local HTTP server in a thread, recording every path requested."""
 
-    def __init__(self, respond):
+    def __init__(self, respond, pass_agent=False):
         server = self
         self.requested = []
 
         class Handler(http.server.BaseHTTPRequestHandler):
             def do_GET(self):
                 server.requested.append(self.path)
-                status, content_type, body = respond(self.path, server.base)
+                args = (self.path, server.base)
+                if pass_agent:
+                    args += (self.headers.get("User-Agent", ""),)
+                status, content_type, body = respond(*args)
                 self.send_response(status)
                 self.send_header("Content-Type", content_type)
                 self.send_header("Content-Length", str(len(body)))
@@ -117,7 +120,8 @@ class RefusingRenderer(StubRenderer):
 
 
 def run(site, **kwargs):
-    with Server(site) as server, tempfile.TemporaryDirectory() as workdir:
+    pass_agent = kwargs.pop("pass_agent", False)
+    with Server(site, pass_agent) as server, tempfile.TemporaryDirectory() as workdir:
         kwargs.setdefault("no_egress", True)
         evidence = collect.collect(server.base, workdir, **kwargs)
         sidecars = {p.name: p.read_bytes() for p in (pathlib.Path(workdir) / "evidence" / "pages").iterdir()}
@@ -252,6 +256,62 @@ class TestUnreachableRobots(unittest.TestCase):
         self.assertEqual(evidence["robots"]["status"], 503)
         self.assertIn("crawl", [d["what"] for d in evidence["run_context"]["degradations"]])
         self.assertTrue(any("full disallow" in m for m in errors(evidence, "robots")))
+
+
+def cloaking_site(path, base, agent):
+    """Serves everyone, but hands GPTBot a teaser. robots disallows ClaudeBot."""
+    if path == "/robots.txt":
+        return 200, "text/plain", b"User-agent: ClaudeBot\nDisallow: /\n\nUser-agent: *\nDisallow:\n"
+    if "GPTBot" in agent:
+        return 200, "text/html", b"<html><body><p>Subscribe to continue reading.</p></body></html>"
+    body = ('<html><body><h1>Real page %s</h1><p>%s</p><a href="/deep/story/">Deep</a>'
+            '</body></html>' % (path, "The genuine article. " * 40)).encode()
+    return 200, "text/html", body
+
+
+class TestUserAgentProbe(unittest.TestCase):
+    """The one observation that deliberately varies the request identity."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.evidence, cls.written, _, _ = run(cloaking_site, no_render=True, pass_agent=True)
+
+    def test_output_is_schema_valid(self):
+        self.assertEqual(EVIDENCE_SCHEMA.errors(self.written), [])
+
+    def test_conditional_serving_shows_as_a_differing_hash_on_one_url(self):
+        by_url = {}
+        for entry in self.evidence["ua_probe"]:
+            by_url.setdefault(entry["url"], {})[entry["user_agent"]] = entry
+        for url, agents in by_url.items():
+            with self.subTest(url=url):
+                self.assertEqual(agents["GPTBot"]["status"], agents["browser-ua"]["status"])
+                self.assertNotEqual(agents["GPTBot"]["text_hash"], agents["browser-ua"]["text_hash"])
+                self.assertLess(agents["GPTBot"]["text_len"], agents["browser-ua"]["text_len"])
+
+    def test_an_agent_its_own_robots_group_disallows_is_never_probed(self):
+        # A group written for ClaudeBot governs anything calling itself
+        # ClaudeBot, us included. No entry at all: absent means unprobed.
+        agents = {e["user_agent"] for e in self.evidence["ua_probe"]}
+        self.assertNotIn("ClaudeBot", agents)
+        self.assertIn("GPTBot", agents)
+
+    def test_google_extended_is_never_sent(self):
+        # A robots control token with no crawler behind it: nothing to send.
+        agents = {e["user_agent"] for e in self.evidence["ua_probe"]}
+        self.assertNotIn("Google-Extended", agents)
+        self.assertIn("Google-Extended", self.evidence["robots"]["ai_agents"])
+
+    def test_the_probe_is_bounded_to_two_urls_and_the_contract_cap(self):
+        self.assertLessEqual(len(self.evidence["ua_probe"]), collect.UA_PROBE_MAX)
+        self.assertLessEqual(len({e["url"] for e in self.evidence["ua_probe"]}), 2)
+
+    def test_a_refused_home_page_is_still_probed(self):
+        # The most informative case: the crawl stopped, so only this probe can
+        # say whether anything else would have been served.
+        evidence, *_ = run(refusing_site, no_render=True)
+        self.assertTrue(evidence["ua_probe"])
+        self.assertTrue(all(e["status"] == 403 for e in evidence["ua_probe"]))
 
 
 def site_with_a_feed(path, base):
@@ -465,14 +525,23 @@ class TestRedirectKey(unittest.TestCase):
     def test_a_final_url_already_held_is_never_fetched_again(self):
         with RedirectServer(redirect_site) as server, tempfile.TemporaryDirectory() as workdir:
             evidence = collect.collect(server.base, workdir, no_render=True, no_egress=True)
-            requested = list(server.requested)
+            requested, base = list(server.requested), server.base
         self.assertEqual([p["url"].rsplit("/", 1)[-1] for p in evidence["pages"]], ["", "a"])
         self.assertEqual(evidence["pages"][1]["final_url"], server.base + "/target")
         # /a is fetched and lands on /target. /b redirects there too, and the hop
         # is refused rather than followed; /target itself is never requested
         # directly. Both are counted.
         self.assertEqual(evidence["discovery"]["collapsed_redirect_target"], 2)
-        self.assertEqual(requested.count("/target"), 1)
+        # Each redirecting URL is fetched exactly once. /target is deliberately
+        # requested again afterwards, once per identity, by the user-agent
+        # probe -- so it is the redirect sources, not the destination, that
+        # measure whether the crawl refetched anything.
+        self.assertEqual(requested.count("/b"), 1)      # never a probe target
+        # /a is a probe target, and every probe of it follows the same redirect,
+        # so both it and /target carry one crawl fetch plus one per identity.
+        probed = [e["url"].replace(base, "") for e in evidence["ua_probe"]]
+        self.assertEqual(requested.count("/a"), 1 + probed.count("/a"))
+        self.assertEqual(requested.count("/target"), 1 + probed.count("/a"))
         self.assertEqual(EVIDENCE_SCHEMA.errors(evidence), [])
 
 

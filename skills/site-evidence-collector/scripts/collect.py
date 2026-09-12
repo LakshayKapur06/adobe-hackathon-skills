@@ -32,7 +32,40 @@ import urls  # noqa: E402
 
 SCHEMA_VERSION = "1.0.0"
 BUDGETS = {"global_s": 300, "robots_s": 15, "well_known_s": 5, "crawl_s": 90,
-           "render_s": 60, "external_s": 90}
+           "render_s": 60, "ua_probe_s": 15, "external_s": 90}
+
+# The identities the user-agent probe sends: (label, robots token, header).
+#
+# Google-Extended is deliberately absent. It is a robots control token, not a
+# crawler: it has no HTTP user agent, so there is nothing to send and nothing
+# to learn from sending it. It stays in robots.ai_agents, where it does mean
+# something.
+#
+# The label is what the evidence records, so a rule compares "browser" against
+# a named crawler rather than parsing header strings.
+UA_PROBE_AGENTS = (
+    # Labelled browser-ua, never "browser". It is a client presenting a
+    # browser's user-agent string, which is not the same thing and must never
+    # be read as one: see the limit recorded in _ua_probe.
+    ("browser-ua", "browser-ua",
+     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+     "Chrome/131.0.0.0 Safari/537.36"),
+    ("GPTBot", "GPTBot",
+     "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko); compatible; GPTBot/1.2; "
+     "+https://openai.com/gptbot"),
+    ("ClaudeBot", "ClaudeBot",
+     "Mozilla/5.0 (compatible; ClaudeBot/1.0; +claudebot@anthropic.com)"),
+    ("PerplexityBot", "PerplexityBot",
+     "Mozilla/5.0 (compatible; PerplexityBot/1.0; +https://perplexity.ai/perplexitybot)"),
+    ("OAI-SearchBot", "OAI-SearchBot",
+     "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko); compatible; OAI-SearchBot/1.0; "
+     "+https://openai.com/searchbot"),
+    ("CCBot", "CCBot", "CCBot/2.0 (https://commoncrawl.org/faq/)"),
+    ("Googlebot", "Googlebot",
+     "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko); compatible; Googlebot/2.1; "
+     "+http://www.google.com/bot.html"),
+)
+UA_PROBE_MAX = 16                 # the contract's hard bound on ua_probe entries
 DEFAULT_MAX_PAGES = 30
 EGRESS_PROBE = ("www.wikidata.org", 443)
 WELL_KNOWN_PATHS = ("/llms.txt", "/agents.md", "/.well-known/ucp")
@@ -175,6 +208,64 @@ def _soft404_probe(run, origin, deadline):
               "soft-404 baseline %s: two paths that cannot exist both returned status %d "
               "with this identical body" % (hashes[0], responses[0].status))
     return record
+
+
+def _ua_probe(run, governing, targets, deadline):
+    """The same URL under different identities, which is the only way to see it.
+
+    A site that serves an ordinary browser and refuses a named AI crawler looks
+    perfectly healthy from any single request. Detecting that requires varying
+    the request identity, which is why this is bounded to two URLs: repeated
+    across a sample it would stop being a measurement and start being probing.
+
+    **A disclosed limit, and the reason a rule may not overclaim from this.**
+    Varying the user-agent header varies one signal. An edge network that
+    fingerprints TLS, header set and header order sees the same client whatever
+    string it sends, and one real site refused all seven identities including
+    browser-ua while serving an actual browser from the same address seconds
+    earlier. So this probe can show that a site treats two *named agents*
+    differently, which is a finding. It cannot show that a site serves browsers
+    and refuses crawlers, because we never present as a browser -- only as a
+    client claiming to be one. Any rule reading these entries states the
+    comparison it actually made.
+
+    robots.txt is obeyed twice over. The URL must be allowed to *us*, because we
+    are the client making the request whatever header we send; and it must be
+    allowed to the agent we name, because a group written for GPTBot governs
+    anything calling itself GPTBot. An agent disallowed here is not probed, and
+    writes no entry -- absent means unprobed, never "served nothing".
+    """
+    entries = []
+    parsed = governing.get("robots")
+    for url in targets:
+        if not run.allowed(url, deadline):
+            continue
+        path = urls.path_and_query(url)
+        for label, token, header in UA_PROBE_AGENTS:
+            if len(entries) >= UA_PROBE_MAX or time.monotonic() >= deadline:
+                return entries
+            if parsed is not None and not parsed.allowed(path, (token,)):
+                continue
+            response = run.fetcher.get(url, deadline=deadline, user_agent=header)
+            doc = _parse(response, url)
+            entries.append({"url": url, "user_agent": label, "status": response.status,
+                            "text_len": doc["text_len"], "text_hash": doc["text_hash"]})
+    return entries
+
+
+def _probe_targets(kept, home_key):
+    """The home page and one deep page, chosen deterministically.
+
+    The deep page is the longest-text page of the sample: a probe against an
+    empty template would compare two nothings and conclude serving is uniform.
+    Ties break on URL so two runs over one site choose the same page.
+    """
+    deep = [(doc["text_len"], key) for key, response, doc in kept
+            if key != home_key and response.ok]
+    targets = [home_key]
+    if deep:
+        targets.append(max(deep, key=lambda item: (item[0], item[1]))[1])
+    return targets
 
 
 def _well_known(run, origin, deadline, baseline):
@@ -332,15 +423,13 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
                 "corroboration rules are not assessed")
     # Stages not yet built leave their arrays empty. Say so, so that an empty
     # array can never be read as a measurement that found nothing.
-    run.degrade("ua-probe", "the user-agent-conditional serving probe is not yet built",
-                "ua_probe is empty because nothing was probed, not because serving is uniform")
     run.degrade("claims", "claim-candidate extraction is not yet built",
                 "claim_candidates is empty because nothing was extracted, not because the site "
                 "makes no claims; identity and corroboration rules are not assessed")
 
     frontier = discover.Frontier(urls.netloc(resolved_origin) if resolved_origin else input_netloc)
     kept, collapsed_shell, aliases, redirected, crawl_errors = [], 0, [], [], 0
-    well_known, sitemap_records, render_results = [], [], {}
+    well_known, sitemap_records, render_results, ua_probe = [], [], {}, []
     soft404 = {"detected": False, "baseline_text_hash": None, "probe_paths": []}
     baseline = None
 
@@ -453,6 +542,7 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
             render_results.update(render.render_many(renderer, first_of_type + rest,
                                                     budgets["render_s"]))
 
+
     if refused_home is not None:
         # Recorded, not crawled. The refusal is a fact about the site, and
         # pages[] with a status and an empty body is where a rule can read it
@@ -462,6 +552,17 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
         key = frontier.add(refused_home.final_url, "nav") or urls.normalise(refused_home.final_url) or home_url
         kept.append((key, refused_home, _parse(refused_home, refused_home.final_url)))
         crawl_errors += 1      # one URL fetched, one refusal: never a clean crawl
+
+    # -- 5b. user-agent-conditional serving ----------------------------------------
+    # Outside the crawl block on purpose. A home page that refused us is the
+    # single most informative case this probe has: "they served a browser and
+    # refused us" is a finding, and it is unreachable from a crawl that stopped.
+    if governing is not None and governing["mode"] != "unreachable" and kept:
+        ua_probe = _ua_probe(run, governing, _probe_targets(kept, kept[0][0]),
+                             time.monotonic() + budgets["ua_probe_s"])
+    if not ua_probe:
+        run.degrade("ua-probe", "no URL could be probed under any user agent",
+                    "ua_probe is empty because nothing was probed, not because serving is uniform")
 
     # -- 6. assemble pages -------------------------------------------------------
     pages, first_with_text = [], {}
@@ -571,7 +672,7 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
         "canonical_claims": [],
         "external": {"attempted": False, "method": "none", "frontier_size": 0, "truncated": False,
                      "origins": [], "hits": []},
-        "ua_probe": [],
+        "ua_probe": ua_probe,
         "well_known": well_known,
         "errors": run.errors,
     }

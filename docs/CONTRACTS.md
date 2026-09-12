@@ -430,5 +430,11 @@ completed is reported and the rest becomes `not_assessed` with reason
 | well-known probe | 5s total, three paths | record unreachable paths as `status: null` and continue |
 | first-party crawl | 90s | stop, report `crawl.fetched` vs `discovered` |
 | rendering | 60s, max 3 concurrent renders | remaining pages fetch-only, mark degraded |
+| user-agent probe | 15s, two URLs | fewer identities probed; absent entries mean unprobed |
 | external probe | 90s | partial results, `external.truncated = true` |
-| diagnosis + synthesis | 40s | n/a (local, fast) |
+| diagnosis + synthesis | 25s | n/a (local, fast) |
+
+The user-agent probe's 15s comes out of diagnosis and synthesis, which drops
+from 40s to 25s so the stages still sum to the 300s deadline. Diagnosis is six
+pure functions over one JSON file and does not approach either figure; the
+probe makes real network requests and does.
