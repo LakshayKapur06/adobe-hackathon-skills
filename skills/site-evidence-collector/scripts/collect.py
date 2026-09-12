@@ -23,6 +23,7 @@ import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+import claims  # noqa: E402
 import discover  # noqa: E402
 import extract  # noqa: E402
 import fetch  # noqa: E402
@@ -423,10 +424,6 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
                 "corroboration rules are not assessed")
     # Stages not yet built leave their arrays empty. Say so, so that an empty
     # array can never be read as a measurement that found nothing.
-    run.degrade("claims", "claim-candidate extraction is not yet built",
-                "claim_candidates is empty because nothing was extracted, not because the site "
-                "makes no claims; identity and corroboration rules are not assessed")
-
     frontier = discover.Frontier(urls.netloc(resolved_origin) if resolved_origin else input_netloc)
     kept, collapsed_shell, aliases, redirected, crawl_errors = [], 0, [], [], 0
     well_known, sitemap_records, render_results, ua_probe = [], [], {}, []
@@ -565,13 +562,13 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
                     "ua_probe is empty because nothing was probed, not because serving is uniform")
 
     # -- 6. assemble pages -------------------------------------------------------
-    pages, first_with_text = [], {}
+    pages, first_with_text, claim_notes = [], {}, []
     render_failed = render_skipped = 0
     render_duplicates = []
     for key, response, doc in kept:
         rendered = {"available": False, "text_len": None, "text_hash": None, "text_path": None,
                     "headings": [], "delta_ratio": None}
-        render_ms = None
+        render_ms, rendered_text = None, None
         if js_render and response.ok and _is_html(response):
             # Neither a non-2xx page nor a non-HTML resource is rendered. The
             # browser would assemble the error document, or its own viewer for
@@ -582,6 +579,7 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
             html, failure, render_ms = render_results.get(key, (None, "not reached within the render budget", None))
             if html:
                 rdoc = extract.parse_document(html, response.final_url)
+                rendered_text = rdoc["text"]
                 if rdoc["text_hash"] in first_with_text:
                     render_duplicates.append((key, first_with_text[rdoc["text_hash"]]))
                     continue
@@ -599,6 +597,14 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
                 render_failed += 1
                 run.error(key, "render", failure or "the browser returned no DOM")
         pages.append(_page_evidence(key, response, doc, rendered, render_ms, pages_dir, run))
+        page = pages[-1]
+        if page["status"] and 200 <= page["status"] <= 299:
+            # Candidates come from the page as recorded: the rendered text when
+            # there is any, because a client-rendered site states its claims
+            # only after rendering, and the raw text otherwise.
+            claims.from_jsonld(page["jsonld"], page["url"], claim_notes)
+            claims.from_headings(doc["headings"], page["page_type"], page["url"], claim_notes)
+            claims.from_text(rendered_text or doc["text"], page["url"], claim_notes)
 
     if render_duplicates:
         run.error((resolved_origin or "") + "/", "discovery",
@@ -629,6 +635,16 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
                     % (total, "" if total == 1 else "s"),
                     "no page-level content exists in the server response at all: nothing on this site "
                     "is readable without executing JavaScript, and no page-level rule can be assessed")
+
+    claim_candidates, dropped = claims.aggregate(claim_notes)
+    if dropped:
+        run.error((resolved_origin or "") + "/", "extract",
+                  "claim_candidates truncated to %d of %d distinct candidates"
+                  % (len(claim_candidates), len(claim_candidates) + dropped))
+    if not claim_candidates:
+        run.degrade("claims", "no claim candidate was extracted from any sampled page",
+                    "claim_candidates is empty because nothing matched, not because the site "
+                    "makes no claims; identity and corroboration rules are not assessed")
 
     evidence = {
         "schema_version": SCHEMA_VERSION,
@@ -668,7 +684,7 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
         },
         "pages": pages,
         "link_graph": _link_graph(frontier, kept, pages, run),
-        "claim_candidates": [],
+        "claim_candidates": claim_candidates,
         "canonical_claims": [],
         "external": {"attempted": False, "method": "none", "frontier_size": 0, "truncated": False,
                      "origins": [], "hits": []},
