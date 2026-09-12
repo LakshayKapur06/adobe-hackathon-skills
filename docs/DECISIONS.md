@@ -280,11 +280,16 @@ denominators being real.
 ### D15 — Soft-404 handling, and why deduplication depends on capability
 
 Some sites answer every path with the same HTML shell and assemble the real
-content client-side. `www.poco.in` does this, confirmed by hand with `curl`
-and `shasum` rather than by trusting our own collector: the home page, a
-nonsense path, a second nonsense path and `/robots.txt` all returned a
-byte-identical body. (Recorded here as an architecture observation only. No
-audit finding about a named third party ships — see D11.)
+content client-side. One of the storefronts used while selecting test sites
+does exactly this, confirmed by hand with `curl` and `shasum` rather than by
+trusting our own collector: its home page, two paths that cannot exist, and
+`/robots.txt` all returned a byte-identical body.
+
+The site is deliberately not named. Per D11 we publish no audit finding about a
+named third party, and a decision record is a weaker place to verify this than
+a fixture is: what was learned from that site is reproduced as the
+empty-server-shell archetype in the adversarial fixture set, where a judge can
+run it rather than take our word for it.
 
 Two decisions follow.
 
