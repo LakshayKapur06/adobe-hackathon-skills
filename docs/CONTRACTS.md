@@ -321,9 +321,17 @@ Handout-required fields are marked. Everything else is an approved extension.
   "evidence_refs": [ { "url": "...", "observation": "raw.text lacks price token; rendered.text contains it",
                        "layer": "first_party", "method": "render", "retrieved_at": "..." } ],
   "false_positive_controls_applied": ["price-token normalisation", "excluded pages with no Offer markup"],
-  "exceptions_checked": ["quote-on-request pricing model"]
+  "exceptions_checked": ["quote-on-request pricing model"],
+  "conditional_on": [ { "rule_id": "RND-001", "reason": "..." } ]   // optional, orchestrator-only (contracts-v8)
 }
 ```
+
+**`conditional_on`** (contracts-v8) is written only by the orchestrator's
+arbitration, never by a diagnostic. It names upstream findings whose fix must
+come first because they change whether this finding still holds, for example
+"no organization markup in the server response" beneath "the server response
+carries no text at all". The finding keeps its own severity; the arbitration
+table is in `skills/audit-orchestrator/references/composition.md`.
 
 Separate top-level arrays in the report, so neither inflates `total_findings`:
 

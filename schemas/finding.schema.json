@@ -112,6 +112,19 @@
       "minItems": 0,
       "items": { "type": "string", "minLength": 1 }
     },
+    "conditional_on": {
+      "description": "Added by the orchestrator's arbitration, never by a diagnostic (contracts-v8). Each entry names an upstream finding, by rule_id, whose fix must come first because it would change whether this finding still holds. The finding is still reported with its own severity; severities are never merged. Absent when nothing upstream conditions it.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["rule_id", "reason"],
+        "properties": {
+          "rule_id": { "type": "string", "pattern": "^[A-Z]{3}-[0-9]{3}$" },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
     "exceptions_checked": {
       "description": "Required non-empty for status \"found\", enforced by the build gate for the same reason as false_positive_controls_applied.",
       "type": "array",

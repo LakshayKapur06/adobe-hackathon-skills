@@ -539,3 +539,26 @@ contradiction signal on its own, and fixed a collector bug that read a declared
 `sameAs` list as one URL (`3149cb4`). Both are recorded in
 `skills/freshness-and-corroboration/references/rules.md` and
 `tests/rule-review.md`.
+
+### D22 — `contracts-v8`: a finding may say what it depends on
+
+Composition rule 3 says a downstream finding under a blocking upstream one is
+still reported but marked conditional. The finding schema had no field to mark
+it with, and the first live case needed one: on a client-rendered site,
+"no organization markup in the server response" (IDM-001) sits beneath "the
+server response carries no text" (RND-001), and reading the first as an
+independent defect would send the owner to fix markup that server rendering
+might supply anyway.
+
+The finding schema gains an optional `conditional_on` array of
+`{rule_id, reason}`, written only by the orchestrator. Severities are never
+merged or changed by it. The arbitration table is deliberately three rows long,
+and `skills/audit-orchestrator/references/composition.md` records both the rows
+and the two cases left out (crawler exclusions, presence-based findings).
+
+The same step added the orchestrator's proactive recommendations and made one
+diagnostic's failure cost only its own rules. PRO-002 quotes claim values into
+prompts a person is told to run, which is observed content reaching a
+recommendation, so it admits only short name, year and address values matching
+a plain-character pattern; a tagline is never used, and a test feeds it an
+instruction-shaped tagline and an injected name to prove neither survives.
