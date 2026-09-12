@@ -31,6 +31,10 @@ path in this list must exist in the evidence schema — CI enforces both
 directions, which is what makes fabricated evidence impossible.
 
 - `pages[].status`
+- `pages[].page_type`
+- `pages[].page_type_confidence`
+- `canonical_claims[].id`
+- `external.hits[].retrieved_at`
 - `canonical_claims`
 - `pages[].jsonld[].values`
 - `canonical_claims[].value_normalized`

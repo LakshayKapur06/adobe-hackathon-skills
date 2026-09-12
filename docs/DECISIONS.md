@@ -523,3 +523,19 @@ each read page content and none could apply the 2xx gate `docs/RULE_FORMAT.md`
 requires. `pages[].status` is added to all three allow-lists in one amendment,
 before any of their rules exist, rather than discovered three more times. The
 schema is unchanged. With this, all six diagnostics can read page status.
+
+### D21 — `contracts-v7`: what freshness needs to cite and gate
+
+`freshness-and-corroboration` gains `pages[].page_type` and
+`pages[].page_type_confidence`, because an undated-article rule must know which
+pages are articles and must keep listing pages, which the classifier scores
+lower, out of it; and `canonical_claims[].id` and
+`external.hits[].retrieved_at`, because a hit can only be joined to its claim by
+id and a third-party observation must be cited with the time it was retrieved.
+The schema is unchanged.
+
+The same work found that `external.hits[].matches_current` is not a
+contradiction signal on its own, and fixed a collector bug that read a declared
+`sameAs` list as one URL (`3149cb4`). Both are recorded in
+`skills/freshness-and-corroboration/references/rules.md` and
+`tests/rule-review.md`.
