@@ -64,6 +64,12 @@ Measured on real bundles before commit: POCO fires RND-001 site-wide (5/5, delta
 | (budget) | identity | cross-cutting | 4 rules, under the 5-8 target; every cut above failed a test | accepted |
 
 Measured on real bundles before commit: iflexbtw fires IDM-002 (29 of 30 pages, nine empty sameAs entries); python.org fires IDM-001 (home carries only WebSite); indianexpress passes all four; the refused publisher is not assessed on all four.
+| (cut) boilerplate dominance | answerability | 2 Threshold | boilerplate_ratio counts only nav/aside/landmark text and spanned 0.0-0.93 on healthy sites (python.org listings 0.8-0.93, 700-word news articles 0.69); no number separates defect from markup habit | cut |
+| (cut) passage / chunk length | answerability | 4 False positives | longest_block_words treats `<br>` as a space, so a line-break-formatted policy page read as one 3,036-word block | cut; would need an extraction change and re-measurement first |
+| (cut) heading architecture counts, multiple h1 | answerability | 1 Mechanism | multiple h1 is valid HTML and common (13 on one python.org page); a count tests conformity | cut |
+| (cut) query-intent coverage | answerability | 3 Minimum evidence | W1's evidence gate (a structured attribute with no page answering by it) has no observable counterpart in the bundle; PLAN.md's first cut | cut |
+| ANS-001 | answerability | 1 Mechanism | section headings aid passage retrieval but no operator documents a penalty for their absence | written as proactive at medium confidence; news article types excluded as house style |
+| (budget) | answerability | cross-cutting | 1 rule. The skill keeps a distinct mechanism, but the collector's text metrics cannot carry defect-level rules; flagged to the user rather than padded | accepted, flagged |
 
 Fact check against operator documentation, 2026-09-13:
 

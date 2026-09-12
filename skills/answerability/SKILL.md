@@ -2,10 +2,8 @@
 name: answerability
 description: >-
   Diagnoses whether content is shaped so a retrieval system can locate and quote
-  an answer: passage and chunk hostility, boilerplate dominance, heading
-  architecture, whether a claim survives summarisation intact, and
-  evidence-gated coverage of the query intents the site's own structured data
-  implies. Use as part of a website AI-readiness audit when a site is reachable
+  an answer, recommending section structure for long articles and documentation
+  that carry almost no headings. Use as part of a website AI-readiness audit when a site is reachable
   and readable but still never quoted. Reads a shared evidence bundle; never
   fetches anything and never judges crawlability or freshness.
 license: Apache-2.0
@@ -35,24 +33,26 @@ to judge whether a fact is current or corroborated; that is
 `evidence/evidence.json`, produced by `site-evidence-collector`. Nothing else,
 and never the network.
 
-Principally: `pages[].text.word_count`, `pages[].text.boilerplate_ratio`,
-`pages[].text.longest_block_words`, `pages[].text.heading_density_per_1k`,
-`pages[].raw.headings`, `pages[].page_type`, `pages[].page_type_confidence`,
-`pages[].jsonld[].fields_present`, `crawl.sampling`.
+Principally: `pages[].status`, `pages[].page_type`, `pages[].text.word_count`,
+`pages[].raw.headings`, `pages[].jsonld[].type`.
 
 ## Procedure
 
+The steps below are implemented in `scripts/diagnose.py`:
+
+    python scripts/diagnose.py --evidence evidence/evidence.json --out findings/answerability.json
+
+It needs only a Python 3 standard library. A host that cannot run scripts
+follows the same steps by hand against `references/rules.md`.
+
 1. Load `evidence/evidence.json` and confirm `schema_version` is compatible.
-2. Establish the page-type denominators from `crawl.sampling.strata`. Text-shape
-   norms differ sharply by page type: a documentation page and a product page
-   have legitimately different heading densities, and a rule that ignores this
-   measures conformity rather than defect.
+2. Judge text shape per page type, never across types: a documentation page and
+   a product page legitimately differ, and a rule that ignores this measures
+   conformity rather than defect.
 3. For each rule in `references/rules.md`, check minimum evidence, then apply
    false-positive controls and legitimate-exception checks before firing.
-4. Query-intent rules are **evidence-gated**: flag a gap only when a structured
-   attribute the site itself publishes has no page that answers by it. If the
-   gap cannot be tied to an attribute we observed, emit nothing. Without this
-   gate the check degrades into generic SEO advice.
+4. Do not add a rule on a text metric without first measuring its spread on real
+   sites. `references/rules.md` records the metrics that failed that test.
 5. Emit findings with observed impact inputs, confidence, status, effort, scope
    denominators and `evidence_refs`. Never assign `severity`.
 6. Emit `checks_passed` for rules that ran and did not fire.
