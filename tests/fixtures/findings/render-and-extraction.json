@@ -1,11 +1,21 @@
 {
+  "checks_passed": [
+    {
+      "rule_id": "RND-002",
+      "summary": "2 of 2 2xx HTML pages carry at least 200 characters of text in the server response"
+    }
+  ],
   "findings": [],
   "not_assessed": [
     {
-      "rule_id": "RND-002",
-      "reason": "no browser available, so no rendered DOM exists to compare against the server HTML",
-      "enable_hint": "install a Chromium-based browser and re-run"
+      "enable_hint": "install a Chromium-based browser (Chrome, Edge or Chromium) and re-run without --no-render",
+      "reason": "no browser was available, so no page could be rendered and compared with its server response",
+      "rule_id": "RND-001"
+    },
+    {
+      "enable_hint": "install a Chromium-based browser (Chrome, Edge or Chromium) and re-run without --no-render",
+      "reason": "no browser was available, so no page could be rendered and compared with its server response",
+      "rule_id": "RND-003"
     }
-  ],
-  "checks_passed": []
+  ]
 }

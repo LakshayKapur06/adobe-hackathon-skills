@@ -2,9 +2,9 @@
 name: render-and-extraction
 description: >-
   Diagnoses whether a page's substance is actually present as machine-readable
-  text once the page is reached: the delta between server HTML and the rendered
-  DOM, facts locked inside images, PDFs, canvas or iframes, and prices or
-  availability that appear only after interaction. Use as part of a website
+  text once the page is reached: pages whose text exists only after JavaScript
+  runs, sites whose server response carries no text at all, and product prices
+  that appear only after rendering. Use as part of a website
   AI-readiness audit when a fact a human plainly sees may be absent from what a
   fetcher receives. Reads a shared evidence bundle; never fetches anything.
 license: Apache-2.0
@@ -33,14 +33,24 @@ judge whether the surrounding prose is quotable; that is `answerability`.
 `evidence/evidence.json`, produced by `site-evidence-collector`. Nothing else,
 and never the network.
 
-Principally: `pages[].raw.text_len`, `pages[].raw.text_hash`,
-`pages[].raw.images`, `pages[].raw.iframes`, `pages[].raw.tables`,
+Principally: `pages[].status`, `pages[].content_type`, `pages[].page_type`,
+`pages[].page_type_confidence`, `pages[].raw.text_len`, `pages[].raw.text_path`,
 `pages[].rendered.available`, `pages[].rendered.text_len`,
-`pages[].rendered.delta_ratio`, `pages[].jsonld[].fields_present`,
-`pages[].content_type`, `pages[].page_type`, `pages[].page_type_confidence`,
-`run_context.capabilities.js_render`.
+`pages[].rendered.text_path`, `pages[].rendered.delta_ratio`,
+`pages[].jsonld[].fields_present`, `discovery.soft_404`,
+`run_context.capabilities.js_render`. The extracted-text sidecars that
+`raw.text_path` and `rendered.text_path` name are part of the bundle.
 
 ## Procedure
+
+The steps below are implemented, one function per rule, in
+`scripts/diagnose.py`:
+
+    python scripts/diagnose.py --evidence evidence/evidence.json --out findings/render-and-extraction.json
+
+It needs only a Python 3 standard library. A host that cannot run scripts
+follows the same steps by hand against `references/rules.md`, which is the
+specification the script implements.
 
 1. Load `evidence/evidence.json` and confirm `schema_version` is compatible.
 2. Establish whether rendering was available at all. If

@@ -42,6 +42,17 @@ Cross-cutting, checked per skill once its rules are complete:
 | ACC-008 | access | 3 Minimum evidence | a named retrieval-crawler exclusion was filed under `checks_passed`, which reads as a miss to anyone who knows the site blocks that assistant | added as `proactive`; honest impact inputs, severity capped at medium by `contracts-v3` (D17) |
 | (budget) | access | cross-cutting | 9 rules, one over the 5-8 target. ACC-008 is the policy half of ACC-001 and ACC-009 was a DECISIONS-assigned mechanism blocked only by the allow-list; nothing was written to reach a number | accepted over target, under the 12 ceiling |
 | (cut) `llms.txt` absent | access | scope | never a defect (DECISIONS exclusions); a proactive item, which the orchestrator's proactive step owns | moved to orchestrator step 2 |
+| RND-001 | render | 2 Threshold | first idea was delta_ratio >= 0.5; measured G2 pages put hydrated Shopify product templates at 0.04-0.24 and server-rendered templates at <= 0.015, shells at 1.0 | tightened: 0.8 plus a 200-character gain, per-type 50% share, home alone; the lone `/subscribe` page on a publisher does not fire |
+| RND-001 | render | 3 Minimum evidence | pages outside the render budget have no delta and must not dilute or pad the share | tightened: excluded from both counts, stated in the evidence |
+| RND-002 | render | cross-cutting | the no-browser shell and RND-001 describe one root cause | tightened: RND-002 applies only when no page was comparable, otherwise `not_assessed` naming RND-001 |
+| RND-002 | render | 4 False positives | a CDN block page is recorded empty on purpose and would read as a shell | tightened: 2xx HTML home page required |
+| RND-003 | render | 4 False positives | a related-products carousel rendered on the server would hide a hydrated main price, and a price in both texts is not a defect | tightened: any server-side price token or offers.price/lowPrice JSON-LD excludes the page; kept to RULE_FORMAT's worked-example numbers |
+| (cut) facts locked in images | render | 4 False positives | `text_likely` is a filename/alt keyword match; `pricing-hero.jpg` and `menu-icon.svg` match | cut: not detectable from evidence |
+| (cut) PDFs, canvas, iframes | render | 3 Minimum evidence | the collector records no PDF or canvas at all and only an iframe count, with no content | cut |
+| (cut) interaction-gated facts | render | 3 Minimum evidence | the collector never clicks, by design and by the handout; an interaction-gated fact is unobservable | cut |
+| (budget) | render | cross-cutting | 3 rules, under the 5-8 target: every cut above failed on evidence, and nothing was added to reach a number | accepted |
+
+Measured on real bundles before commit: POCO fires RND-001 site-wide (5/5, delta 1.0) with a browser and RND-002 at high confidence without one; iflexbtw, indianexpress and python.org fire nothing; the refused publisher is not assessed on all three.
 
 Fact check against operator documentation, 2026-09-13:
 

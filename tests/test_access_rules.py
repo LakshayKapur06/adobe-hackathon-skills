@@ -8,18 +8,23 @@ a rule cannot emit something the report would refuse.
 """
 
 import copy
+import importlib.util
 import json
 import pathlib
 import sys
 import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "skills" / "access-and-indexability" / "scripts"))
 sys.path.insert(0, str(ROOT / "skills" / "audit-orchestrator" / "scripts"))
 
-import diagnose  # noqa: E402
 import severity as sev_mod  # noqa: E402
 from jsonschema_lite import Validator  # noqa: E402
+
+# Loaded by path under a unique name: every diagnostic's script is called
+# diagnose.py, and one test process imports several of them.
+_spec = importlib.util.spec_from_file_location("access_diagnose", ROOT / "skills" / "access-and-indexability" / "scripts" / "diagnose.py")
+diagnose = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(diagnose)
 
 BASE = json.loads((ROOT / "tests" / "fixtures" / "evidence" / "minimal.evidence.json").read_text(encoding="utf-8"))
 SCHEMAS = {name: json.loads((ROOT / "schemas" / name).read_text(encoding="utf-8"))
