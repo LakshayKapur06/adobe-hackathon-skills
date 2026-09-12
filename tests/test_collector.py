@@ -253,6 +253,72 @@ class TestUnreachableRobots(unittest.TestCase):
         self.assertTrue(any("full disallow" in m for m in errors(evidence, "robots")))
 
 
+def refusing_site(path, base):
+    """Every path answers 403 with an edge block page, as a real CDN block does.
+
+    Modelled on the Akamai page a live run met: a short HTML body carrying a
+    reference number, served 403 with a text/html content type. To anything that
+    does not check the status it is perfectly plausible page content, which is
+    what makes it dangerous — extracted, it reads as a thin, link-less,
+    markup-free home page, and every rule about thin content would fire on a
+    site whose real home page we never saw.
+    """
+    return 403, "text/html", (b"<html><body><h1>Access Denied</h1><p>You don't have permission to "
+                              b"access \"/\" on this server.</p><p>Reference #18.4c6c3f17</p>"
+                              b"</body></html>")
+
+
+class TestRefusedSite(unittest.TestCase):
+    """A site that refuses us must never read as a site with nothing on it."""
+
+    def test_the_block_page_text_reaches_no_part_of_the_bundle(self):
+        evidence, written, _, _ = run(refusing_site, no_render=True)
+        self.assertEqual(EVIDENCE_SCHEMA.errors(written), [])
+        self.assertNotIn("Access Denied", json.dumps(written))
+        self.assertNotIn("Reference #", json.dumps(written))
+
+    def test_the_home_page_is_recorded_with_its_status_and_no_content(self):
+        evidence, *_ = run(refusing_site, no_render=True)
+        self.assertEqual(len(evidence["pages"]), 1)
+        page = evidence["pages"][0]
+        self.assertEqual(page["status"], 403)
+        self.assertEqual(page["raw"]["text_len"], 0)
+        self.assertEqual(page["raw"]["links"], [])
+        self.assertEqual(page["raw"]["headings"], [])
+        self.assertEqual(page["jsonld"], [])
+        self.assertFalse(page["rendered"]["available"])
+
+    def test_the_refusal_is_counted_and_degraded_never_silent(self):
+        evidence, *_ = run(refusing_site, no_render=True)
+        self.assertIn("crawl", [d["what"] for d in evidence["run_context"]["degradations"]])
+        self.assertTrue(any("403" in d["reason"] for d in evidence["run_context"]["degradations"]))
+        self.assertTrue(any("403" in m for m in errors(evidence, "fetch")))
+        self.assertEqual(evidence["crawl"]["errors"], 1)
+        # Fetched may never exceed discovered: that describes no possible crawl.
+        self.assertEqual(evidence["crawl"]["discovered"], evidence["crawl"]["fetched"])
+
+    def test_the_crawl_stops_at_the_front_door(self):
+        _, _, _, requested = run(refusing_site, no_render=True)
+        self.assertEqual(set(requested), {"/robots.txt", "/"})
+
+    def test_a_refused_well_known_probe_records_no_entry(self):
+        """Refused is not absent: the contract's missing entry means no answer."""
+        def refuses_only_probes(path, base):
+            if path in ("/llms.txt", "/agents.md", "/.well-known/ucp"):
+                return 403, "text/html", b"<html><body>Access Denied</body></html>"
+            return fixture_site(path, base)
+
+        evidence, *_ = run(refuses_only_probes, no_render=True)
+        self.assertEqual(evidence["well_known"], [])
+
+    def test_a_rendered_block_page_is_never_a_javascript_only_verdict(self):
+        """With a browser, the error document must not become a render delta."""
+        evidence, *_ = run(refusing_site, renderer=StubRenderer())
+        page = evidence["pages"][0]
+        self.assertFalse(page["rendered"]["available"])
+        self.assertIsNone(page["rendered"]["delta_ratio"])
+
+
 class TestDiscoveryRecord(unittest.TestCase):
     """discovery is the structured record rules read; errors[] stays free text."""
 

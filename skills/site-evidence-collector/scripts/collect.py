@@ -97,7 +97,17 @@ def _is_html(response):
 
 
 def _parse(response, base):
-    return extract.parse_document(response.text if _is_html(response) else "", base)
+    """Extract a document, but only from a response that carries page content.
+
+    A non-2xx body is an error document, not the page: an edge block page, a
+    not-found notice, a gateway error. Extracting it would record its text as
+    the page's own content, and no rule reading text_len, links, headings or
+    jsonld could then tell a page we were refused from a page that is thin.
+    The status is recorded either way, and it is the observation that matters.
+    """
+    if not response.ok or not _is_html(response):
+        return extract.parse_document("", base)
+    return extract.parse_document(response.text, base)
 
 
 def _probe_egress(disabled):
@@ -181,6 +191,12 @@ def _well_known(run, origin, deadline, baseline):
         if not run.allowed(url, deadline):
             continue                      # not probed: no entry, by contract
         response = run.fetcher.get(url, may_follow=_same_site(run, origin, deadline), deadline=deadline)
+        if response.status in (401, 403):
+            # Probed, and refused. No answer was obtained, which is what the
+            # contract's missing entry means; a 404 is a real absence and keeps
+            # its entry. Recording present: false here would assert that a file
+            # we were never allowed to look at does not exist.
+            continue
         present = bool(response.ok and response.body.strip())
         if present and baseline and \
                 extract.parse_document(response.text, response.final_url)["text_hash"] == baseline:
@@ -258,6 +274,8 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
 
     # -- 1. robots.txt first, then the origin ----------------------------------
     resolved_origin, home, governing, stop = None, None, None, None
+    refused_home = None
+    stop_impact = "no first-party pages were fetched; every page-level rule is not assessed"
     entry = run.robots_for(scheme, input_netloc, robots_deadline)
     home_url = urls.origin(start_url) + "/"
     if entry["mode"] == "unreachable":
@@ -278,8 +296,18 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
                 stop, home = governing["reason"], None
             elif home.status in fetch.REDIRECT_STATUSES:
                 stop, home = "the home page redirects to a URL robots.txt disallows", None
+            elif not home.ok:
+                # A refusal at the front door. The crawl cannot proceed, and
+                # the error document must not be mistaken for the site: an
+                # edge block page extracted as content reads exactly like a
+                # thin, link-less, markup-free home page.
+                stop = "the home page returned HTTP %d, so no page content was observed" % home.status
+                stop_impact = ("the home page is recorded with its status and an empty body; no page "
+                               "content was observed, and every content-level rule is not assessed")
+                run.error(home_url, "fetch", "the home page returned HTTP %d" % home.status)
+                refused_home, home = home, None
     if stop:
-        run.degrade("crawl", stop, "no first-party pages were fetched; every page-level rule is not assessed")
+        run.degrade("crawl", stop, stop_impact)
 
     # -- 2. capabilities ---------------------------------------------------------
     if no_render:
@@ -370,8 +398,11 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
             if final in held:
                 redirected.append((target, final))
                 continue
-            if 500 <= response.status <= 599:
+            if not response.ok and response.status not in fetch.REDIRECT_STATUSES:
+                # Every refusal counts, not only a 5xx. A run that is answered
+                # 403 at every door must never report a clean crawl.
                 crawl_errors += 1
+                run.error(target, "fetch", "returned HTTP %d" % response.status)
             doc = _parse(response, response.final_url)
             if not js_render and baseline and response.ok and doc["text_hash"] == baseline:
                 # Rendering is unavailable, so this copy of the shell adds no
@@ -410,6 +441,16 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
             pending = [key for key, _, _ in kept if key not in render_results]
             render_results.update(render.render_many(renderer, pending, budgets["render_s"]))
 
+    if refused_home is not None:
+        # Recorded, not crawled. The refusal is a fact about the site, and
+        # pages[] with a status and an empty body is where a rule can read it
+        # as a typed field instead of parsing a degradation message. It enters
+        # the frontier too: we did discover this URL, and a bundle reporting
+        # more pages fetched than discovered describes no possible crawl.
+        key = frontier.add(refused_home.final_url, "nav") or urls.normalise(refused_home.final_url) or home_url
+        kept.append((key, refused_home, _parse(refused_home, refused_home.final_url)))
+        crawl_errors += 1      # one URL fetched, one refusal: never a clean crawl
+
     # -- 6. assemble pages -------------------------------------------------------
     pages, first_with_text = [], {}
     render_failed = render_skipped = 0
@@ -418,7 +459,11 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
         rendered = {"available": False, "text_len": None, "text_hash": None, "text_path": None,
                     "headings": [], "delta_ratio": None}
         render_ms = None
-        if js_render:
+        if js_render and response.ok:
+            # A non-2xx page is not rendered either: the browser would assemble
+            # the error document, and a rendered block page against an empty raw
+            # body is a delta_ratio near 1.0 — "the content is JavaScript-only"
+            # is precisely the wrong conclusion to hand a rule.
             html, failure, render_ms = render_results.get(key, (None, "not reached within the render budget", None))
             if html:
                 rdoc = extract.parse_document(html, response.final_url)
