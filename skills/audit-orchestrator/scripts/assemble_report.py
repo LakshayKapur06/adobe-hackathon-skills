@@ -92,7 +92,13 @@ def parse_ts(value):
     return datetime.datetime.strptime(value, TS).replace(tzinfo=datetime.timezone.utc)
 
 
-def build_run_context(evidence):
+def build_run_context(evidence, extra_degradations=()):
+    """The report's run_context: what was observed, with what, and what was not.
+
+    ``extra_degradations`` are the orchestrator's own, such as a diagnostic that
+    has no rules yet, appended after the collector's so that an empty findings
+    array can never be mistaken for a clean site.
+    """
     rc = evidence["run_context"]
     started, finished = parse_ts(rc["started_at"]), parse_ts(rc["finished_at"])
     crawl = evidence["crawl"]
@@ -109,7 +115,7 @@ def build_run_context(evidence):
             "errors": crawl["errors"],
         },
         "sampling": json.loads(json.dumps(crawl["sampling"])),
-        "degradations": json.loads(json.dumps(rc["degradations"])),
+        "degradations": json.loads(json.dumps(rc["degradations"])) + [dict(d) for d in extra_degradations],
         "corroboration": {
             "method": rc["corroboration"]["method"],
             "attempted": external["attempted"],
@@ -120,7 +126,7 @@ def build_run_context(evidence):
     }
 
 
-def assemble(evidence, findings, not_assessed, checks_passed):
+def assemble(evidence, findings, not_assessed, checks_passed, extra_degradations=()):
     findings = deduplicate(findings)
     for f in findings:
         sev_mod.derive(f)
@@ -149,7 +155,7 @@ def assemble(evidence, findings, not_assessed, checks_passed):
         "checks_passed": sorted(
             (dict(c) for c in checks_passed), key=lambda c: (c["rule_id"], c["summary"])
         ),
-        "run_context": build_run_context(evidence),
+        "run_context": build_run_context(evidence, extra_degradations),
     }
 
 
