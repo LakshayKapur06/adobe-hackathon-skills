@@ -7,13 +7,16 @@ and whether prose containing a string is the same as prose asserting it.
 
 import json
 import pathlib
+import shutil
 import sys
+import tempfile
 import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "skills" / "site-evidence-collector" / "scripts"))
 sys.path.insert(0, str(ROOT / "skills" / "identity-and-markup" / "scripts"))
 
+import collect  # noqa: E402
 import external  # noqa: E402
 import promote  # noqa: E402
 
@@ -152,6 +155,31 @@ class FakeRun:
 
     def allowed(self, url, deadline=None):
         return url not in self.blocked
+
+
+class TestPassTwoMerge(unittest.TestCase):
+    def test_run_context_reports_the_method_that_actually_ran(self):
+        # Pass 1 writes run_context.corroboration before anything off-site runs.
+        # A report once said method "none" beside an external block with a
+        # frontier of seven, contradicting itself.
+        with tempfile.TemporaryDirectory() as work:
+            evidence_dir = pathlib.Path(work) / "evidence"
+            evidence_dir.mkdir()
+            shutil.copy(ROOT / "tests" / "fixtures" / "evidence" / "minimal.evidence.json", evidence_dir / "evidence.json")
+            (evidence_dir / "canonical_claims.json").write_text(json.dumps([
+                {"id": "C-001", "from_candidates": ["CC-001"], "kind": "legal_name", "value_normalized": "velocity",
+                 "first_party_confidence": "high", "entity_ambiguity": "low"}]), encoding="utf-8")
+            result = {"attempted": True, "method": "keyless", "frontier_size": 1, "truncated": False,
+                      "origins": [], "hits": []}
+            saved = (collect._probe_egress, external.probe_external)
+            collect._probe_egress = lambda disabled: (True, None)
+            external.probe_external = lambda *args: (result, None)
+            try:
+                merged = collect.corroborate(work)
+            finally:
+                collect._probe_egress, external.probe_external = saved
+            self.assertEqual(merged["external"]["method"], "keyless")
+            self.assertEqual(merged["run_context"]["corroboration"]["method"], "keyless")
 
 
 class TestSameAsVerification(unittest.TestCase):

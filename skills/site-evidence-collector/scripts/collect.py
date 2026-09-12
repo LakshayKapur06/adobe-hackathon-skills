@@ -827,6 +827,10 @@ def corroborate(workdir, no_egress=False, budgets=None):
             run.degrade("external", "the %ss external budget ran out" % budgets["external_s"],
                         "corroboration breadth is partial; frontier_size states what was reached")
         evidence["external"] = result
+        # run_context.corroboration was written by pass 1, before anything
+        # off-site ran. Left alone it reports method "none" beside an external
+        # block that did run, and the report contradicts itself.
+        evidence["run_context"]["corroboration"]["method"] = result["method"]
     else:
         run.degrade("external", egress_note or "no third-party egress",
                     "corroboration rules are not assessed: nothing off-site could be reached")
