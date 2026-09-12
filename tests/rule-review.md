@@ -23,7 +23,44 @@ Cross-cutting, checked per skill once its rules are complete:
 
 | rule_id | skill | test failed | what I said | outcome |
 |---|---|---|---|---|
-| | | | | tightened / cut / accepted |
+| ACC-001 | access | 4 False positives | robots.py records every agent `disallowed` when robots.txt is 5xx/429/unreachable, so a policy rule reading only `ai_agents` would report an outage as a crawler policy | tightened: requires `parse_reason == "ok"`; outage case moved to ACC-002 |
+| ACC-001 | access | 4 False positives | a publisher naming PerplexityBot in its own group has made a licensing decision; calling it a defect is FP-EXC on every publisher that opts out | tightened: named-group exclusions never fire, reported in `checks_passed` instead |
+| ACC-001 | access | 3 Minimum evidence | first draft sent `absent_4xx` / `not_plausibly_robots` to `not_assessed`, but RFC 9309 settles those as "no restrictions" | tightened: those emit `checks_passed` |
+| ACC-001 | access | cross-cutting | first draft lowered confidence and narrowed breadth for re-allowed paths, penalising one fact twice | tightened: breadth only |
+| ACC-006 | access | 4 False positives | edges that refuse requests *claiming* Googlebot/GPTBot from unpublished addresses admit the real crawler; the probe cannot present a network origin | tightened: `risk`, confidence low always, Googlebot excluded, 429/5xx excluded, remediation starts at the server logs |
+| ACC-006 | access | 4 False positives | all identities refused (gadgets360 specimen) says nothing about real crawlers | tightened: `not_assessed` |
+| ACC-003 | access | 4 False positives | `noindex` on archive/facet listings is deliberate consolidation; a single `noindex` article is editorial | tightened: `category` not primary; per-type 2-page and 50% floor; canonical-elsewhere pages excluded |
+| ACC-004 | access | 4 False positives | a paywalled publisher may permit indexing but not reproduction; the markup cannot tell that from a template error | tightened: confidence capped at medium; never on a page ACC-003 already covers |
+| ACC-005 | access | 4 False positives | first idea (any 3 pages sharing a non-self canonical) fires on legitimate product-variant consolidation | tightened: only canonicals naming the site root, same registrable domain, root aliases excluded |
+| ACC-007 | access | 4 False positives | 401/403/429 are refusals to this client, not dead URLs | tightened: excluded; 5xx lowers confidence |
+| ACC-002 | access | 1 Mechanism | fact check: the drafted mechanism said a 5xx robots.txt closes the site outright; Google pauses 12h then uses its last good copy, and RFC 9309 never names 429 | tightened: mechanism rewritten to the documented behaviour; stays `risk`/low |
+| (cut) redirect chains | access | 1 Mechanism | no documented hop limit for any AI crawler; Googlebot follows up to ten. Would be "best practice" | cut |
+| (cut) hreflang reciprocity | access | 1 Mechanism | evidence holds locale codes only, not target URLs, so reciprocity cannot be checked; locale selection has no documented AI-retrieval effect | cut |
+| (cut) canonical host/scheme mismatch | access | 4 False positives | www-vs-apex canonical is harmless when the other host redirects here, which is unobservable; a `risk` at low confidence would carry no information | cut |
+| (cut) UA text-length drop | access | 2 Threshold | same-status, shorter body for a bot has no threshold separating dynamic content from cloaking, and serving bots a prerendered page is the opposite defect | cut |
+| ACC-009 | access | allow-list | needed `sitemaps[].status`, `sitemaps[].parse_ok`, `sitemaps[].url`, outside the allow-list | allow-list amended in `contracts-v3` (D17); written with only robots-declared URLs counted, null statuses and client refusals excluded |
+| ACC-008 | access | 3 Minimum evidence | a named retrieval-crawler exclusion was filed under `checks_passed`, which reads as a miss to anyone who knows the site blocks that assistant | added as `proactive`; honest impact inputs, severity capped at medium by `contracts-v3` (D17) |
+| (budget) | access | cross-cutting | 9 rules, one over the 5-8 target. ACC-008 is the policy half of ACC-001 and ACC-009 was a DECISIONS-assigned mechanism blocked only by the allow-list; nothing was written to reach a number | accepted over target, under the 12 ceiling |
+| (cut) `llms.txt` absent | access | scope | never a defect (DECISIONS exclusions); a proactive item, which the orchestrator's proactive step owns | moved to orchestrator step 2 |
+
+Fact check against operator documentation, 2026-09-13:
+
+| claim | source | result |
+|---|---|---|
+| OAI-SearchBot = ChatGPT search, GPTBot = training, settings independent, IP ranges published | OpenAI crawler docs | confirmed |
+| PerplexityBot = search index, not training; IP ranges published | Perplexity crawler docs | confirmed |
+| ClaudeBot = training; Claude-SearchBot is Anthropic's search crawler | Anthropic help centre | confirmed; Claude-SearchBot is not in the tracked seven, recorded as a limit in the definitions |
+| Google-Extended does not govern Search AI features | Google "AI features and your website" | confirmed |
+| nosnippet / max-snippet:0 govern AI Overviews and AI Mode input | Google robots meta docs | confirmed, stronger than drafted; ACC-004 mechanism now quotes it |
+| `none` = noindex, nofollow; X-Robots-Tag may be scoped to a user agent | Google robots meta docs | confirmed |
+| robots.txt 5xx means "crawl nothing" | RFC 9309 2.3.1.4; Google robots.txt spec | RFC confirmed; Google pauses 12h then uses last good copy up to 30 days. ACC-002 mechanism corrected, it overstated the effect |
+| robots.txt 429 means "crawl nothing" | RFC 9309; Google robots.txt spec | RFC is silent; Google excepts 429 from the 4xx "no robots.txt" rule and groups it with 5xx. ACC-002 now says exactly that |
+| Google documents verifying real Googlebot | Google "Verifying Googlebot" | confirmed |
+
+Author static review only. The user reviewed the open decisions on
+2026-09-13 (named opt-outs, the sitemap allow-list, Claude-SearchBot) and
+approved the `contracts-v3` amendments; no real-site specimens were available,
+so true-positive evidence for each rule comes from the step 3 fixtures.
 
 ## Accepted without change
 

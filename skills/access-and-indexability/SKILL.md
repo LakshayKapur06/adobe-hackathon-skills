@@ -2,10 +2,10 @@
 name: access-and-indexability
 description: >-
   Diagnoses whether a machine can legally and technically reach a site's content
-  at a stable address: AI-crawler policy in robots.txt, user-agent-conditional
-  blocking, status and redirect chains, host and URL canonical fragmentation,
-  sitemap health, meta robots and X-Robots-Tag directives including nosnippet,
-  and locale fragmentation via hreflang. Use as part of a website AI-readiness
+  at a stable address: AI-crawler policy in robots.txt, a robots.txt answering
+  with errors, user-agent-conditional refusal, noindex and nosnippet directives
+  in meta robots and X-Robots-Tag, canonicals collapsing pages into the home
+  page, and advertised URLs returning errors. Use as part of a website AI-readiness
   audit when content that humans can see may be unreachable or unindexable by
   retrieval systems. Reads a shared evidence bundle; never fetches anything.
 license: Apache-2.0
@@ -33,10 +33,10 @@ quality is `answerability`; machine-readability of the response body is
 `evidence/evidence.json`, produced by `site-evidence-collector`. This skill
 reads nothing else and never touches the network.
 
-Principally: `robots`, `sitemaps`, `crawl`, `pages[].status`,
-`pages[].redirect_chain`, `pages[].headers.x_robots_tag`,
+Principally: `robots`, `pages[].status`, `pages[].headers.x_robots_tag`,
 `pages[].meta_robots`, `pages[].canonical`, `pages[].canonical_self`,
-`pages[].hreflang`, `site.resolved_origin`, `ua_probe`.
+`pages[].page_type`, `site.resolved_origin`, `site.registrable_domain`,
+`ua_probe`.
 
 ## Procedure
 
