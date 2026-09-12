@@ -63,7 +63,7 @@ then deciding it was what we expected all along.
 | P1 | indianexpress: `parse_ok: true`, a real `*` group, and `ClaudeBot`/`PerplexityBot` `disallowed` by name | We are misreading a normal robots.txt, or the named-group logic does not beat `*` |
 | P2 | indianexpress: article pages classify as `article`, not `other` | `page_type` is undertrained on the commonest page shape on the web |
 | P3 | indianexpress: `delta_ratio` low on articles (server-rendered text) | Either extraction is dropping raw body text, or ads/embeds inflate the rendered side |
-| P4 | indianexpress: at least one page has heading `id=` attributes, and `raw.anchors` is non-empty there (29 were seen on the home page during selection) | The anchors extractor has never been proven to fire at all (see check 6) |
+| P4 | **Settled, artifact-to-artifact.** The home page yields 29 anchors: 9 heading `id=` attributes plus their containers' ids, paired deliberately (`extract.py:118-127`). The extractor fires. One note for rule authoring: a page reusing an id produces duplicate entries, so a rule counting deep-link targets must count *distinct* ids, never `len(anchors)` | — |
 | P5 | **Settled before the run, artifact-to-artifact.** Across ten real pages the count of `<script type="application/ld+json">` blocks in the raw bytes matched `len(jsonld_scripts)` exactly, including a 4-block article and a 5-block home page. The Day-2 "reads only the first block" worry is dead | — |
 | P6 | iflexbtw: `parse_ok: true`; Shopify's default robots.txt, server-rendered product text, low `delta_ratio` | Shopify's default template is not what we think it is |
 | P7 | POCO **with** render: `soft_404.detected: true`, `baseline_text_hash` set, `delta_ratio` very high (raw text near zero) | The two-attempt render fix does not survive a hydration-only page — the single most important open validation in the build (D13) |
@@ -105,9 +105,9 @@ four, GSMArena four, indianexpress two. A `disallowed` verdict is **not** a FAIL
 | 4 | `robots.ai_agents` vs the literal robots.txt, all 7 agents | PASS / FAIL | |
 | 4b | `parse_ok` / `parse_reason` — values: ___ / ___ ; do they match what was served? | PASS / FAIL | |
 | 5 | Sampling spread across strata | PASS / FAIL | |
-| 6 | **Positive** anchors case: find a page with real heading `id=` attributes; does `raw.anchors` pick them up? | PASS / FAIL | |
+| 6 | **Positive** anchors case | PASS | closed artifact-to-artifact: home page carries 29 anchors, 9 from heading `id=` attributes and the rest from their containers, which `extract.py:118-127` pairs deliberately. The extractor fires |
 | 7 | `jsonld[].values` vs the actual `<script type="application/ld+json">` | PASS / FAIL | |
-| 7a | **Count** `ld+json` blocks in view-source on one article page: ___ in source vs ___ in `jsonld[]` | PASS / FAIL | |
+| 7a | `ld+json` blocks in source vs in `jsonld[]` | PASS | closed across ten real pages, exact match including a 4-block and a 5-block page |
 | 8 | Runtime under 5 minutes | PASS / FAIL | |
 
 Wrong `page_type` classifications (url -> got -> expected):
