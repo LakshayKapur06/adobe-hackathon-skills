@@ -78,6 +78,8 @@ directions, which is what makes fabricated evidence impossible.
 - `pages[].provenance.method`
 - `robots.parse_ok`
 - `robots.parse_reason`
+- `robots.url`
+- `run_context.started_at`
 - `discovery`
 - `discovery.soft_404`
 - `discovery.soft_404.detected`

@@ -483,3 +483,20 @@ generally ignores robots.txt, so a verdict for them would describe nothing.
 `sitemaps[].parse_ok`.** The schema already held these fields; only the
 allow-list lacked them, so "a sitemap robots.txt declares cannot be read"
 (ACC-009) was unwritable. DECISIONS assigns sitemap health to this skill.
+
+### D18 — `contracts-v4`: robots.txt findings must be citable when no page exists
+
+Found by implementing the access rules, not by reading them. Every finding needs
+at least one `evidence_ref`, and each one needs a URL and a `retrieved_at`
+timestamp. The rules that observe robots.txt or a sitemap had neither in their
+allow-list: `robots.url` was not listed, and the only timestamp available was
+`pages[].fetched_at`. ACC-002 fires exactly when robots.txt answers with an
+error, and in that case the collector fetches no page at all, so the finding
+the site most needs would have been impossible to emit validly.
+
+`access-and-indexability` may now read `robots.url` and `run_context.started_at`.
+A robots.txt or sitemap observation is cited as retrieved at the start of the
+run, which is accurate to within the robots stage: robots.txt is the collector's
+first request and the sitemaps follow it inside the same 15-second budget. The
+schema is unchanged; only the allow-list grew, and the citation rule is written
+into the skill's `references/rules.md` so a reader does not have to infer it.
