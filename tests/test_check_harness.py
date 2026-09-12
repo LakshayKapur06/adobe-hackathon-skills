@@ -14,6 +14,7 @@ import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
+sys.path.insert(0, str(ROOT / "skills" / "audit-orchestrator" / "scripts"))
 
 import check as gate  # noqa: E402
 from jsonschema_lite import UnsupportedKeyword, Validator, resolve_field_path  # noqa: E402

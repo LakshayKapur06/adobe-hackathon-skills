@@ -36,10 +36,11 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 
-from jsonschema_lite import Validator, resolve_field_path  # noqa: E402
-
+# The orchestrator owns schema validation at runtime, so it owns the validator;
+# the build gate reuses the same module rather than keeping a second copy.
 sys.path.insert(0, os.path.join(os.path.dirname(HERE), "skills", "audit-orchestrator",
                                "scripts"))
+from jsonschema_lite import Validator, resolve_field_path  # noqa: E402
 import severity as sev_mod  # noqa: E402
 
 SKILLS_DIR = os.path.join(ROOT, "skills")
