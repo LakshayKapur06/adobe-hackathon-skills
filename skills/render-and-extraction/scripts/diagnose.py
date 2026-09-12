@@ -43,10 +43,17 @@ def comparable(page):
     return is_2xx(page["status"]) and is_html(page) and page["rendered"]["available"]
 
 
+def server_text(page):
+    """Visible plus hidden server text: what a fetcher that ignores CSS extracts."""
+    return page["raw"]["text_len"] + page["raw"]["hidden_text_len"]
+
+
 def js_dependent(page):
     rendered = page["rendered"]
+    rendered_len = rendered["text_len"] or 0
     return (rendered["delta_ratio"] is not None and rendered["delta_ratio"] >= JS_DELTA
-            and (rendered["text_len"] or 0) - page["raw"]["text_len"] >= JS_MIN_GAIN)
+            and rendered_len - page["raw"]["text_len"] >= JS_MIN_GAIN
+            and server_text(page) <= (1 - JS_DELTA) * rendered_len)
 
 
 def ref(page, observation):
@@ -140,6 +147,7 @@ def rnd_001(evidence, workdir, out):
             refs=[ref(p, "server text %d chars, rendered %d chars, delta_ratio %.3f"
                       % (p["raw"]["text_len"], p["rendered"]["text_len"], p["rendered"]["delta_ratio"])) for p in hit],
             controls=["only 2xx HTML pages with a rendered DOM compared",
+                      "server text hidden with CSS counts as present in the server response",
                       "delta_ratio >= 0.8 and >= 200 characters gained, above the measured hydrated-widget band",
                       "pages outside the render budget excluded from numerator and denominator",
                       "rendered duplicates collapsed by the collector"],
@@ -163,7 +171,7 @@ def rnd_002(evidence, workdir, out):
                                     "door is unknown",
                                     "enable_hint": "the home page must answer this client with 2xx"})
         return
-    thin = [p for p in html if p["raw"]["text_len"] < EMPTY_TEXT]
+    thin = [p for p in html if server_text(p) < EMPTY_TEXT]
     if len(thin) < len(html):
         out["passed"].append({"rule_id": "RND-002", "summary":
                               "%d of %s carry at least %d characters of text in the server response"

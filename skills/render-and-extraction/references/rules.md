@@ -88,9 +88,21 @@ resources are never rendered by the collector, and a refused page has a
 deliberately empty body, so neither can show a render gap.
 
 **JavaScript-dependent.** A comparable page whose `rendered.delta_ratio` is at
-least 0.8 and whose rendered text is at least 200 characters longer than its
-server text (`rendered.text_len - raw.text_len >= 200`). `delta_ratio` is the
-share of the rendered text that is missing from the server response.
+least 0.8, whose rendered text is at least 200 characters longer than its
+server text (`rendered.text_len - raw.text_len >= 200`), and whose server text
+counting hidden text is still no more than 20% of the rendered text
+(`raw.text_len + raw.hidden_text_len <= 0.2 * rendered.text_len`).
+`delta_ratio` is the share of the rendered text that is missing from the
+server response's visible text.
+
+Why hidden text is counted in that last condition: a page can ship its whole
+text in the server response inside a `display:none` container and reveal it
+with script. Its visible server text is near zero and its delta is high, yet a
+fetcher that ignores CSS extracts all of it, so "absent from the server
+response" would be false. The 20% is the same boundary as the 0.8 ratio,
+applied to all server text rather than only the visible part. G2 found the
+pattern in miniature (a storefront's reviews in a hidden container) and measured
+hidden text at 0 to 376 characters on real pages.
 
 Why 0.8, from the pages measured during the G2 evidence check: server-rendered
 templates on a news publisher and on python.org sit at 0.000 to 0.015; Shopify
@@ -133,9 +145,9 @@ in `scripts/diagnose.py`, one function per rule, in the order written here.
 - **Signal:** comparable pages that are JavaScript-dependent, either making up at
   least half of all comparable pages, or concentrated in a primary page type.
 - **Evidence read:** `pages[].url`, `pages[].status`, `pages[].content_type`,
-  `pages[].page_type`, `pages[].raw.text_len`, `pages[].rendered.available`,
-  `pages[].rendered.text_len`, `pages[].rendered.delta_ratio`,
-  `run_context.capabilities.js_render`.
+  `pages[].page_type`, `pages[].raw.text_len`, `pages[].raw.hidden_text_len`,
+  `pages[].rendered.available`, `pages[].rendered.text_len`,
+  `pages[].rendered.delta_ratio`, `run_context.capabilities.js_render`.
 - **Threshold:** site-wide when JavaScript-dependent pages are at least 50% of
   comparable pages and number at least 2; otherwise per primary page type, when
   at least 2 comparable pages of the type are JavaScript-dependent and they are
@@ -152,6 +164,9 @@ in `scripts/diagnose.py`, one function per rule, in the order written here.
 - **False-positive controls:** only comparable pages count, so a refused page or
   a non-HTML resource can never read as JavaScript-only; the 0.8 ratio and the
   200-character floor together exclude hydrated widgets and injected notices;
+  text present in the server response but hidden with CSS counts as present, so
+  a page that reveals server-sent text with script is never called
+  JavaScript-dependent;
   pages the render budget did not reach are left out of both numerator and
   denominator and the finding states how many were compared; a page whose
   rendered text merely duplicates another page's never reaches `pages[]`,
@@ -198,10 +213,11 @@ in `scripts/diagnose.py`, one function per rule, in the order written here.
   empty, and that alone is what a non-rendering fetcher receives.
 - **Signal:** rendering produced no comparable page, the home page answered 2xx,
   and every 2xx HTML page in `pages[]` has fewer than 200 characters of server
-  text.
+  text, visible and hidden together (`raw.text_len + raw.hidden_text_len`).
 - **Evidence read:** `pages[].url`, `pages[].status`, `pages[].content_type`,
-  `pages[].page_type`, `pages[].raw.text_len`, `pages[].raw.text_hash`,
-  `pages[].rendered.available`, `run_context.capabilities.js_render`,
+  `pages[].page_type`, `pages[].raw.text_len`, `pages[].raw.hidden_text_len`,
+  `pages[].raw.text_hash`, `pages[].rendered.available`,
+  `run_context.capabilities.js_render`,
   `discovery.soft_404.detected`, `discovery.soft_404.baseline_text_hash`,
   `discovery.collapsed_duplicate_text`.
 - **Threshold:** every 2xx HTML page under 200 characters. Justification: the

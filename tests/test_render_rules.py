@@ -50,12 +50,13 @@ class Workdir:
 
 def page(path, page_type="article", raw_len=3000, rendered_len=3050, status=200, content_type="text/html",
          rendered=True, confidence=0.9, raw_text_path=None, rendered_text_path=None, jsonld_fields=(),
-         raw_hash="sha256:" + "1" * 64):
+         raw_hash="sha256:" + "1" * 64, hidden_len=0):
     p = copy.deepcopy(BASE["pages"][1])
     url = ORIGIN + path
     p.update({"url": url, "final_url": url, "status": status, "page_type": page_type,
               "page_type_confidence": confidence, "content_type": content_type})
     p["raw"]["text_len"] = raw_len
+    p["raw"]["hidden_text_len"] = hidden_len
     p["raw"]["text_hash"] = raw_hash
     if raw_text_path:
         p["raw"]["text_path"] = raw_text_path
@@ -131,6 +132,14 @@ class TestRND001(RuleCase):
         self.assertEqual((fired["impact"]["breadth"], fired["scope"]["page_types"], fired["confidence"]),
                          ("section", ["product"], "medium"))
 
+    def test_text_hidden_in_the_server_response_is_not_javascript_only(self):
+        # Server sends the whole text in a display:none container and script
+        # reveals it: visible server text is zero, but a fetcher that ignores CSS
+        # reads everything, so "absent from the server response" would be false.
+        pages = [page("/", "home", 0, 3000, hidden_len=2900)] + [
+            page("/p%d" % i, "other", 0, 1500, hidden_len=1450) for i in range(4)]
+        self.assertOutcome(bundle(pages), "RND-001", "passed")
+
     def test_tiny_gain_is_not_substance(self):
         pages = [page("/", "home", 20, 150)] + [page("/p%d" % i, "other", 10, 180) for i in range(3)]
         self.assertOutcome(bundle(pages), "RND-001", "passed")
@@ -159,6 +168,10 @@ class TestRND002(RuleCase):
     def test_empty_but_not_a_shared_shell_is_medium(self):
         e = bundle([page("/", "home", 40, rendered=False)], js_render=False)
         self.assertEqual(self.assertOutcome(e, "RND-002", "fired")[0]["confidence"], "medium")
+
+    def test_hidden_server_text_is_not_an_empty_response(self):
+        e = bundle([page("/", "home", 0, rendered=False, hidden_len=2400)], js_render=False)
+        self.assertOutcome(e, "RND-002", "passed")
 
     def test_any_page_with_real_text_passes(self):
         e = bundle([page("/", "home", 0, rendered=False), page("/a", "article", 531, rendered=False)], js_render=False)
