@@ -342,6 +342,7 @@
       "GPTBot": "allowed",
       "Google-Extended": "allowed",
       "Googlebot": "allowed",
+      "Claude-SearchBot": "allowed",
       "OAI-SearchBot": "allowed",
       "PerplexityBot": "allowed"
     },

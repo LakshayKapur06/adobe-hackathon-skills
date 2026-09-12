@@ -31,6 +31,15 @@ PRIORITIES = ("P0", "P1", "P2", "P3")
 # Only a high-confidence finding can ever be critical.
 CONFIDENCE_CAP = {"high": "critical", "medium": "high", "low": "medium"}
 
+# The most severe rating a proactive finding may carry (contracts-v3). A
+# proactive finding describes a real, observed situation that is not a defect,
+# such as a crawler the owner excluded by name. Its impact inputs must stay
+# honest about what that situation costs, so the status caps the derived
+# severity instead of forcing the rule to understate its impact. `risk` is
+# deliberately not capped here: a risk finding claiming critical impact is an
+# authoring error, and status_violations still rejects it loudly.
+STATUS_CAP = {"proactive": "medium"}
+
 
 def severity(impact, confidence):
     """Derive severity from observed impact, capped by confidence.
@@ -135,10 +144,15 @@ def status_violations(sev, prio, status):
 def derive(finding):
     """Fill in the two derived fields on a finding, in place, and return it.
 
-    Raises ValueError if the diagnostic declared a combination the status
-    semantics forbid, so that an authoring error cannot reach a report.
+    A proactive finding's severity is capped at medium by STATUS_CAP. Raises
+    ValueError if the diagnostic declared a combination the status semantics
+    still forbid, such as a risk finding deriving to critical, so that an
+    authoring error cannot reach a report.
     """
     sev = severity(finding["impact"], finding["confidence"])
+    cap = STATUS_CAP.get(finding["status"])
+    if cap is not None and ORDER.index(sev) < ORDER.index(cap):
+        sev = cap
     prio = priority(sev, finding["suggested_action"]["effort"], finding["status"])
     problems = status_violations(sev, prio, finding["status"])
     if problems:

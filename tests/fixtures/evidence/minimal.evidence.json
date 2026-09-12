@@ -64,7 +64,8 @@
       "Google-Extended": "allowed",
       "OAI-SearchBot": "allowed",
       "CCBot": "allowed",
-      "Googlebot": "allowed"
+      "Googlebot": "allowed",
+      "Claude-SearchBot": "allowed"
     },
     "sitemaps": [
       "http://localhost:8000/sitemap.xml"

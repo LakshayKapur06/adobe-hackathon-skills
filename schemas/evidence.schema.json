@@ -123,7 +123,7 @@
         "ai_agents": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["GPTBot", "ClaudeBot", "PerplexityBot", "Google-Extended", "OAI-SearchBot", "CCBot", "Googlebot"],
+          "required": ["GPTBot", "ClaudeBot", "PerplexityBot", "Google-Extended", "OAI-SearchBot", "CCBot", "Googlebot", "Claude-SearchBot"],
           "properties": {
             "GPTBot": { "$ref": "#/$defs/agent_verdict" },
             "ClaudeBot": { "$ref": "#/$defs/agent_verdict" },
@@ -131,7 +131,8 @@
             "Google-Extended": { "$ref": "#/$defs/agent_verdict" },
             "OAI-SearchBot": { "$ref": "#/$defs/agent_verdict" },
             "CCBot": { "$ref": "#/$defs/agent_verdict" },
-            "Googlebot": { "$ref": "#/$defs/agent_verdict" }
+            "Googlebot": { "$ref": "#/$defs/agent_verdict" },
+            "Claude-SearchBot": { "$ref": "#/$defs/agent_verdict" }
           }
         },
         "sitemaps": { "type": "array", "items": { "type": "string" } }

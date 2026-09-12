@@ -249,6 +249,21 @@ class TestDerive(unittest.TestCase):
         self.assertEqual(filled + rejected, 324)
         self.assertGreater(rejected, 0, "the status invariants should reject something")
 
+    def test_proactive_is_capped_at_medium_not_rejected(self):
+        # contracts-v3: a proactive finding keeps honest impact inputs and the
+        # status caps what they derive to.
+        f = self.finding(True, "site", "primary", "high", "low", "proactive")
+        sev_mod.derive(f)
+        self.assertEqual(f["severity"], "medium")
+        self.assertEqual(f["suggested_action"]["priority"], "P2")
+        g = self.finding(False, "page", "secondary", "low", "high", "proactive")
+        sev_mod.derive(g)
+        self.assertEqual(g["severity"], "low")
+
+    def test_risk_deriving_to_critical_is_still_rejected(self):
+        with self.assertRaises(ValueError):
+            sev_mod.derive(self.finding(True, "site", "primary", "high", "low", "risk"))
+
     def test_sort_key_orders_worst_and_cheapest_first(self):
         a = self.finding(True, "site", "primary", "high", "low", "found")
         b = self.finding(False, "page", "secondary", "low", "high", "found")

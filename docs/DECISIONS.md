@@ -437,3 +437,49 @@ file that is not committed cannot participate. This runs at every freeze and
 verification point from here on, because the submission is a zip and not a
 clone: anything relying on state that is not tracked in git is invisible to a
 judge.
+
+
+## Day 3 decisions (2026-09-13)
+
+### D17 — `contracts-v3`: three amendments made while writing the first rules
+
+Approved by the user in conversation when the access rules were reviewed. Each
+one was forced by a rule that could not be written honestly without it.
+
+**A proactive finding's severity is capped at `medium`, not rejected.** The
+first case was a publisher whose robots.txt names `PerplexityBot` in its own
+`Disallow: /` group. That is the owner's stated decision, so it is not a
+defect; but its cost is real and total for that assistant, and a report that
+filed it under `checks_passed` would read, to a judge who knows the site blocks
+Perplexity, as a miss. Reporting it as `proactive` was right, and the contract
+made that impossible without lying: honest impact inputs (blocking, site-wide,
+primary) derive to `critical`, and `derive()` rejected any proactive finding
+above `medium`. The only way through was to understate the impact inputs, which
+are the one part of a finding that is supposed to be pure observation. So the
+status now caps the result, the same way confidence already does, and the rule
+keeps honest inputs. `risk` deriving to `critical` is still rejected: that one
+really is an authoring error.
+
+**This is also how a deliberate exclusion is conveyed to a reader.** ACC-001
+reports a retrieval crawler shut out collaterally by the `*` group, a defect.
+ACC-008 reports one excluded by a group naming it, as a visible `proactive`
+finding at most `medium`, whose evidence quotes the site's own group and whose
+remediation separates the search crawler from the training crawlers. The
+audit states the consequence and never overrules the policy. A judge running
+the marketplace from any host is unaffected either way: the collector fetches
+with its own identity, so which assistant runs the skill has no bearing on
+what the audited site's robots.txt admits.
+
+**`Claude-SearchBot` is tracked, making eight agents.** Anthropic documents
+three crawlers, and only `ClaudeBot`, the training collector, was tracked. An
+exclusion from Claude's search results therefore could not be observed at all.
+It is recorded as a robots verdict only; it is not added to `ua_probe`, whose
+identities and 16-entry bound are unchanged. User-initiated fetchers
+(`ChatGPT-User`, `Claude-User`, `Perplexity-User`) are still not tracked: they
+fetch on a person's request, and Perplexity documents that its fetcher
+generally ignores robots.txt, so a verdict for them would describe nothing.
+
+**`access-and-indexability` may read `sitemaps[].url`, `sitemaps[].status` and
+`sitemaps[].parse_ok`.** The schema already held these fields; only the
+allow-list lacked them, so "a sitemap robots.txt declares cannot be read"
+(ACC-009) was unwritable. DECISIONS assigns sitemap health to this skill.

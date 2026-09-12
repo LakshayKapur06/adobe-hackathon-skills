@@ -38,6 +38,9 @@ directions, which is what makes fabricated evidence impossible.
 - `robots.status`
 - `robots.sitemaps`
 - `sitemaps`
+- `sitemaps[].url`
+- `sitemaps[].status`
+- `sitemaps[].parse_ok`
 - `crawl`
 - `crawl.blocked_by_robots`
 - `crawl.discovered`

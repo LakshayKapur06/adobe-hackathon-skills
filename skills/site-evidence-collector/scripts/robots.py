@@ -19,8 +19,11 @@ import urllib.parse
 DIRECTIVES = ("user-agent", "allow", "disallow", "crawl-delay", "sitemap")
 
 # The crawlers the evidence contract tracks, in contract order.
+# Claude-SearchBot was added in contracts-v3: it is Anthropic's search crawler,
+# separate from ClaudeBot's training collection, and without it an exclusion
+# from Claude's search results could not be observed at all.
 AI_AGENTS = ("GPTBot", "ClaudeBot", "PerplexityBot", "Google-Extended",
-             "OAI-SearchBot", "CCBot", "Googlebot")
+             "OAI-SearchBot", "CCBot", "Googlebot", "Claude-SearchBot")
 
 # The closed vocabulary of robots.parse_reason. The first two outcomes that are
 # not "ok" mean no restrictions apply; the last three mean nothing may be

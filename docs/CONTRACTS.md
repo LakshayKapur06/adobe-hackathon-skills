@@ -40,7 +40,7 @@ A diagnostic still fetches nothing.
     "groups": [ { "user_agent": "*", "allow": [], "disallow": ["/cart"], "crawl_delay": null } ],
     "ai_agents": { "GPTBot": "disallowed", "ClaudeBot": "unspecified", "PerplexityBot": "unspecified",
                    "Google-Extended": "unspecified", "OAI-SearchBot": "unspecified", "CCBot": "unspecified",
-                   "Googlebot": "allowed" },
+                   "Googlebot": "allowed", "Claude-SearchBot": "unspecified" },
     "sitemaps": ["https://example.com/sitemap.xml"]
   },
   "sitemaps": [ { "url": "...", "status": 200, "url_count": 412, "lastmod_present_ratio": 0.12, "parse_ok": true } ],
@@ -345,8 +345,13 @@ change to either without the other is a build failure.
 
 - `found` — an observed defect. Requires direct evidence.
 - `risk` — evidence is suggestive but incomplete. Never `critical`.
-- `proactive` — no defect observed; a strengthening recommendation. Never above
-  `medium`, always `P2` or `P3`.
+- `proactive` — no defect observed; a strengthening recommendation, or the
+  consequence of a deliberate choice the owner made. Never above `medium`,
+  always `P2` or `P3`. Since `contracts-v3` the orchestrator enforces the
+  ceiling by capping derived severity at `medium`, not by rejecting the finding:
+  a proactive rule declares honest impact inputs, and the status bounds what
+  they derive to. `risk` deriving to `critical` is still rejected as an
+  authoring error.
 
 ### Mechanism-to-symptom mapping (many-to-many, fixed)
 
@@ -394,6 +399,10 @@ def severity(impact, confidence):
 ```
 
 Only a high-confidence finding can ever be `critical`.
+
+After `severity()`, `derive()` applies one status cap: a `proactive` finding is
+lowered to `medium` if its impact derives higher (`contracts-v3`). The function
+above is unchanged; the cap is applied to its result.
 
 The ladder is monotonic in all three impact inputs, and must stay that way:
 widening `breadth` from `page` to `section` to `site` never lowers severity,

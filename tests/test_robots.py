@@ -33,6 +33,16 @@ class TestGroupSelection(unittest.TestCase):
         self.assertTrue(r.allowed("/page", ("GPTBot",)))
         self.assertFalse(r.allowed("/page", ("ClaudeBot",)))
 
+    def test_claude_searchbot_and_claudebot_are_separate_products(self):
+        # contracts-v3: Anthropic's training and search crawlers are governed
+        # independently, so a group for one must never decide the other.
+        r = from_text("User-agent: ClaudeBot\nDisallow: /\n")
+        self.assertEqual(r.verdict("ClaudeBot"), "disallowed")
+        self.assertEqual(r.verdict("Claude-SearchBot"), "unspecified")
+        r = from_text("User-agent: *\nDisallow: /\n\nUser-agent: Claude-SearchBot\nAllow: /\n")
+        self.assertEqual(r.verdict("Claude-SearchBot"), "allowed")
+        self.assertEqual(r.verdict("ClaudeBot"), "disallowed")
+
     def test_star_covers_every_unnamed_crawler(self):
         r = from_text("User-agent: *\nDisallow: /private\n")
         for agent in robots.AI_AGENTS:
