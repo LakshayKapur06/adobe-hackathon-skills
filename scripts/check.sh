@@ -1,5 +1,5 @@
 #!/bin/sh
-# The build gate. One command, no dependencies beyond Python 3.9+.
+# The build gate. One command, no dependencies beyond Python 3.10+.
 # Usage: scripts/check.sh [--only NAME]... [--list]
 set -eu
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)

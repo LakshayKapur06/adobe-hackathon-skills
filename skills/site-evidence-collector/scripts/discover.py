@@ -1,0 +1,213 @@
+"""Discovery, page-type classification and stratified sampling. Standard library only.
+
+Sampling is stratified by page type rather than breadth-first, because a
+breadth-first crawl of a large catalogue spends the whole budget inside one
+template and then reports a site-wide conclusion from it. Each page type gets an
+equal share of the page budget in turn, so no single template can consume it.
+"""
+
+import gzip
+import re
+import urllib.parse
+import xml.etree.ElementTree as ET
+
+import urls
+
+PAGE_TYPES = ("home", "product", "category", "article", "about", "contact", "policy", "doc", "other")
+
+# Checked in this order; the first type with a matching path segment wins.
+# Policy comes first because storefronts nest policies under product-like
+# paths (/policies/refund-policy); product comes before category because a
+# product URL usually sits inside a collection (/collections/x/products/y).
+_SEGMENTS = (
+    ("policy", {"privacy", "privacy-policy", "terms", "terms-of-service", "terms-and-conditions",
+                "tos", "legal", "cookie-policy", "cookies", "cookie", "policies", "policy",
+                "returns", "return-policy", "refund", "refund-policy", "refunds", "shipping",
+                "shipping-policy", "disclaimer", "imprint", "impressum"}),
+    ("product", {"product", "products", "p", "item", "items", "dp", "sku"}),
+    ("category", {"collections", "collection", "category", "categories", "c", "catalog",
+                  "catalogue", "department", "departments", "browse", "shop"}),
+    ("article", {"blog", "blogs", "news", "article", "articles", "post", "posts", "stories",
+                 "story", "insights", "press", "press-releases", "magazine", "journal"}),
+    ("doc", {"docs", "doc", "documentation", "help", "guide", "guides", "api", "reference",
+             "manual", "faq", "faqs", "kb", "knowledge-base", "support", "learn", "tutorial",
+             "tutorials"}),
+    ("about", {"about", "about-us", "company", "who-we-are", "our-story", "team", "our-team",
+               "mission"}),
+    ("contact", {"contact", "contact-us", "contactus", "locations", "store-locator", "find-us"}),
+)
+# Segments whose leading word is enough: /about-fixture-instruments is an about page.
+_PREFIX_WORDS = {"about": "about", "contact": "contact", "privacy": "policy", "terms": "policy",
+                 "blog": "article", "faq": "doc", "help": "doc", "docs": "doc",
+                 "shipping": "policy", "returns": "policy", "refund": "policy"}
+_HOME_PATHS = {"/", "/index.html", "/index.htm", "/index.php", "/home", "/default.aspx"}
+_LOCALE = re.compile(r"^[a-z]{2}(?:[-_][a-z]{2})?$")
+_DATED = re.compile(r"/(?:19|20)\d{2}/(?:0?[1-9]|1[0-2])(?:/|$)")
+_EXTENSION = re.compile(r"\.(?:html?|php|aspx?|jsp)$")
+
+# schema.org types that settle the question when the URL does not.
+_SCHEMA_TYPES = {
+    "Product": "product", "ProductGroup": "product", "IndividualProduct": "product",
+    "Article": "article", "NewsArticle": "article", "BlogPosting": "article", "Report": "article",
+    "CollectionPage": "category", "AboutPage": "about", "ContactPage": "contact",
+    "FAQPage": "doc", "HowTo": "doc", "TechArticle": "doc",
+}
+
+
+def classify_url(url):
+    """Page type and confidence from the URL alone."""
+    path = urllib.parse.urlsplit(url).path.lower() or "/"
+    segments = [_EXTENSION.sub("", s) for s in path.split("/") if s]
+    if path in _HOME_PATHS or (len(segments) == 1 and _LOCALE.match(segments[0])):
+        return "home", 0.95
+    for page_type, names in _SEGMENTS:
+        if any(s in names for s in segments):
+            return page_type, 0.6
+    for s in segments:
+        word = s.split("-", 1)[0]
+        if word in _PREFIX_WORDS:
+            return _PREFIX_WORDS[word], 0.6
+    if _DATED.search(path):
+        return "article", 0.6
+    return "other", 0.3
+
+
+def refine(url_type, url_confidence, jsonld_types):
+    """Combine the URL's verdict with the page's own structured data.
+
+    The home page stays home whatever it declares. Otherwise the first
+    declared type that maps to a page type wins: agreement with the URL raises
+    confidence, and a disagreement is resolved in favour of the markup at
+    reduced confidence, because the page's own declaration is more direct
+    evidence than its address.
+    """
+    if url_type == "home":
+        return url_type, url_confidence
+    for declared in jsonld_types:
+        mapped = _SCHEMA_TYPES.get(declared)
+        if mapped is None:
+            continue
+        if mapped == url_type:
+            return mapped, 0.9
+        return mapped, 0.8 if url_type == "other" else 0.7
+    return url_type, url_confidence
+
+
+def parse_sitemap(body, content_type, url):
+    """Parse a sitemap or sitemap index.
+
+    Returns ``(kind, locations, lastmod_ratio, parse_ok)`` where kind is
+    ``urlset``, ``index`` or None. A body that is not XML, such as the HTML
+    shell some sites serve at every path, is ``parse_ok = False``, not an empty
+    sitemap.
+    """
+    data = body
+    if url.lower().endswith(".gz") or (content_type or "").lower().startswith("application/x-gzip"):
+        try:
+            data = gzip.decompress(body)
+        except (OSError, EOFError):
+            return None, [], None, False
+    if len(data) > 50 * 1024 * 1024:
+        return None, [], None, False
+    try:
+        root = ET.fromstring(data)
+    except ET.ParseError:
+        return None, [], None, False
+    tag = root.tag.rsplit("}", 1)[-1].lower()
+    if tag not in ("urlset", "sitemapindex"):
+        return None, [], None, False
+    child = "url" if tag == "urlset" else "sitemap"
+    locations, with_lastmod, total = [], 0, 0
+    for node in root:
+        if node.tag.rsplit("}", 1)[-1].lower() != child:
+            continue
+        total += 1
+        loc = lastmod = None
+        for field in node:
+            name = field.tag.rsplit("}", 1)[-1].lower()
+            if name == "loc" and field.text:
+                loc = field.text.strip()
+            elif name == "lastmod" and field.text and field.text.strip():
+                lastmod = field.text.strip()
+        if loc:
+            locations.append(loc)
+        if lastmod:
+            with_lastmod += 1
+    ratio = round(with_lastmod / total, 3) if total else None
+    return ("urlset" if tag == "urlset" else "index"), locations, ratio, True
+
+
+class Frontier:
+    """Every in-scope URL known to the crawl, in discovery order.
+
+    Scope is the resolved origin's host and its www/apex twin. A twin URL is
+    rewritten onto the origin host, so the crawl never needs the twin host's
+    own robots.txt and never fetches the same page twice under two hosts.
+    """
+
+    def __init__(self, origin_netloc, cap=50000):
+        self.origin = origin_netloc
+        self.twin = urls.twin_netloc(origin_netloc)
+        self.cap = cap
+        self.order = []
+        self.kind = {}
+        self.sources = set()
+        self.overflow = 0
+
+    def add(self, url, source):
+        normal = urls.normalise(url)
+        if normal is None:
+            return None
+        where = urls.netloc(normal)
+        if self.twin and where == self.twin:
+            normal, where = urls.with_netloc(normal, self.origin), self.origin
+        if where != self.origin:
+            return None
+        if normal in self.kind:
+            return normal
+        if len(self.order) >= self.cap:
+            self.overflow += 1
+            return None
+        self.order.append(normal)
+        self.kind[normal] = classify_url(normal)[0]
+        self.sources.add(source)
+        return normal
+
+    def __len__(self):
+        return len(self.order)
+
+
+class Sampler:
+    """Equal allocation across page types, deterministic given the frontier.
+
+    Each pick goes to the page type sampled least so far; ties go to the type
+    with more unsampled URLs, then alphabetically. Within a type, URLs without a
+    query string come first (faceted and sorted variants are the least
+    representative pages on a site), then shallower paths, then shorter ones.
+    """
+
+    def __init__(self, frontier):
+        self.frontier = frontier
+        self.attempted = set()
+        self.picked = {}
+
+    def mark(self, url):
+        self.attempted.add(url)
+
+    def next(self):
+        candidates = {}
+        for url in self.frontier.order:
+            if url not in self.attempted:
+                candidates.setdefault(self.frontier.kind[url], []).append(url)
+        if not candidates:
+            return None
+        page_type = min(candidates, key=lambda t: (self.picked.get(t, 0), -len(candidates[t]), t))
+        url = min(candidates[page_type], key=_sample_key)
+        self.attempted.add(url)
+        self.picked[page_type] = self.picked.get(page_type, 0) + 1
+        return url
+
+
+def _sample_key(url):
+    parts = urllib.parse.urlsplit(url)
+    return (bool(parts.query), parts.path.count("/"), len(url), url)

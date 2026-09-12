@@ -22,9 +22,11 @@ import ast
 import json
 import os
 import re
+import http.server
 import subprocess
 import sys
 import tempfile
+import threading
 
 # Subprocesses never write bytecode into the tree. A stale __pycache__ entry
 # whose source was edited within the same filesystem timestamp tick and kept the
@@ -344,7 +346,9 @@ def check_references():
             continue
         for path in walk_files(folder, (".md",)):
             for token in backticked(read(path)):
-                token = token.strip()
+                # A command in backticks names its script first: that word is the path.
+                words = token.split()
+                token = words[0] if words else ""
                 if not token.startswith(prefixes):
                     continue
                 base = ROOT if token.startswith("docs/") else folder
@@ -603,8 +607,63 @@ def assemble_fixture_report(out_path=None):
     return read_json(handle)
 
 
+TIMING_RE = re.compile(r'"(ttfb_ms|fetch_ms|render_ms|elapsed_s)": [0-9.]+')
+LOCAL_ORIGIN_RE = re.compile(r"http://127\.0\.0\.1:\d+")
+
+
+def _normalised(text):
+    """Blank out what legitimately varies between runs: clock readings and the local port."""
+    text = TIMESTAMP_RE.sub("<timestamp>", text)
+    text = TIMING_RE.sub(r'"\1": "<ms>"', text)
+    return LOCAL_ORIGIN_RE.sub("<origin>", text)
+
+
+class _FixtureSite:
+    """tests/fixtures/site served on a local port, with its fixed localhost:8000 origin rewritten."""
+
+    def __enter__(self):
+        root = os.path.join(FIXTURES, "site")
+        site = self
+
+        class Handler(http.server.BaseHTTPRequestHandler):
+            def do_GET(self):
+                name = self.path.split("?", 1)[0].lstrip("/") or "index.html"
+                target = os.path.normpath(os.path.join(root, name))
+                if target.startswith(root) and os.path.isfile(target):
+                    with open(target, "rb") as handle:
+                        body = handle.read().replace(b"http://localhost:8000", site.base.encode())
+                    kind = {"txt": "text/plain", "xml": "application/xml"}.get(name.rsplit(".", 1)[-1], "text/html")
+                    self.send_response(200)
+                else:
+                    body, kind = b"<html><body>Not found</body></html>", "text/html"
+                    self.send_response(404)
+                self.send_header("Content-Type", kind)
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def log_message(self, *args):
+                pass
+
+        self.httpd = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        self.base = "http://127.0.0.1:%d" % self.httpd.server_address[1]
+        threading.Thread(target=self.httpd.serve_forever, daemon=True).start()
+        return self
+
+    def __exit__(self, *exc):
+        self.httpd.shutdown()
+        self.httpd.server_close()
+
+
 def check_determinism():
-    """The same fixture twice produces identical output except timestamps."""
+    """The same fixture twice gives identical output, apart from clock readings.
+
+    Two pipelines are checked: report assembly over the fixture bundle, and the
+    real collector over the fixture site served locally, with rendering and
+    egress off so that nothing outside this machine can vary the result.
+    Timestamps, millisecond timings and the local port are the only values
+    allowed to differ.
+    """
     problems = []
     outputs = []
     with tempfile.TemporaryDirectory() as tmp:
@@ -614,23 +673,49 @@ def check_determinism():
                 assemble_fixture_report(path)
             except RuntimeError as exc:
                 return [str(exc)]
-            outputs.append(read(path))
-    normalised = [TIMESTAMP_RE.sub("<timestamp>", text) for text in outputs]
-    if normalised[0] != normalised[1]:
+            outputs.append(_normalised(read(path)))
+    if outputs[0] != outputs[1]:
         problems.append(
-            "two runs over the same fixture produced different reports; "
-            "something in the pipeline depends on ordering, the clock or iteration order"
+            "two report assemblies over the same fixture differ; "
+            "something depends on ordering, the clock or iteration order"
+        )
+
+    collector = os.path.join(SKILLS_DIR, COLLECTOR, "scripts", "collect.py")
+    bundles = []
+    with _FixtureSite() as site, tempfile.TemporaryDirectory() as tmp:
+        for run_index in range(2):
+            workdir = os.path.join(tmp, "run-%d" % run_index)
+            run = subprocess.run(
+                [sys.executable, collector, "--url", site.base, "--workdir", workdir,
+                 "--no-render", "--no-egress"],
+                capture_output=True, text=True, env=CHILD_ENV, timeout=180,
+            )
+            if run.returncode != 0:
+                return problems + ["the collector failed on the fixture site: %s"
+                                   % (run.stdout + run.stderr).strip()[-1500:]]
+            bundles.append(_normalised(read(os.path.join(workdir, "evidence", "evidence.json"))))
+    if bundles[0] != bundles[1]:
+        problems.append(
+            "two collector runs over the fixture site produced different evidence "
+            "beyond clock readings; something depends on ordering or iteration order"
         )
     return problems
 
 
 def check_stdlib_only():
-    """The six diagnostics import nothing but the standard library."""
+    """Every skill imports only the standard library and its own modules.
+
+    Parsing and detection are stdlib-only so that the same site yields the same
+    evidence on every machine: a third-party parser is a different parser, and
+    a different parser is different evidence. A skill may import its own sibling
+    scripts, and nothing from another skill.
+    """
     problems = []
-    for sid in DIAGNOSTICS:
+    for sid in sorted(os.listdir(SKILLS_DIR)):
         folder = os.path.join(SKILLS_DIR, sid)
         if not os.path.isdir(folder):
             continue
+        own = {os.path.splitext(os.path.basename(p))[0] for p in walk_files(folder, (".py",))}
         for path in walk_files(folder, (".py",)):
             try:
                 tree = ast.parse(read(path), filename=path)
@@ -647,11 +732,10 @@ def check_stdlib_only():
                     modules = [node.module or ""]
                 for module in modules:
                     top = module.split(".")[0]
-                    if top and top not in sys.stdlib_module_names:
+                    if top and top not in sys.stdlib_module_names and top not in own:
                         problems.append(
-                            "%s imports %r, which is not in the standard library. "
-                            "Diagnostics are stdlib-only so that extraction and detection "
-                            "cannot vary between machines." % (rel(path), module)
+                            "%s imports %r, which is neither the standard library nor a "
+                            "module of this skill" % (rel(path), module)
                         )
     return problems
 
@@ -703,8 +787,9 @@ CHECKS = [
     ("finding-invariants", "rules the finding schema deliberately cannot express",
      check_finding_invariants),
     ("no-placeholders", "no unfinished-work markers on a graded surface", check_no_placeholders),
-    ("determinism", "same fixture twice, identical output except timestamps", check_determinism),
-    ("stdlib-only", "the six diagnostics import only the standard library", check_stdlib_only),
+    ("determinism", "same fixture twice, report and collector, identical but for clocks",
+     check_determinism),
+    ("stdlib-only", "every skill imports only the standard library", check_stdlib_only),
     ("isolation", "no cross-skill dependencies", check_isolation),
     ("unit", "unit tests, including the 324-case severity truth table", check_unit_tests),
 ]

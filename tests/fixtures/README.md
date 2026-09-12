@@ -24,10 +24,19 @@ returning 5xx — is a Day 5 deliverable per `docs/PLAN.md`, not optional polish
 
 ## `evidence/` and `findings/` — pipeline inputs
 
-`evidence/minimal.evidence.json` is the evidence bundle a collector run against
-`site/` produces, hand-written until the collector exists on Day 2. It is
-schema-valid and internally consistent with `site/`: the same two URLs, the same
-counts, the same claim strings.
+`evidence/minimal.evidence.json` is a hand-written bundle for `site/`, kept
+because report assembly needs fixed, human-checked input that does not move
+when the collector changes. It is schema-valid and internally consistent with
+`site/`: the same two URLs, the same counts, the same claim strings. The
+collector itself is tested against `site/` served locally, in
+`tests/test_collector.py`.
+
+`robots/` holds two robots.txt files modelled on real deployments — a storefront
+with a separately named ad-bot group and faceted crawl traps, and a media site
+with leading-wildcard, end-anchored and literal-bracket patterns and three
+sitemaps. `echo-site/shell.html` is served byte-identical at every path,
+`/robots.txt` included, the way a client-rendered site with no server-side
+routes behaves.
 
 `evidence/pages/*.txt` are the extracted-text sidecars that the bundle's
 `raw.text_path` and `rendered.text_path` fields point at, named by the sha256

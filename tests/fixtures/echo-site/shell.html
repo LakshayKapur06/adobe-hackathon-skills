@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Echo Store</title>
+  <!-- Served byte-identical at every path, robots.txt and sitemap.xml
+       included, like a client-rendered storefront whose server knows no routes.
+       The page text is assembled in the browser from location.pathname, so the
+       server response is the same everywhere and the rendered page is not. -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var path = window.location.pathname;
+      var app = document.getElementById("app");
+      var heading = document.createElement("h1");
+      heading.textContent = "Echo Store page " + path;
+      var body = document.createElement("p");
+      body.textContent = "Content assembled in the browser for " + path + ".";
+      app.appendChild(heading);
+      app.appendChild(body);
+    });
+  </script>
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/products/alpha">Alpha</a>
+    <a href="/products/beta">Beta</a>
+    <a href="/about">About</a>
+  </nav>
+  <div id="app"></div>
+  <noscript>This store needs JavaScript to show its products and prices.</noscript>
+</body>
+</html>
