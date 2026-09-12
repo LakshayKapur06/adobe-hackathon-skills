@@ -165,3 +165,186 @@ a rule inside an existing skill.
   covering the entire on-site half, and say so in the README. Pre-empts any
   strict reading of the self-contained clause and demonstrates the degradation
   story rather than claiming it.
+
+## Day 2 implementation decisions (2026-09-12)
+
+Everything above was decided before any code existed. The entries below were
+decided *while building the collector*, when the real world contradicted an
+assumption. Each was approved in conversation and landed in code, and each is
+recorded here so the repository explains itself without anyone reading the
+commit history. They continue the register's numbering and are citable as D12
+to D16.
+
+None of these changed a frozen contract. The contract amendments that ran
+alongside them are `contracts-v2`, recorded in `docs/CONTRACTS.md`.
+
+### D12 — RFC 9309 nuances, decided case by case
+
+`skills/site-evidence-collector/scripts/robots.py` implements the standard
+rather than an approximation of it, because every verdict it produces can
+become a critical finding and a wrong verdict is the one error that would make
+us fail the guardrail we audit for. Four cases needed a decision the spec does
+not make for us.
+
+**429 is crawl-nothing, not a 4xx.** RFC 9309 2.3.1.3 says an "unavailable"
+status means no restrictions apply, and 2.3.1.4 says "unreachable" means treat
+everything as disallowed. 429 is numerically a 4xx and would fall into the
+permissive branch under a naive reading. We put it in the restrictive branch,
+with its own `parse_reason` value `rate_limited`. The reasoning is that 429 is
+the server saying "slow down", and answering that by crawling freely would
+respond to a rate limit by speeding up. This one was a correction by the
+builder of an imprecise instruction, and the correction is what the spec
+intends.
+
+**A robots.txt redirect chain over five hops is recorded as `absent_4xx`.**
+RFC 9309 2.3.1.2 says a crawler should follow at least five redirects and may
+then treat robots.txt as unavailable, which has the same semantics as a 4xx.
+Rather than add a seventh `parse_reason` value for a case that differs from
+`absent_4xx` only in how it arose, we record the value whose *meaning* it
+shares. Accepted as a known limit: a rule cannot distinguish "no robots.txt"
+from "a robots.txt behind a redirect loop". Nothing we plan to detect needs
+that distinction, and the closed enum stays small enough to reason about.
+
+**Digits are allowed in product tokens.** RFC 9309 2.2.1 asks crawlers to
+choose tokens of letters, underscores and hyphens. Real crawlers do not comply:
+`MJ12bot` and `360Spider` exist and appear in real robots.txt files. Reading
+`MJ12bot` as the token `MJ` would apply that group to no crawler at all, which
+silently loses a rule the site author wrote. No tracked AI crawler and no token
+of our own parses differently either way, so this is free correctness.
+
+**The body decides whether a response is robots.txt; content-type is
+advisory.** A file of valid directives served as `text/html` is honoured as
+robots.txt; a response that starts like an HTML document is not robots.txt
+whatever its content-type claims. The two errors are not symmetric. Rejecting a
+genuine but mislabelled file means crawling paths the owner disallowed, which
+is a guardrail violation; accepting a page as a robots file means parsing
+nonsense, which under our parser yields no directives and therefore no
+restrictions we would not otherwise have had. We chose the error that cannot
+make us crawl something forbidden. `looks_like_robots()` holds this test and
+`robots.parse_ok` records the outcome, which is why "a valid robots.txt with
+zero rules" and "we were served a web page" are not the same observation in the
+bundle.
+
+### D13 — The render timeout: two attempts, not a longer budget
+
+Waiting for the `load` event hung on pages with one resource that never
+settles; the `www.python.org` home page is a live example. The obvious fix,
+Chromium's `--virtual-time-budget`, **made it worse**, and the reason is worth
+recording because it is counter-intuitive and would otherwise be rediscovered.
+Virtual time stops advancing while any network request is pending, so on a page
+with a request that never settles the budget never expires. `--timeout`, set
+alongside it as a safety net, is measured on that same paused clock and so
+never fires either. The two flags together wait forever; python.org hung until
+killed at 20s.
+
+The replacement is two attempts per page, described in full in
+`render.py`'s module docstring. Attempt 1 settles: `--virtual-time-budget` for
+a quiet period after load, killed at 5s of *real* time from outside the
+browser, which is the guarantee the flags themselves do not provide. Attempt 2
+runs only if the first returned nothing: a real-time `--timeout` and no virtual
+clock at all, which stops navigation, fires the lifecycle events and dumps
+whatever DOM exists. Pages rendered the second way are listed in `fallbacks`
+so the evidence can say they had no quiet period rather than implying a clean
+render.
+
+The per-page cap dropped from 20s to 10s as a result. A page that cannot be
+rendered in 10s is recorded as a render failure, which is an honest
+observation; the alternative of waiting longer spends the global deadline on
+the pages least likely to repay it.
+
+**Known and not yet closed:** this was validated against python.org and a local
+page whose iframe never responds. It has *not* been proven on a page whose real
+content only arrives after full client-side hydration, which is the exact case
+the whole raw-versus-rendered mechanism exists to detect. That validation is
+the first thing G2 must settle.
+
+### D14 — Pages are keyed on their final URL after redirects
+
+`/psf` redirects to `/psf-landing/`, and so does `/psf/`. Both were fetched,
+and the same document entered the crawl twice under two different starting
+URLs. Keying on the requested URL cannot see this; only the response knows
+where it landed.
+
+So the crawl holds a set of *final* URLs (`held` in `collect.py`): a target
+already in that set is never fetched, a redirect hop onto one is never
+followed, and a response whose final URL is already held is dropped. Both
+outcomes are counted in `discovery.collapsed_redirect_target`, so a rule
+reading `crawl.fetched` can tell a small site from a heavily-redirecting one.
+Confirming the fix: a 12-page-capped crawl went from "11 of 12 fetched", with
+one page silently lost as a duplicate, to a clean 12 of 12.
+
+This matters beyond tidiness. A duplicate page inflates every denominator a
+finding reports, and the whole sampling defence (W4) rests on those
+denominators being real.
+
+### D15 — Soft-404 handling, and why deduplication depends on capability
+
+Some sites answer every path with the same HTML shell and assemble the real
+content client-side. `www.poco.in` does this, confirmed by hand with `curl`
+and `shasum` rather than by trusting our own collector: the home page, a
+nonsense path, a second nonsense path and `/robots.txt` all returned a
+byte-identical body. (Recorded here as an architecture observation only. No
+audit finding about a named third party ships — see D11.)
+
+Two decisions follow.
+
+**The soft-404 probe.** Two paths that cannot exist are requested at the start
+of the crawl. If both answer 2xx with a substantive body, the site does not
+return real 404s, and `discovery.soft_404.detected` says so. A
+`baseline_text_hash` is recorded only when the two bodies are also *identical*:
+a site that echoes the requested path into its not-found page is still detected
+but has no single baseline, and deduplicating against a hash that varies per
+URL would be worse than not deduplicating at all. The probe paths are derived
+by hashing the host, not randomly generated, because they are written into the
+bundle and CLAUDE.md rule 10 requires two runs over the same site to produce
+the same bundle.
+
+The same baseline redefined `well_known[].present`. The original definition,
+2xx plus a non-empty body, reported `/llms.txt` as present on every site that
+soft-404s its whole domain. Presence now additionally requires that the text
+not match the baseline.
+
+**Deduplication splits on capability, because the honest answer differs.**
+With a browser, pages are deduplicated by *rendered* text hash: the shells are
+distinct pages that happen to share a server response, and collapsing them
+would throw away real content. Without a browser, pages are deduplicated by
+*raw* text hash against the soft-404 baseline, and the copies are not counted
+in `crawl.fetched` or in any stratum, because with no way to execute the page
+they genuinely carry no distinct content and counting them would inflate every
+denominator with copies of one file.
+
+The degenerate case gets its own statement rather than an empty report: when
+every sampled URL matched the baseline and rendering is unavailable, the run
+degrades with "no page-level content exists in the server response at all".
+The claim the evidence supports is that the content is absent from the server
+response, so any retrieval path that does not execute JavaScript sees nothing.
+The overclaim we specifically do not make is "invisible to AI assistants" —
+some assistants render.
+
+The same split is why basic rendering was pulled forward into Day 2 instead of
+waiting for Day 3: `rendered.delta_ratio` is the discriminator, and it had to
+exist before G2 could test it.
+
+### D16 — `scripts/package.sh` is a standing gate, not a one-off fix
+
+A `.gitignore` line reading `evidence/` was written to exclude audit output.
+Being unanchored, it also matched `tests/fixtures/evidence/`, so the fixture
+bundle that CI reads was never committed. Every check passed locally, because
+the files were sitting on disk. A fresh clone would have failed from the very
+first commit. The line is now anchored (`/audit-run/`, `/runs/`, `/out/`) with
+a comment saying why.
+
+Fixing the line was not the point. The bug class is **local disk state
+masquerading as a passing build**, and a passing `check.sh` in a working tree
+is structurally incapable of detecting it, because the working tree is where
+the untracked files are. Nothing caught this; it was noticed. The same class
+covers an uncommitted new file, a path that resolves only on this machine, and
+a test that reads something no one packaged.
+
+So the gate is not "grep the .gitignore". `scripts/package.sh` builds the zip
+from tracked files only (`git archive` of HEAD), refuses it at 50 MB, extracts
+it into an empty temporary directory, and runs the full build gate *there*. A
+file that is not committed cannot participate. This runs at every freeze and
+verification point from here on, because the submission is a zip and not a
+clone: anything relying on state that is not tracked in git is invisible to a
+judge.
