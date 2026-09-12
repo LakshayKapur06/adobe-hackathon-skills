@@ -207,6 +207,7 @@
         "tables": 0,
         "text_hash": "sha256:a35b9e1573e854ff011f1aa0354569851e46b3c9d06d8ccaa891d77a4b9c217e",
         "text_len": 678,
+        "hidden_text_len": 0,
         "text_path": "evidence/pages/a35b9e1573e854ff011f1aa0354569851e46b3c9d06d8ccaa891d77a4b9c217e.txt"
       },
       "redirect_chain": [],
@@ -330,6 +331,7 @@
         "tables": 0,
         "text_hash": "sha256:94a6516fd6e66e5da04e34e9d1598909ffadf102db3758ab40220a74e9bda934",
         "text_len": 607,
+        "hidden_text_len": 0,
         "text_path": "evidence/pages/94a6516fd6e66e5da04e34e9d1598909ffadf102db3758ab40220a74e9bda934.txt"
       },
       "redirect_chain": [],

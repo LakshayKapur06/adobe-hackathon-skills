@@ -154,7 +154,7 @@ the bundle, as `discovery` is.
   "page_type": "product",
   "page_type_confidence": 0.82,
   "raw": {
-    "bytes": 48213, "text_len": 1840, "text_hash": "sha256:...",
+    "bytes": 48213, "text_len": 1840, "hidden_text_len": 0, "text_hash": "sha256:...",
     "text_path": "evidence/pages/9f2b...c1.txt",
     "headings": [ { "level": 1, "text": "Velocity X9" } ],
     "anchors": [ { "id": "specs", "heading_text": "Specifications" } ],
@@ -188,6 +188,20 @@ text itself — passage shape, summarisation survivability, a token present in o
 layer and absent from the other — read the file rather than inlining page text
 into the bundle. Named by content hash, so two pages with identical extracted
 text share one file and a bundle stays diffable.
+
+**`raw.hidden_text_len`** (contracts-v9). Characters of text inside elements the
+server HTML hides with the `hidden` attribute or an inline `display:none`. It is
+never part of `text_len` or the text sidecar, which model visible text. It exists
+because a fetcher that ignores CSS extracts that text anyway, so a rule that
+concludes text is absent from the server response must be able to tell "absent"
+from "present but hidden". Found in G2, where a storefront's reviews sat in a
+`display:none` container in the server HTML.
+
+**`crawl.sampling.strata[].page_type`** (contracts-v9) is a sampling stratum
+derived from the URL pattern before fetching, because sampling has to choose
+what to fetch before any content exists. It is not `pages[].page_type`, which is
+decided from content afterwards, and the two can disagree on the same page. No
+rule uses strata as a denominator.
 
 **`raw.anchors`.** The in-page fragment targets a deep link can address, paired
 with the heading each one labels. An assistant citing a specific passage can

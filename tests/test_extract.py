@@ -56,6 +56,16 @@ class TestParseDocument(unittest.TestCase):
     def setUpClass(cls):
         cls.doc = extract.parse_document(PAGE, BASE)
 
+    def test_hidden_text_is_counted_but_never_part_of_the_page_text(self):
+        # contracts-v9: visible text is the page text; hidden text is measured
+        # separately because a fetcher that ignores CSS still extracts it.
+        doc = extract.parse_document(
+            '<html><body><p>Visible words here</p><div hidden><p>secret one</p></div>'
+            '<div style="display: none"><p>secret two</p></div><script>var x = "never text"</script>'
+            '<template><p>template text</p></template></body></html>', "https://x.example/")
+        self.assertEqual(doc["text"].strip(), "Visible words here")
+        self.assertEqual(doc["hidden_text_len"], len("secret one") + len("secret two"))
+
     def test_text_excludes_head_script_style_and_hidden(self):
         text = self.doc["text"]
         for absent in ("Title is not body text", "notText", "Hidden text", "Nor does this", "Hidden dialog"):

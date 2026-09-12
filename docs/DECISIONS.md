@@ -562,3 +562,33 @@ prompts a person is told to run, which is observed content reaching a
 recommendation, so it admits only short name, year and address values matching
 a plain-character pattern; a tagline is never used, and a test feeds it an
 instruction-shaped tagline and an injected name to prove neither survives.
+
+### D23 — `contracts-v9`: hidden server text is measured, strata are labelled, audits run alone
+
+Three decisions from the completed G2 check, each taken only after asking
+whether the obvious fix was the right architecture.
+
+**Hidden text: measured, not merged.** G2 found a storefront's reviews in a
+`display:none` container in the server HTML, excluded from page text by design.
+Keeping visible text as the page text is right: it is what a reader sees, what
+rendering compares against, and changing it would move every threshold measured
+so far. But leaving hidden text unrecorded created a false-positive path: a page
+that ships its text hidden and reveals it with script looks JavaScript-only,
+while a fetcher that ignores CSS reads all of it. So the extractor now records
+`raw.hidden_text_len`, and RND-001 and RND-002 count hidden text as present in
+the server response. Measured on real pages: 0 to 376 characters.
+
+**Strata: labelled, not switched.** The proposed fix, computing
+`crawl.sampling.strata` from content page types, was rejected. Sampling decides
+what to fetch before any content exists, so the discovered counts can only come
+from URL patterns; mixing a content-typed sampled count into a URL-typed row
+would be worse than either. The field is now documented as a URL-pattern
+sampling stratum, distinct from `pages[].page_type`, and no rule uses strata as
+a denominator.
+
+**Concurrency: documented.** Concurrent audits starve the renderer (6 of 30
+pages rendered in parallel against 29 of 30 alone). The handout's limit is under
+five minutes for a typical site on a standard machine, which one audit at a time
+meets with room to spare (14 to 94 s on the G2 sites), so the orchestrator's
+`SKILL.md` now says to run one at a time, and the degradation already reports any
+shortfall.

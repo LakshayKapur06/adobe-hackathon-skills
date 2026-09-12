@@ -35,6 +35,7 @@ directions, which is what makes fabricated evidence impossible.
 - `pages[].content_type`
 - `pages[].status`
 - `pages[].raw.text_len`
+- `pages[].raw.hidden_text_len`
 - `pages[].raw.text_hash`
 - `pages[].raw.text_path`
 - `pages[].raw.images`

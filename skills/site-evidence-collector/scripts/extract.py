@@ -81,12 +81,20 @@ class _Parser(HTMLParser):
         self.jsonld_scripts = []
         self.microdata_or_rdfa = False
         self.obstructions = {}
+        # Text inside elements the markup hides (the hidden attribute or an
+        # inline display:none). It is not visible text, so it never enters the
+        # page text or its length, but a fetcher that ignores CSS extracts it,
+        # so its size is recorded separately rather than lost.
+        self.hidden_chars = 0
         self._jsonld_buf = None
         self._open_link = None
 
     # -- stack helpers ---------------------------------------------------
     def _skipping(self):
         return any(e["skip"] for e in self.stack)
+
+    def _never_text(self):
+        return any(e["never_text"] for e in self.stack)
 
     def _in_boilerplate(self):
         return any(e["boiler"] for e in self.stack)
@@ -100,7 +108,7 @@ class _Parser(HTMLParser):
             tag in ("header", "footer") and page_level)
         self.stack.append({
             "tag": tag, "id": attrs.get("id"), "paired": False,
-            "skip": tag in SKIP_TEXT or hidden, "boiler": boiler,
+            "skip": tag in SKIP_TEXT or hidden, "never_text": tag in SKIP_TEXT, "boiler": boiler,
             "heading": [] if tag in HEADINGS else None,
         })
 
@@ -233,6 +241,8 @@ class _Parser(HTMLParser):
             self._jsonld_buf.append(data)
             return
         if self._skipping():
+            if not self._never_text():
+                self.hidden_chars += len(_norm_space(data))
             return
         self.stream.append(data)
         size = len(_norm_space(data))
@@ -318,6 +328,7 @@ def parse_document(html, base_url):
         "jsonld_scripts": parser.jsonld_scripts,
         "microdata_or_rdfa": parser.microdata_or_rdfa,
         "obstructions": [{"kind": k, "evidence": v} for k, v in sorted(parser.obstructions.items())],
+        "hidden_text_len": parser.hidden_chars,
         "word_count": words,
         "boilerplate_ratio": round(parser.boiler_chars / parser.total_chars, 3) if parser.total_chars else None,
         "longest_block_words": max((len(line.split()) for line in lines), default=0),

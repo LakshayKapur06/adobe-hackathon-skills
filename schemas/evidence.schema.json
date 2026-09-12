@@ -171,6 +171,7 @@
           "properties": {
             "strategy": { "type": "string", "minLength": 1 },
             "strata": {
+          "description": "Sampling strata, derived from each URL's pattern before it is fetched, because sampling must decide what to fetch before any content exists. strata[].page_type is therefore a URL-pattern stratum and can differ from pages[].page_type, which is decided from content after fetching: a /about/<topic>/ archive is an about stratum and a category page. No rule uses strata as a denominator; every rule counts pages[] (contracts-v9).",
               "type": "array",
               "items": {
                 "type": "object",
@@ -444,10 +445,11 @@
         "raw": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["bytes", "text_len", "text_hash", "text_path", "headings", "anchors", "links", "images", "tables", "iframes", "forms"],
+          "required": ["bytes", "text_len", "hidden_text_len", "text_hash", "text_path", "headings", "anchors", "links", "images", "tables", "iframes", "forms"],
           "properties": {
             "bytes": { "type": "integer", "minimum": 0 },
             "text_len": { "type": "integer", "minimum": 0 },
+            "hidden_text_len": { "type": "integer", "minimum": 0, "description": "Characters of text inside elements the server HTML hides (the hidden attribute or an inline display:none). Excluded from text_len because it is not visible, recorded because a fetcher that ignores CSS still extracts it (contracts-v9)." },
             "text_hash": { "type": "string" },
             "text_path": { "$ref": "#/$defs/text_path" },
             "headings": { "type": "array", "items": { "$ref": "#/$defs/heading" } },
