@@ -1,11 +1,9 @@
 ---
 name: arrival-and-engagement
 description: >-
-  Diagnoses whether a visitor who arrives mid-journey from an assistant can
-  orient and complete their task: applicability-gated task completability, deep
-  linkability and anchor targets, content-obstructing interstitials such as
-  cookie walls and modals, above-the-fold answer completeness, internal
-  reachability and orphaned pages, and a light latency check. Use as part of a
+  Diagnoses whether a visitor who arrives mid-journey from an assistant is kept
+  waiting: a light, engagement-only check on server response time across the
+  sampled pages. Use as part of a
   website AI-readiness audit when visitors arrive but do not stay. Reads a
   shared evidence bundle; never fetches, clicks or submits anything.
 license: Apache-2.0
@@ -33,20 +31,20 @@ visitor can reach and complete a task the site itself claims to offer.
 `evidence/evidence.json`, produced by `site-evidence-collector`. Nothing else,
 and never the network.
 
-Principally: `pages[].obstructions`, `pages[].raw.headings`,
-`pages[].raw.links`, `pages[].text.visible_excerpt`,
-`pages[].text.word_count`, `pages[].timing.ttfb_ms`, `pages[].timing.fetch_ms`,
-`link_graph.orphans`, `link_graph.max_depth_from_home`, `link_graph.edges`,
-`pages[].jsonld[].fields_present`, `pages[].page_type`.
+Principally: `pages[].status`, `pages[].timing.ttfb_ms`,
+`pages[].timing.fetch_ms`, `pages[].page_type`.
 
 ## Procedure
 
 1. Load `evidence/evidence.json` and confirm `schema_version` is compatible.
-2. **Gate every task on applicability.** A task activates only when the evidence
-   says the site offers it: the price task requires an observed `Offer` or price
-   pattern, the location task requires a claimed physical presence. Score only
-   applicable tasks and always report the denominator. Without this gate the
-   check invents obligations the site never took on.
+2. Measure what the evidence can observe, and nothing it cannot. The collector
+   never clicks, never submits and never renders a page the way a visitor sees
+   it after load, so a rule about task completion or an overlay covering the
+   content would be a guess. `references/rules.md` records which arrival checks
+   failed that test. The rule is implemented in `scripts/diagnose.py`:
+
+       python scripts/diagnose.py --evidence evidence/evidence.json --out findings/arrival-and-engagement.json
+
 3. For each rule in `references/rules.md`, check minimum evidence, then apply
    false-positive controls and legitimate-exception checks before firing.
 4. Treat latency as an engagement signal only. It is deliberately not used as a

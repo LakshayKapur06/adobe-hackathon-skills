@@ -3,6 +3,7 @@
 import http.server
 import json
 import pathlib
+import re
 import subprocess
 import sys
 import tempfile
@@ -71,7 +72,17 @@ class TestRunner(unittest.TestCase):
         self.assertEqual(Validator(REGISTRY["evidence.schema.json"], REGISTRY).errors(evidence), [])
         self.assertEqual(Validator(REGISTRY["report.schema.json"], REGISTRY).errors(report), [])
         self.assertEqual(report["findings"], [])
-        self.assertIn("diagnosis", [d["what"] for d in report["run_context"]["degradations"]])
+        # Every diagnostic now has rules, so no skill may be reported as
+        # unevaluated, and every rule defined in any references/rules.md must
+        # reach the report as exactly one outcome: a finding, a pass, or a
+        # not-assessed entry. A rule that silently produced nothing would read
+        # as a clean result for a check that never ran.
+        self.assertNotIn("diagnosis", [d["what"] for d in report["run_context"]["degradations"]])
+        defined = sorted(re.findall(r"^### ([A-Z]{3}-\d{3}) ", "".join(
+            p.read_text(encoding="utf-8") for p in (ROOT / "skills").glob("*/references/rules.md")), re.M))
+        outcomes = ([f["rule_id"] for f in report["findings"]] + [n["rule_id"] for n in report["not_assessed"]]
+                    + [c["rule_id"] for c in report["checks_passed"]])
+        self.assertEqual(sorted(outcomes), defined)
 
     def test_summary_line_and_table(self):
         result, _, evidence = run_audit("--summary")

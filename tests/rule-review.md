@@ -77,6 +77,12 @@ Measured on real bundles before commit: iflexbtw fires IDM-002 (29 of 30 pages, 
 | (cut) sitemap lastmod absence | freshness | 4 False positives | lastmod_present_ratio cannot tell a sitemap index, which legitimately omits lastmod, from a urlset | cut |
 | (collector bug) sameAs list read as one URL | collector | observation | external.py treated the " | "-joined sameAs value as a single URL and recorded a broken identity link the site never had | fixed in 3149cb4 with a test, before any rule read it |
 | (budget) | freshness | cross-cutting | 2 rules; every cut failed on evidence | accepted |
+| (cut) content-obstructing interstitials | arrival | 4 False positives | obstructions is a class/attribute marker: `paywall` matched nine fully served 2,000-word articles, `aria-modal` matched a hidden cart drawer on 29 of 30 pages | cut |
+| (cut) orphans and depth from home | arrival | 3 Minimum evidence | computed within the ~30 sampled pages only, so a page linked from any unsampled page reads as an orphan | cut |
+| (cut) deep-link anchors | arrival | 1 Mechanism | text fragments (#:~:text=) address a passage without any id in every current major browser | cut |
+| (cut) task completability, above-the-fold completeness | arrival | 3 Minimum evidence | the collector never clicks, submits or renders the page as a visitor sees it after load; form counts miss button-driven purchases | cut |
+| ARR-001 | arrival | 4 False positives | client distance and a fresh TLS connection per request inflate TTFB against a returning browser | tightened: median against web.dev's poor boundary, risk at low confidence, remediation starts with field data |
+| (budget) | arrival | cross-cutting | 1 rule; the engagement half of the audit is thin on observable evidence, flagged to the user rather than padded | accepted, flagged |
 
 Fact check against operator documentation, 2026-09-13:
 
@@ -95,6 +101,7 @@ Fact check against operator documentation, 2026-09-13:
 | sameAs is a URL unambiguously indicating identity | schema.org/sameAs | confirmed, expected type URL; IDM-002 quotes it |
 | structured data must represent visible page content | Google structured data general guidelines | confirmed; IDM-004 quotes it |
 | Google estimates page dates from several signals and recommends a visible labelled date plus datePublished/dateModified | Google "Influence your byline dates" | confirmed; FRC-001 follows it |
+| TTFB good <= 0.8 s, poor > 1.8 s, and it precedes FCP and LCP | web.dev "Time to First Byte" | confirmed; ARR-001 quotes it |
 
 Author static review only. The user reviewed the open decisions on
 2026-09-13 (named opt-outs, the sitemap allow-list, Claude-SearchBot) and
