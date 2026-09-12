@@ -42,6 +42,13 @@ Nothing else is required. No API key, no account, no configuration. The whole
 procedure below runs as `scripts/run.py --url <site> --workdir <dir>`, under a
 300s global deadline.
 
+**Run one audit at a time per machine.** The renderer shares the machine's CPU,
+and concurrent audits starve it: measured during the G2 check, one site rendered
+6 of 30 sampled pages while three other audits ran and 29 of 30 when run alone,
+in 94 seconds. The shortfall is always reported as a `render` degradation, so a
+concurrent run is still honest, but it assesses less. Run alone, audits of the
+G2 sites finished in 14 to 94 seconds, inside the handout's five-minute limit.
+
 ## Procedure
 
 1. **Establish the working directory.** Create `workdir` and treat it as the

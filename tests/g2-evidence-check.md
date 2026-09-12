@@ -340,10 +340,11 @@ Fix list, in priority order:
 
 1. Done: the page-type vocabulary fix for URL-only classification, re-verified on
    POCO.
-2. Decide whether `crawl.sampling.strata` should use content page types rather
-   than URL-pattern types, since the two disagree on the same page and the
-   strata are the denominators W4 relies on.
-3. State in the README that audits should run one at a time on a machine,
-   because concurrent runs starve the renderer and thin the evidence.
-4. Record a decision on hidden-text policy: the collector models visible text,
-   and a CSS-unaware retrieval tool would read `display: none` content.
+2. Done, differently from proposed (D23): strata stay URL-pattern sampling strata,
+   because sampling precedes content, and are now documented as such; no rule
+   uses them as a denominator.
+3. Done (D23): the orchestrator's `SKILL.md` says to run one audit at a time; run
+   alone, the G2 audits finished in 14 to 94 s.
+4. Done (D23): visible text stays the page text, and `raw.hidden_text_len` records
+   hidden server text so RND-001 and RND-002 never call hidden-but-present text
+   absent.
