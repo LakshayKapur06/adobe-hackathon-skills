@@ -1,10 +1,10 @@
 ---
 name: identity-and-markup
 description: >-
-  Diagnoses whether a brand presents as a well-formed, unambiguous, credible
-  entity to a machine: JSON-LD presence, validity and completeness, structured
-  markup that contradicts visible text, Organization identity anchoring via id
-  and sameAs, name-collision risk, and trust and provenance affordances. Also
+  Diagnoses whether a brand presents as a well-formed, unambiguous entity to a
+  machine: organization identity markup on the home page, sameAs identity links
+  that identify nothing, JSON-LD that fails to parse, and structured prices that
+  contradict the visible page. Also
   promotes extracted claim candidates to canonical claims so corroboration has
   something stable to test. Use as part of a website AI-readiness audit when a
   brand may be confused with another entity or described inconsistently.
@@ -34,19 +34,22 @@ claims to be; that skill tests whether the world agrees.
 `evidence/evidence.json`, produced by `site-evidence-collector`. Nothing else,
 and never the network.
 
-Principally: `pages[].jsonld`, `pages[].microdata_or_rdfa`,
-`pages[].raw.headings`, `pages[].text.visible_excerpt`, `claim_candidates`,
-`site.registrable_domain`, `site.detected_locales`.
+Principally: `pages[].status`, `pages[].page_type`, `pages[].jsonld`,
+`pages[].microdata_or_rdfa`, and `claim_candidates` for promotion.
 
 ## Procedure
 
 1. Load `evidence/evidence.json` and confirm `schema_version` is compatible.
-2. **Promote claim candidates to canonical claims first.** Group candidates by
-   kind and normalised value, weigh them by observed count, extraction method
-   and source-page prominence, then assign `first_party_confidence` and
-   `entity_ambiguity`. Write the promoted set back as `canonical_claims`. This
-   runs before the off-site probe, because an ambiguous brand name poisons
-   external matching and corroboration confidence is gated on it.
+2. **Promote claim candidates to canonical claims first**, with
+   `scripts/promote.py`. Group candidates by kind and normalised value, weigh
+   them by observed count and extraction method, then assign
+   `first_party_confidence` and `entity_ambiguity`. Write the promoted set to
+   `evidence/canonical_claims.json`; the collector merges it into the bundle in
+   its second pass. This runs before the off-site probe, because an ambiguous
+   brand name poisons external matching and corroboration confidence is gated
+   on it. The rules in step 3 are implemented in `scripts/diagnose.py`:
+
+       python scripts/diagnose.py --evidence evidence/evidence.json --out findings/identity-and-markup.json
 3. For each rule in `references/rules.md`, check minimum evidence, then apply
    false-positive controls and legitimate-exception checks before firing.
 4. Emit findings with observed impact inputs, confidence, status, effort, scope
@@ -56,9 +59,10 @@ Principally: `pages[].jsonld`, `pages[].microdata_or_rdfa`,
 ## Output
 
 `findings/identity-and-markup.json`: `findings`, `not_assessed` and
-`checks_passed` arrays. Additionally writes `canonical_claims` back into the
-evidence bundle — the only diagnostic permitted to write to the bundle, and
-only for that one key.
+`checks_passed` arrays. Promotion additionally writes
+`evidence/canonical_claims.json`, a sidecar rather than an edit to
+`evidence.json`, so that the collector stays the single writer of the bundle
+(D2); the collector merges it in pass 2.
 
 
 The rule set, the ownership boundary, the evidence this skill is permitted to

@@ -53,6 +53,17 @@ Cross-cutting, checked per skill once its rules are complete:
 | (budget) | render | cross-cutting | 3 rules, under the 5-8 target: every cut above failed on evidence, and nothing was added to reach a number | accepted |
 
 Measured on real bundles before commit: POCO fires RND-001 site-wide (5/5, delta 1.0) with a browser and RND-002 at high confidence without one; iflexbtw, indianexpress and python.org fire nothing; the refused publisher is not assessed on all three.
+| IDM-001 | identity | 4 False positives | an Organization subtype list can never be complete, so a Winery or Dentist site would read as having no identity | tightened: any node with logo or sameAs, or a nested publisher organization, counts; an about page or a Person node satisfies it; microdata or RDFa is not_assessed |
+| IDM-001 | identity | cross-cutting | JSON-LD is parsed from the server response, so on a client-rendered site (POCO) the absence may be a render gap | kept, stated in the rule's definitions; the orchestrator's arbitration must mark it conditional on RND-001/RND-002 |
+| IDM-002 | identity | 4 False positives | values is capped at 4KB with long values dropped first, so a truncated sameAs would read as empty; and the self-description test counts any node with sameAs | tightened: truncated values excluded, strictly organization types only |
+| IDM-003 | identity | 4 False positives | "missing @type" is legal JSON-LD for a node typed where its @id is referenced | tightened: parse failures only, identified by structure rather than error text |
+| IDM-004 | identity | 4 False positives | server-side currency conversion or a default variant can make markup and visible price differ legitimately | tightened: confidence medium on a single page; relies on the collector's narrow definition |
+| (cut) name-collision risk | identity | 1 Mechanism | promote.py's entity_ambiguity is a string-shape heuristic with no observation of an actual collision; a finding on it would be confident output carrying no information | cut; ambiguity still gates corroboration confidence |
+| (cut) markup completeness beyond identity (Product without offers, Article without author) | identity | 1 Mechanism | completeness to a vendor's recommended property list is convention, and a missing Product price is already RND-003's fact when it matters | cut |
+| (cut) trust and provenance affordances | identity | 3 Minimum evidence | no typed evidence field records authorship, contact or policy affordances beyond page_type | cut |
+| (budget) | identity | cross-cutting | 4 rules, under the 5-8 target; every cut above failed a test | accepted |
+
+Measured on real bundles before commit: iflexbtw fires IDM-002 (29 of 30 pages, nine empty sameAs entries); python.org fires IDM-001 (home carries only WebSite); indianexpress passes all four; the refused publisher is not assessed on all four.
 
 Fact check against operator documentation, 2026-09-13:
 
@@ -67,6 +78,9 @@ Fact check against operator documentation, 2026-09-13:
 | robots.txt 5xx means "crawl nothing" | RFC 9309 2.3.1.4; Google robots.txt spec | RFC confirmed; Google pauses 12h then uses last good copy up to 30 days. ACC-002 mechanism corrected, it overstated the effect |
 | robots.txt 429 means "crawl nothing" | RFC 9309; Google robots.txt spec | RFC is silent; Google excepts 429 from the 4xx "no robots.txt" rule and groups it with 5xx. ACC-002 now says exactly that |
 | Google documents verifying real Googlebot | Google "Verifying Googlebot" | confirmed |
+| Organization markup is used to disambiguate the organization, recommended on the home page or about page | Google Organization structured data docs | confirmed; IDM-001 quotes it |
+| sameAs is a URL unambiguously indicating identity | schema.org/sameAs | confirmed, expected type URL; IDM-002 quotes it |
+| structured data must represent visible page content | Google structured data general guidelines | confirmed; IDM-004 quotes it |
 
 Author static review only. The user reviewed the open decisions on
 2026-09-13 (named opt-outs, the sitemap allow-list, Claude-SearchBot) and

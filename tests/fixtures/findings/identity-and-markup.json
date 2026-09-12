@@ -1,64 +1,25 @@
 {
-  "findings": [
-    {
-      "id": "F-001",
-      "title": "Organization node has no sameAs identity anchors",
-      "evidence": "Examined 2 pages; the single Organization node at http://localhost:8000/#org declares @id, name, foundingDate, url and address, and no sameAs. No off-site profile is therefore linked from the entity the site publishes.",
-      "suggested_action": {
-        "summary": "Add sameAs links from the Organization node to the profiles the brand already controls off-site.",
-        "what": "A sameAs array on the existing Organization node listing the brand's own off-site profiles.",
-        "where": "The JSON-LD Organization block in the site-wide head, at http://localhost:8000/#org.",
-        "why": "The node currently asserts an identity that nothing off-site can be matched against, so a retrieval system holding two entities with similar names has nothing to break the tie with.",
-        "how": "Add the URLs of profiles the brand actually controls and that name it back. Each target must be verifiable in both directions; a sameAs pointing at a profile that does not mention the brand weakens the claim rather than strengthening it.",
-        "mechanism": "Identity disambiguation: an entity reachable from several independent addresses is resolvable, where an entity asserted only on its own domain is not.",
-        "success_criteria": "Every sameAs target resolves and names the brand, and the Organization node can be matched to an external entity record without guessing.",
-        "effort": "medium"
-      },
-      "skill": "identity-and-markup",
-      "rule_id": "IDM-004",
-      "status": "proactive",
-      "category": "discoverability",
-      "symptom": [
-        "invisible",
-        "misrepresented"
-      ],
-      "confidence": "medium",
-      "impact": {
-        "blocking": false,
-        "breadth": "site",
-        "content_importance": "secondary"
-      },
-      "scope": {
-        "pages_affected": 2,
-        "pages_examined": 2,
-        "page_types": [
-          "home",
-          "about"
-        ]
-      },
-      "evidence_refs": [
-        {
-          "url": "http://localhost:8000/index.html",
-          "observation": "jsonld[0].fields_present is [@id, name, foundingDate, url, address]; sameAs absent",
-          "layer": "first_party",
-          "method": "fetch",
-          "retrieved_at": "2026-09-06T09:00:01Z"
-        }
-      ],
-      "false_positive_controls_applied": [
-        "checked every JSON-LD block on every sampled page, not only the home page",
-        "treated the node as anchored if sameAs appeared on any page, since one site-wide declaration is sufficient"
-      ],
-      "exceptions_checked": [
-        "brands with no off-site presence to point at, for which the recommendation is to establish one first rather than to fabricate links"
-      ]
-    }
-  ],
-  "not_assessed": [],
   "checks_passed": [
     {
       "rule_id": "IDM-001",
-      "summary": "JSON-LD parses and validates on 2/2 sampled pages, with no contradiction against visible text"
+      "summary": "The home page's JSON-LD states an organization identity"
+    },
+    {
+      "rule_id": "IDM-003",
+      "summary": "Every JSON-LD block parsed on 2 pages carrying JSON-LD"
+    }
+  ],
+  "findings": [],
+  "not_assessed": [
+    {
+      "enable_hint": "applies only to organization markup that declares sameAs",
+      "reason": "no organization node on a 2xx page declares sameAs with its value recorded",
+      "rule_id": "IDM-002"
+    },
+    {
+      "enable_hint": "applies only to pages with Offer or price markup",
+      "reason": "no 2xx page states a price in JSON-LD",
+      "rule_id": "IDM-004"
     }
   ]
 }
