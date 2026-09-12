@@ -1,11 +1,9 @@
 ---
 name: freshness-and-corroboration
 description: >-
-  Diagnoses whether a brand's current facts are datable, internally consistent
-  and independently supported: declared versus actual freshness, undated
-  substantive content, contradictions between pages of the same site, and the
-  breadth, agreement rate and contradiction inventory of independent off-site
-  sources. Use as part of a website AI-readiness audit when a brand is
+  Diagnoses whether a brand's current facts are datable and consistent with the
+  public record: articles that state no machine-readable date, and a founding
+  year that disagrees with the organization's Wikidata record. Use as part of a website AI-readiness audit when a brand is
   represented with stale or wrong facts. Reads a shared evidence bundle; never
   fetches anything and always reports its own coverage bound.
 license: Apache-2.0
@@ -37,11 +35,10 @@ claims.
 `evidence/evidence.json`, produced by `site-evidence-collector`. Nothing else,
 and never the network.
 
-Principally: `canonical_claims`, `claim_candidates`, `external.attempted`,
-`external.method`, `external.frontier_size`, `external.truncated`,
-`external.origins`, `external.hits`, `pages[].dates`,
-`pages[].headers.last_modified`, `sitemaps[].lastmod_present_ratio`,
-`run_context.capabilities.egress`, `run_context.corroboration`.
+Principally: `pages[].status`, `pages[].page_type`,
+`pages[].page_type_confidence`, `pages[].dates`, `canonical_claims`,
+`external.attempted`, `external.frontier_size`, `external.hits`,
+`run_context.capabilities.egress`.
 
 ## Procedure
 
@@ -55,14 +52,22 @@ Principally: `canonical_claims`, `claim_candidates`, `external.attempted`,
    brand itself points to, press it links, its own archived history — and
    `external.frontier_size` is the denominator. We do not have open-web recall,
    and no finding may be worded as though we do.
-4. Count independence honestly: collapse syndication clusters and exclude
-   brand-owned origins before computing breadth, or a single press release
-   republished twelve times reads as twelve independent sources.
-5. For each rule in `references/rules.md`, check minimum evidence, then apply
+4. Count independence honestly if a rule ever measures breadth: collapse
+   syndication clusters and exclude brand-owned origins first, or one press
+   release republished twelve times reads as twelve sources. No current rule
+   measures breadth, for the reasons in `references/rules.md`.
+5. Never read `external.hits[].matches_current` as "a source disagrees" on its
+   own. Wayback snapshots, name labels and refused profiles all record `false`
+   without asserting anything; `references/rules.md` records which hits are
+   genuinely comparable. The rules are implemented in `scripts/diagnose.py`:
+
+       python scripts/diagnose.py --evidence evidence/evidence.json --out findings/freshness-and-corroboration.json
+
+6. For each rule in `references/rules.md`, check minimum evidence, then apply
    false-positive controls and legitimate-exception checks before firing.
-6. Emit findings with observed impact inputs, confidence, status, effort, scope
+7. Emit findings with observed impact inputs, confidence, status, effort, scope
    denominators and `evidence_refs`. Never assign `severity`.
-7. Emit `checks_passed` for rules that ran and did not fire.
+8. Emit `checks_passed` for rules that ran and did not fire.
 
 ## Output
 

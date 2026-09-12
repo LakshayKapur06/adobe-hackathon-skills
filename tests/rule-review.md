@@ -70,6 +70,13 @@ Measured on real bundles before commit: iflexbtw fires IDM-002 (29 of 30 pages, 
 | (cut) query-intent coverage | answerability | 3 Minimum evidence | W1's evidence gate (a structured attribute with no page answering by it) has no observable counterpart in the bundle; PLAN.md's first cut | cut |
 | ANS-001 | answerability | 1 Mechanism | section headings aid passage retrieval but no operator documents a penalty for their absence | written as proactive at medium confidence; news article types excluded as house style |
 | (budget) | answerability | cross-cutting | 1 rule. The skill keeps a distinct mechanism, but the collector's text metrics cannot carry defect-level rules; flagged to the user rather than padded | accepted, flagged |
+| FRC-001 | freshness | 4 False positives | blog indexes classify as article at 0.6 while real articles score 0.9; visible_dates include sidebar dates; a client-rendered shell returns one Last-Modified for every URL | tightened: classifier confidence >= 0.8, any visible date counts, HTTP Last-Modified never accepted |
+| FRC-002 | freshness | 4 False positives | matches_current is false for Wayback first-snapshot years, Wikidata labels vs legal names, and refused social profiles, none of which is a disagreement | tightened: only wikidata.org founding-year hits compared; risk, never found, because the two years may describe different events |
+| (cut) external breadth and agreement rate | freshness | 3 Minimum evidence | the only real run reaching pass 2 had a frontier of one Wayback snapshot; a rate over that implies recall we do not have | cut |
+| (cut) unsupported-claim inventory | freshness | 3 Minimum evidence | a claim with no hit in an enumerable frontier is unchecked, not unsupported | cut |
+| (cut) sitemap lastmod absence | freshness | 4 False positives | lastmod_present_ratio cannot tell a sitemap index, which legitimately omits lastmod, from a urlset | cut |
+| (collector bug) sameAs list read as one URL | collector | observation | external.py treated the " | "-joined sameAs value as a single URL and recorded a broken identity link the site never had | fixed in 3149cb4 with a test, before any rule read it |
+| (budget) | freshness | cross-cutting | 2 rules; every cut failed on evidence | accepted |
 
 Fact check against operator documentation, 2026-09-13:
 
@@ -87,6 +94,7 @@ Fact check against operator documentation, 2026-09-13:
 | Organization markup is used to disambiguate the organization, recommended on the home page or about page | Google Organization structured data docs | confirmed; IDM-001 quotes it |
 | sameAs is a URL unambiguously indicating identity | schema.org/sameAs | confirmed, expected type URL; IDM-002 quotes it |
 | structured data must represent visible page content | Google structured data general guidelines | confirmed; IDM-004 quotes it |
+| Google estimates page dates from several signals and recommends a visible labelled date plus datePublished/dateModified | Google "Influence your byline dates" | confirmed; FRC-001 follows it |
 
 Author static review only. The user reviewed the open decisions on
 2026-09-13 (named opt-outs, the sitemap allow-list, Claude-SearchBot) and
