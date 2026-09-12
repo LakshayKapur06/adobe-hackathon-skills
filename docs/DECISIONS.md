@@ -75,10 +75,40 @@ Escalating, all writing the identical `external_hits` schema. Nothing downstream
 branches on which provider ran, except a `coverage.method` label and a
 confidence gate.
 
-1. **Always:** keyless providers — Wikidata (`wbsearchentities` + entity fetch),
-   Wikipedia/MediaWiki API, Wayback CDX, declared `sameAs` target verification,
-   linked-press verification, Common Crawl index (best-effort, hard 10s timeout,
-   never blocking).
+1. **Always:** keyless providers — Wikipedia (via `api.wikimedia.org`), Wikidata
+   (via `Special:EntityData`, see the robots note below), Wayback CDX, and
+   declared `sameAs` target verification.
+
+   **Revised on building it (2026-09-13), after checking each endpoint's
+   robots.txt.** The original list named endpoints that turned out to be
+   disallowed to crawlers, and an audit that grades sites on robots compliance
+   does not get an exception:
+
+   - `wbsearchentities` and the MediaWiki `api.php` are both under `/w/`, which
+     Wikidata and Wikipedia disallow. So is `/w/rest.php`, `Special:Search`, and
+     `query.wikidata.org/sparql`. Every route that can *search* Wikidata is
+     closed.
+   - **Wikidata is kept anyway, by the one permitted route.**
+     `Special:EntityData/{id}.json` is allowed but needs an id we cannot look
+     up — and a Wikipedia article, which we are allowed to read, names its own
+     entity id. So: search Wikipedia, read the article, take the id, fetch the
+     entity. No disallowed path is touched and the best source is not lost.
+     Its official-website property then settles identity outright, which is
+     verification rather than resemblance and removes the namesake problem D8
+     warns about.
+   - **Common Crawl is dropped.** `index.commoncrawl.org` disallows its index
+     endpoint. There is no permitted route, so it is not used at all.
+   - **DBpedia is dropped**: its SPARQL and data endpoints are disallowed, and
+     the host was returning 502 when checked.
+   - **RDAP was considered and cut**, though it is permitted and keyless. Domain
+     registration dates look like an independent check on a founding claim and
+     are not one: a company can predate its domain by decades and a domain can
+     predate the venture launched on it, so the registry can neither confirm nor
+     deny a founding year. Shipping it would have attached authoritative-looking
+     verdicts to a comparison carrying no information.
+   - **GLEIF** is permitted and authoritative for legal names, but only covers
+     entities with a Legal Entity Identifier — essentially none of the sites
+     this audits. Left as a documented extension point rather than dead code.
 2. **If the host volunteers it:** the host agent's own search capability. No
    script can detect a host tool, so this is agent-volunteered only: the SKILL.md
    says "if you have a web search capability, run these queries and write results

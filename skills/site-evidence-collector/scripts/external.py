@@ -6,10 +6,13 @@ that later volunteers a search capability changes the breadth of this and not
 the shape of it.
 
 - **Wikipedia** — prose, and the source most assistants demonstrably read.
-  Searched through ``api.wikimedia.org``, then *verified by outbound link*: an
-  article is only accepted as being about this brand if it links to this brand's
-  domain. A name search alone will happily return a village in Bavaria, or in
-  one real case both "The Indian Express" and "The New Indian Express".
+  Searched through ``api.wikimedia.org``. A name search alone will happily
+  return a village in Bavaria, or in one real case both "The Indian Express"
+  and "The New Indian Express", so an article is only evidence once identity is
+  settled below.
+- **Wikidata** — the machine-readable record, reached by the one route its
+  robots.txt permits (see below). Its official-website property settles
+  identity outright, and its structured statements need no prose matching.
 - **Declared sameAs targets** — the profiles the site itself points at. The
   cheapest high-value check available: a `sameAs` naming a page that does not
   exist, or does not mention the brand, is a broken identity graph.
@@ -18,6 +21,14 @@ the shape of it.
   never be read as "last substantive change" (the Wayback correction in
   docs/DECISIONS.md).
 
+**A provider considered and cut: RDAP.** Domain registration dates are keyless,
+permitted and authoritative, and they look like an independent check on a
+founding claim. They are not one. A company can predate its domain by decades,
+and a domain can predate the venture launched on it, so the registry can neither
+confirm nor deny a founding year. Shipping it would have attached
+authoritative-looking matches_current verdicts to a comparison that carries no
+information, which is worse than the coverage it would have added.
+
 **The coverage bound is disclosed, never hidden.** Without privileged search
 there is no open-web recall. Breadth is measured over an *enumerable frontier* —
 encyclopedic entries, the profiles the brand itself points to, its own archived
@@ -25,16 +36,21 @@ history — and ``frontier_size`` reports how large that frontier was. A report
 built on this may say "of the sources we could enumerate", and may never imply
 omniscience.
 
-**Wikidata is deliberately absent, and this is why.** It would be the best
-source here — a machine-readable public record, verifiable by its official-website
-property, immune to the namesake problem. Every endpoint that can reach it is
-disallowed by Wikidata's own robots.txt for crawlers: ``/w/api.php``,
-``/w/rest.php``, ``Special:Search``, and ``query.wikidata.org/sparql``. Only
-``Special:EntityData/{id}.json`` is permitted, and that needs an entity id we
-have no permitted way to look up. So it is not used. Auditing sites on their
-crawler policy while quietly making an exception for ourselves is the one
-inconsistency this project cannot afford, and the coverage lost is reported in
-``frontier_size`` rather than hidden.
+**How Wikidata is reached, and why the obvious way is not used.** Every endpoint
+that can *search* Wikidata is disallowed to crawlers by its own robots.txt:
+``/w/api.php``, ``/w/rest.php``, ``Special:Search`` and
+``query.wikidata.org/sparql`` were each checked and each refused. We do not make
+an exception for ourselves in an audit that grades sites on robots compliance,
+so none of them is touched. What *is* permitted is
+``Special:EntityData/{id}.json`` — which needs an id we have no permitted way to
+look up.
+
+The article supplies it. A Wikipedia page we are already allowed to read carries
+its own entity id, so the route is: search, read the article, take the id it
+names, fetch the entity by id. No disallowed path, and the best source is not
+lost. Common Crawl's index was checked the same way and *is* disallowed, so it
+is not used at all and the coverage is reported in ``frontier_size`` rather than
+hidden.
 
 **robots.txt is respected on third-party hosts too.** That is easy to forget and
 it is the exact guardrail this audit exists to check for: auditing someone's
@@ -54,6 +70,8 @@ import urls
 
 WIKIPEDIA_SEARCH = "https://api.wikimedia.org/core/v1/wikipedia/en/search/page"
 WIKIPEDIA_ARTICLE = "https://en.wikipedia.org/wiki/"
+WIKIDATA_ENTITY = "https://www.wikidata.org/wiki/Special:EntityData/%s.json"
+_QID = re.compile(r'"wgWikibaseItemId"\s*:\s*"(Q\d+)"|wikidata\.org/wiki/(Q\d+)')
 MAX_ARTICLES = 3
 WAYBACK_CDX = "https://web.archive.org/cdx/search/cdx"
 MAX_ORIGINS = 24
@@ -212,8 +230,21 @@ def _wikipedia(run, probe, claims, name_claim, site_domain, deadline, now):
         # link sits near the end, past the 500-link cap the bundle imposes for
         # its own size. A bound meant for storage silently defeated this check
         # until the article was read by hand.
-        if site_domain and site_domain not in (response.text or ""):
-            continue                      # a namesake: looked at, not evidence
+        # Identity is settled by Wikidata where it can be: an entity whose
+        # official-website property *is* this domain is this brand, full stop.
+        # Where that is unavailable, fall back to the article mentioning the
+        # domain -- weaker, but better than name similarity alone.
+        entity = _wikidata_entity(run, probe, response.text, site_domain, deadline)
+        if entity is None:
+            # Verified against the response itself, not against parsed links: an
+            # encyclopedic article carries hundreds of them and its official-website
+            # link sits near the end, past the 500-link cap the bundle imposes for
+            # its own size. A bound meant for storage silently defeated this check
+            # until the article was read by hand.
+            if site_domain and site_domain not in (response.text or ""):
+                continue                  # a namesake: looked at, not evidence
+        else:
+            _wikidata_claims(probe, entity, claims, now)
         text = extract.parse_document(response.text, url)["text"]
         for claim in claims:
             if asserts(text, claim):
@@ -223,6 +254,76 @@ def _wikipedia(run, probe, claims, name_claim, site_domain, deadline, now):
                 # Silence from a verified article is itself an observation: the
                 # encyclopedic record of this brand does not carry this claim.
                 probe.note_hit(claim, origin, url, "the article does not assert this value", now)
+
+
+def _wikidata_entity(run, probe, article_html, site_domain, deadline):
+    """Reach Wikidata by the one route its robots.txt permits.
+
+    Wikidata is the best source available for this: a machine-readable record
+    whose official-website property settles identity outright, with none of the
+    namesake risk a name search carries. Every endpoint that can *search* it is
+    disallowed to crawlers -- /w/api.php, /w/rest.php, Special:Search and the
+    SPARQL service were each checked and each refused -- and we do not make an
+    exception for ourselves in an audit that grades sites on robots compliance.
+
+    What is permitted is Special:EntityData/{id}.json, which needs an id we
+    cannot look up. The article gives it: a Wikipedia page we are already
+    allowed to read carries its own entity id. So the route is search, read the
+    article, take the id it names, and fetch the entity by id. No disallowed
+    path is touched and the best source is not lost.
+
+    Returns the entity only when its official website is this domain, which is
+    verification rather than resemblance. Otherwise None.
+    """
+    found = _QID.search(article_html or "")
+    if not found:
+        return None
+    entity_id = found.group(1) or found.group(2)
+    url = WIKIDATA_ENTITY % entity_id
+    document = _get_json(run, url, deadline)
+    entity = ((document or {}).get("entities") or {}).get(entity_id)
+    if entity is None:
+        return None
+    official = _wikidata_values(entity, "P856")
+    if not any(urls.registrable_domain(urls.host(u) or "") == site_domain for u in official):
+        return None                       # a namesake with an article, not this brand
+    probe.note_origin("https://www.wikidata.org/wiki/" + entity_id, "encyclopedic")
+    return dict(entity, id=entity_id)
+
+
+def _wikidata_values(entity, prop):
+    """Plain values of one property, times and entity ids flattened to strings."""
+    out = []
+    for statement in ((entity.get("claims") or {}).get(prop) or []):
+        value = (((statement.get("mainsnak") or {}).get("datavalue") or {}).get("value"))
+        if isinstance(value, str):
+            out.append(value)
+        elif isinstance(value, dict):
+            out.append(value.get("time") or value.get("id") or "")
+    return [v for v in out if v]
+
+
+def _wikidata_claims(probe, entity, claims, now):
+    """What the record itself states, against what the site states.
+
+    Structured statements need no prose matching and carry no citation-date
+    ambiguity, so these are the most reliable hits this module produces. A
+    disagreement here is a real contradiction rather than a phrasing difference,
+    and reporting it is the point: one publisher's own pages say 1932 while the
+    record says 1931, and an audit that hid that would be useless.
+    """
+    url = "https://www.wikidata.org/wiki/" + entity["id"]
+    label = ((entity.get("labels") or {}).get("en") or {}).get("value") or ""
+    inception = _wikidata_values(entity, "P571")
+    for claim in claims:
+        if claim["kind"] == "legal_name" and label:
+            probe.note_hit(claim, "wikidata.org", url, label, now,
+                           matches=_norm(claim["value_normalized"]) == _norm(label)
+                           or _norm(claim["value_normalized"]) in _norm(label))
+        elif claim["kind"] == "founded_year" and inception:
+            year = inception[0].lstrip("+")[:4]
+            probe.note_hit(claim, "wikidata.org", url, "inception %s" % year, now,
+                           matches=year == claim["value_normalized"])
 
 
 def _sentence_around(text, value, window=200):

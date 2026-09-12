@@ -5,6 +5,7 @@ are worth asking the world about, whether a source is about this brand at all,
 and whether prose containing a string is the same as prose asserting it.
 """
 
+import json
 import pathlib
 import sys
 import unittest
@@ -180,6 +181,58 @@ class TestSameAsVerification(unittest.TestCase):
         external._same_as(run, probe, [claim], [target], 1e9, NOW)
         self.assertEqual(run.asked, [])
         self.assertEqual(probe.result(True, "keyless")["hits"], [])
+
+
+class TestWikidataIdentity(unittest.TestCase):
+    """Identity settled by the record, not by resemblance."""
+
+    ENTITY = {"entities": {"Q1": {
+        "labels": {"en": {"value": "Garuda Footwear"}},
+        "claims": {
+            "P856": [{"mainsnak": {"datavalue": {"value": "https://brand.example/"}}}],
+            "P571": [{"mainsnak": {"datavalue": {"value": {"time": "+1998-00-00T00:00:00Z"}}}}],
+        }}}}
+
+    def _run(self, official="https://brand.example/"):
+        entity = json.loads(json.dumps(self.ENTITY))
+        entity["entities"]["Q1"]["claims"]["P856"][0]["mainsnak"]["datavalue"]["value"] = official
+        return FakeRun({external.WIKIDATA_ENTITY % "Q1": (json.dumps(entity), 200)})
+
+    def test_the_entity_id_is_taken_from_the_article_we_may_already_read(self):
+        probe = external.Probe("brand.example")
+        html = '<html><script>{"wgWikibaseItemId":"Q1"}</script></html>'
+        entity = external._wikidata_entity(self._run(), probe, html, "brand.example", 1e9)
+        self.assertIsNotNone(entity)
+        self.assertEqual(entity["id"], "Q1")
+
+    def test_an_entity_whose_official_site_is_elsewhere_is_refused(self):
+        probe = external.Probe("brand.example")
+        html = '<html><script>{"wgWikibaseItemId":"Q1"}</script></html>'
+        entity = external._wikidata_entity(self._run("https://someoneelse.example/"),
+                                           probe, html, "brand.example", 1e9)
+        self.assertIsNone(entity)
+
+    def test_no_disallowed_wikidata_endpoint_is_ever_requested(self):
+        run = self._run()
+        probe = external.Probe("brand.example")
+        external._wikidata_entity(run, probe, '{"wgWikibaseItemId":"Q1"}', "brand.example", 1e9)
+        for url in run.asked:
+            self.assertNotIn("/w/api.php", url)
+            self.assertNotIn("/w/rest.php", url)
+            self.assertNotIn("Special:Search", url)
+            self.assertNotIn("query.wikidata.org", url)
+            self.assertIn("Special:EntityData", url)
+
+    def test_a_structured_disagreement_is_recorded_as_one(self):
+        # The live case this came from: the site says 1932, the record says 1931.
+        probe = external.Probe("brand.example")
+        entity = dict(self.ENTITY["entities"]["Q1"], id="Q1")
+        claims = [{"id": "C-001", "kind": "founded_year", "value_normalized": "1998"},
+                  {"id": "C-002", "kind": "founded_year", "value_normalized": "2012"}]
+        external._wikidata_claims(probe, entity, claims, NOW)
+        verdicts = {h["claim_id"]: h["matches_current"] for h in probe.result(True, "keyless")["hits"]}
+        self.assertTrue(verdicts["C-001"])
+        self.assertFalse(verdicts["C-002"])
 
 
 if __name__ == "__main__":
