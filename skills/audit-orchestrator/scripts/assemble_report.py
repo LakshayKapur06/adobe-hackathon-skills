@@ -21,7 +21,9 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-import severity as sev_mod  # noqa: E402  (path is set immediately above)
+import arbitrate as arb_mod  # noqa: E402  (path is set immediately above)
+import proactive as pro_mod  # noqa: E402
+import severity as sev_mod  # noqa: E402
 
 DIAGNOSTIC_SKILLS = (
     "access-and-indexability",
@@ -126,11 +128,41 @@ def build_run_context(evidence, extra_degradations=()):
     }
 
 
+def report_order(finding):
+    """Priority first, then unconditional before conditional, then severity.
+
+    A conditional finding keeps its own severity, but within a priority band it
+    is listed after the findings it does not depend on, so a reader working
+    down the list meets the upstream fix before the work it conditions.
+    """
+    key = sev_mod.sort_key(finding)
+    return (key[0], 1 if finding.get("conditional_on") else 0) + key[1:]
+
+
 def assemble(evidence, findings, not_assessed, checks_passed, extra_degradations=()):
-    findings = deduplicate(findings)
+    extra_degradations = list(extra_degradations)
+    proactive, pro_not_assessed, pro_passed = pro_mod.recommend(evidence)
+    not_assessed = list(not_assessed) + pro_not_assessed
+    checks_passed = list(checks_passed) + pro_passed
+    findings = deduplicate(list(findings) + proactive)
+    derived = []
     for f in findings:
-        sev_mod.derive(f)
-    findings.sort(key=sev_mod.sort_key)
+        try:
+            sev_mod.derive(f)
+        except ValueError as exc:
+            # An authoring error in a rule must never reach a report, and must
+            # never take the whole run down with it either. The finding is
+            # withheld and the withholding is stated.
+            extra_degradations.append({
+                "what": "diagnosis",
+                "reason": "a %s finding was withheld because its declared inputs violate the status semantics: %s"
+                          % (f.get("rule_id", "unknown"), exc),
+                "impact": "%s is not reported for this run; the rule needs correcting" % f.get("rule_id", "the rule"),
+            })
+            continue
+        derived.append(f)
+    findings = arb_mod.arbitrate(derived)
+    findings.sort(key=report_order)
 
     # Identifiers are assigned after ordering so the report reads F-001 downward
     # in the order a reader should act, and so two runs over the same evidence

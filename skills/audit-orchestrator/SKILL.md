@@ -69,13 +69,14 @@ procedure below runs as `scripts/run.py --url <site> --workdir <dir>`, under a
    corroboration because an ambiguous brand name poisons external matching and
    therefore gates corroboration confidence. Each diagnostic writes
    `workdir/findings/<skill-id>.json` and touches nothing else. A diagnostic
-   with no rules is recorded as a degradation, so that an empty findings array
-   is never mistaken for a site that passed.
+   that crashes, times out or writes an unreadable file costs only its own
+   rules: each is reported in `not_assessed` by id, the failure is a
+   degradation, and the other five still reach the report.
 
 5. **Arbitrate.** Merge the finding sets and resolve overlap using the rules in
-   `references/composition.md`: one root cause yields one finding, held by the
-   skill that owns the mechanism, with the downstream symptom recorded as
-   evidence rather than as a second finding.
+   `references/composition.md`: one root cause yields one finding, and a finding
+   whose observation an upstream finding explains is marked `conditional_on`
+   that finding, keeping its own severity (`scripts/arbitrate.py`).
 
 6. **Derive severity and priority.** Diagnostics declare observed impact inputs
    (`blocking`, `breadth`, `content_importance`), `confidence`, `effort` and
@@ -92,7 +93,9 @@ procedure below runs as `scripts/run.py --url <site> --workdir <dir>`, under a
 8. **Add proactive recommendations.** Emit strengthening actions that are
    warranted by the evidence even where no defect was found, marked
    `status: proactive`. These never exceed `medium` severity and are always
-   `P2` or `P3`, so they cannot crowd out a real defect.
+   `P2` or `P3`, so they cannot crowd out a real defect. The two, and the rule
+   that keeps observed site text out of them, are specified in
+   `references/proactive.md` and implemented in `scripts/proactive.py`.
 
 9. **Assemble and validate.** Build the report with
    `scripts/assemble_report.py` and validate it against

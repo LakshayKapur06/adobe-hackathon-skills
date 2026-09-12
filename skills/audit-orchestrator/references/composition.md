@@ -73,15 +73,33 @@ Diagnostics overlap by design at the *symptom* level and are disjoint at the
 *mechanism* level. When two findings describe the same underlying cause:
 
 1. **One root cause, one finding.** Keep the finding from the skill that owns
-   the causal mechanism, upstream-most in the ordering above.
+   the causal mechanism, upstream-most in the ordering above. In the current
+   rule set this is enforced inside the rules rather than after them: ACC-004
+   skips pages ACC-003 already covers, RND-002 yields to RND-001 whenever a
+   rendered comparison exists, and RND-003 skips pages RND-001 already covers.
+   So no two emitted findings share one root cause, and arbitration only ever
+   marks dependencies.
 2. **The downstream observation becomes evidence, not a second finding.** If
    prices are missing from server HTML *and* the product pages are also
    `nosnippet`, the access finding is the finding; the extraction observation is
    recorded in its `evidence_refs`.
-3. **Suppress conditional findings under a blocking upstream one.** If robots
-   disallows every AI crawler at the origin, content-shape findings are still
-   reported but explicitly marked as conditional on the access fix, because
-   fixing them first would change nothing.
+3. **Mark conditional findings under a blocking upstream one.** The downstream
+   finding is still reported, with its own severity, but carries
+   `conditional_on` naming the upstream rule and why, and is listed after
+   unconditional findings of the same priority. Implemented in
+   `scripts/arbitrate.py` as this table, and nothing more:
+
+   | Upstream finding | Marks conditional | Why |
+   |---|---|---|
+   | RND-001 site-wide, or RND-002 | IDM-001, ANS-001, FRC-001 | each concludes something is absent from the server response, which the upstream finding already explains |
+   | RND-001 on a page type | IDM-001, ANS-001, FRC-001 where their page types overlap | the same, confined to the template |
+   | ACC-003 site-wide | every discoverability finding from render, identity, answerability and freshness | nothing on those templates reaches an index until `noindex` is removed |
+
+   Two cases are deliberately absent. A crawler exclusion (ACC-001, ACC-008)
+   removes some assistants and not others, so content fixes still matter for
+   the rest and nothing downstream is conditional on it. A finding presence-based
+   rather than absence-based (IDM-002, IDM-003, IDM-004, ACC-005) holds whatever
+   the server response later contains, so it is never conditional either.
 4. **Never merge severities.** Severity is recomputed from the surviving
    finding's own impact inputs. Two medium findings never become a high.
 5. **Deduplicate by `(rule_id, scope.page_types, evidence_refs[].url)`.** The

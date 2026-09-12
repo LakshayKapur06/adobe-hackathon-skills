@@ -15,6 +15,7 @@ Standard library only.
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -33,9 +34,19 @@ GLOBAL_DEADLINE_S = 300
 DIAGNOSIS_RESERVE_S = 40       # the diagnosis-and-synthesis stage budget
 
 
+def rule_ids(skill):
+    """The rule ids a diagnostic defines, read from its own rules.md."""
+    path = os.path.join(ROOT, "skills", skill, "references", "rules.md")
+    with open(path, encoding="utf-8") as handle:
+        return re.findall(r"^### ([A-Z]{3}-\d{3}) ", handle.read(), re.M)
+
+
 def _registry():
-    return {name: json.load(open(os.path.join(SCHEMAS, name), encoding="utf-8"))
-            for name in ("evidence.schema.json", "finding.schema.json", "report.schema.json")}
+    registry = {}
+    for name in ("evidence.schema.json", "finding.schema.json", "report.schema.json"):
+        with open(os.path.join(SCHEMAS, name), encoding="utf-8") as handle:
+            registry[name] = json.load(handle)
+    return registry
 
 
 def _validate(instance, schema_name, registry):
@@ -102,18 +113,36 @@ def run(url, workdir, collect_only=False, no_render=False, no_egress=False, max_
 
     findings_dir = os.path.join(workdir, "findings")
     os.makedirs(findings_dir, exist_ok=True)
-    unruled = []
+    unruled, failed = [], []
     for skill in assemble_report.DIAGNOSTIC_SKILLS:
         script = os.path.join(ROOT, "skills", skill, "scripts", "diagnose.py")
+        out_path = os.path.join(findings_dir, skill + ".json")
         if not os.path.isfile(script):
             unruled.append(skill)
             continue
         remaining = GLOBAL_DEADLINE_S - (time.monotonic() - started)
-        subprocess.run([sys.executable, script, "--evidence", evidence_path,
-                        "--out", os.path.join(findings_dir, skill + ".json")],
-                       timeout=max(5, remaining), check=True)
+        try:
+            subprocess.run([sys.executable, script, "--evidence", evidence_path, "--out", out_path],
+                           timeout=max(5, remaining), check=True)
+            with open(out_path, encoding="utf-8") as handle:
+                json.load(handle)
+        except (subprocess.TimeoutExpired, subprocess.CalledProcessError, OSError, ValueError) as exc:
+            # One diagnostic failing must not cost the other five their report
+            # (CONTRACTS section 4: never fail the whole run). Its rules are
+            # reported as not assessed, by id, so nothing reads as a pass.
+            failed.append((skill, exc))
+            if os.path.exists(out_path):
+                os.remove(out_path)
 
-    extra = []
+    extra, failed_not_assessed = [], []
+    for skill, exc in failed:
+        reason = "budget_exhausted" if isinstance(exc, subprocess.TimeoutExpired) else             "the %s diagnostic did not complete (%s)" % (skill, type(exc).__name__)
+        extra.append({"what": "diagnosis", "reason": "%s: %s" % (skill, reason),
+                      "impact": "every %s rule is reported as not assessed" % skill})
+        for rule_id in rule_ids(skill):
+            failed_not_assessed.append({"rule_id": rule_id, "reason": reason,
+                                        "enable_hint": "re-run the audit; if it recurs, run skills/%s/scripts/"
+                                                       "diagnose.py directly to see the error" % skill})
     if unruled:
         extra.append({
             "what": "diagnosis",
@@ -122,7 +151,7 @@ def run(url, workdir, collect_only=False, no_render=False, no_egress=False, max_
                       "nothing was evaluated, not because the site passed",
         })
     findings, not_assessed, checks_passed = assemble_report.read_findings(findings_dir)
-    report = assemble_report.assemble(evidence, findings, not_assessed, checks_passed, extra)
+    report = assemble_report.assemble(evidence, findings, not_assessed + failed_not_assessed, checks_passed, extra)
     problems = _validate(report, "report.schema.json", registry)
     if problems:
         return _fail("the assembled report is not schema-valid; nothing was written", problems)
