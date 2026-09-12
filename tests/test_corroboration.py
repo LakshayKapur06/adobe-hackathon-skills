@@ -155,6 +155,16 @@ class FakeRun:
 
 
 class TestSameAsVerification(unittest.TestCase):
+    def test_a_joined_list_of_profiles_is_split_into_urls(self):
+        # The extractor joins a sameAs list with " | ". Reading the joined string
+        # as one URL requested an address that does not exist and recorded a
+        # broken identity link the site never had.
+        evidence = {"pages": [{"jsonld": [{"values": {
+            "sameAs": "https://www.facebook.com/brand | https://twitter.com/brand |  | not-a-url"}}]},
+            {"jsonld": [{"values": {"sameAs": "https://twitter.com/brand", "name": "Brand"}}]}]}
+        self.assertEqual(external.declared_same_as(evidence),
+                         ["https://www.facebook.com/brand", "https://twitter.com/brand"])
+
     def test_a_dead_declared_profile_is_recorded_against_the_claim(self):
         claim = {"id": "C-001", "kind": "legal_name", "value_normalized": "garuda footwear"}
         probe = external.Probe("brand.example")

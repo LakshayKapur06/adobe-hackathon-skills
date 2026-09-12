@@ -384,6 +384,28 @@ def _wayback(run, probe, claims, origin_url, deadline, now):
                            "first archived snapshot %s" % first[:4], now)
 
 
+def declared_same_as(evidence):
+    """Every sameAs URL the site declares, one URL per entry, in first-seen order.
+
+    The extractor joins a list of scalars into one value with " | " so that every
+    member survives into the flat values map. Reading that joined string as a
+    single URL, as this function once did, turned a site's three profile links
+    into one request for a URL that does not exist, and recorded the failure as
+    a broken identity link the site never had. Split first, then filter.
+    """
+    found = []
+    for page in evidence.get("pages") or []:
+        for entry in page.get("jsonld") or []:
+            for path, value in (entry.get("values") or {}).items():
+                if path.split(".")[0] != "sameAs":
+                    continue
+                for part in (value or "").split(" | "):
+                    part = part.strip()
+                    if part.startswith(("http://", "https://")) and part not in found:
+                        found.append(part)
+    return found
+
+
 def probe_external(run, evidence, canonical_claims, deadline, now):
     """Run every keyless provider that fits in the budget. Never raises."""
     site = evidence["site"]
@@ -392,13 +414,7 @@ def probe_external(run, evidence, canonical_claims, deadline, now):
     claims = list(canonical_claims)
     names = [c for c in claims if c["kind"] == "legal_name"]
 
-    same_as = []
-    for page in evidence.get("pages") or []:
-        for entry in page.get("jsonld") or []:
-            for path, value in (entry.get("values") or {}).items():
-                if path.split(".")[0] == "sameAs" and value.startswith("http"):
-                    if value not in same_as:
-                        same_as.append(value)
+    same_as = declared_same_as(evidence)
 
     if not claims:
         return probe.result(False, "none"), "no canonical claim was promoted, so nothing could be asked"
