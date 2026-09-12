@@ -514,3 +514,12 @@ The same work corrected the skill's `SKILL.md`, which still described promotion
 as writing `canonical_claims` into `evidence.json`. It writes the sidecar
 `evidence/canonical_claims.json`, which the collector merges in pass 2, as D2
 and the promotion script already required.
+
+### D20 — `contracts-v6`: every remaining diagnostic may read page status
+
+The gap D19 closed for identity existed in all three remaining diagnostics:
+`answerability`, `freshness-and-corroboration` and `arrival-and-engagement`
+each read page content and none could apply the 2xx gate `docs/RULE_FORMAT.md`
+requires. `pages[].status` is added to all three allow-lists in one amendment,
+before any of their rules exist, rather than discovered three more times. The
+schema is unchanged. With this, all six diagnostics can read page status.

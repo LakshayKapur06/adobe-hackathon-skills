@@ -30,6 +30,7 @@ network. Every field path a rule consumes must appear in this list, and every
 path in this list must exist in the evidence schema — CI enforces both
 directions, which is what makes fabricated evidence impossible.
 
+- `pages[].status`
 - `canonical_claims`
 - `pages[].jsonld[].values`
 - `canonical_claims[].value_normalized`
