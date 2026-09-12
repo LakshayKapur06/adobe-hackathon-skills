@@ -1,7 +1,8 @@
 # HANDOFF — picking this build up mid-flight
 
 Written 2026-09-13 at commit `4c7b9c2`, roughly six hours into a 24-hour
-deadline. If you are a fresh agent reading this, the previous one ran out of
+deadline, and brought up to date at `d4ee898` once step 1 of section 4 was
+done. Section 3a is the newer state; section 3 is kept as it was. If you are a fresh agent reading this, the previous one ran out of
 budget or access. Everything you need is in this repository.
 
 ---
@@ -14,8 +15,8 @@ work is the single most expensive mistake available to you. Run these first and
 believe them over anything below.
 
 ```sh
-git log --oneline -30            # compare against 4c7b9c2, named above
-git tag -l                       # contracts-v1, contracts-v2, maybe later
+git log --oneline -30            # compare against d4ee898, named above
+git tag -l                       # contracts-v1 through contracts-v7, maybe later
 sh scripts/check.sh              # must be 12/12 before you change anything
 grep -n "Rules defined" skills/*/references/rules.md    # rule progress per skill
 ls runs/ tests/fixtures/ samples/ 2>/dev/null           # runs, fixtures, samples
@@ -26,13 +27,17 @@ Then read, in this order, and do not skip them:
 
 1. `CLAUDE.md` — standing rules for the repository, including the safety rule
    about observed content.
-2. `docs/DECISIONS.md` — the decision register. **Read D12 through D16 and any
+2. `docs/DECISIONS.md` — the decision register. **Read D12 through D21 and any
    later entries carefully**: they record mid-build corrections, including two
    revisions of the rendering decision on the same day. Entries marked *revised*
    supersede their own earlier text.
 3. `docs/CONTRACTS.md` — the frozen data contracts.
 4. `docs/RULE_FORMAT.md` — the 14-field block every detection rule must use.
 5. `tests/g2-evidence-check.md` — the completed empirical evidence check.
+   Its verdict columns for sites 1-3 were still blank at `d4ee898`; the user
+   has been asked whether that verification is recorded elsewhere.
+6. `tests/rule-review.md` — every rule tightened or cut, and why, plus the
+   fact-check of every operator claim the rules make.
 
 `grep -n "Rules defined" skills/*/references/rules.md` is the fastest read on
 progress. Each diagnostic declares `Rules defined: N of a maximum 12`, and
@@ -144,6 +149,50 @@ encoded four since-fixed bugs into their thresholds.
 
 ---
 
+## 3a. Where things stood at `d4ee898`
+
+**Step 1 is done: all six diagnostics have rules, a `scripts/diagnose.py`, and
+rule tests.** Twenty rules in total, every one reviewed against the five tests,
+every operator claim fact-checked against the operator's own documentation:
+
+| Skill | Rules | Real-site result on the saved G2 runs |
+|---|---|---|
+| access-and-indexability | 9 | indianexpress: ACC-008 (PerplexityBot excluded by name, proactive, medium). POCO: ACC-005 (every page canonical to home) |
+| render-and-extraction | 3 | POCO: RND-001 critical site-wide with a browser, RND-002 without one |
+| identity-and-markup | 4 | iflexbtw: IDM-002 (nine empty sameAs). python.org: IDM-001 (WebSite only) |
+| answerability | 1 | not assessed on all four sites (no long non-news articles) |
+| freshness-and-corroboration | 2 | indianexpress: FRC-002 (site says 1932, Wikidata disagrees), risk |
+| arrival-and-engagement | 1 | passes all four (median TTFB 127-400 ms) |
+
+**The low counts in the last three are a finding, not an omission.** The text
+metrics (`boilerplate_ratio`, `longest_block_words`), the obstruction markers
+and the sample-bound link graph were measured on real sites and produce false
+positives on healthy pages; each skill's `references/rules.md` has a section
+saying exactly why. Raising those counts needs better observations from the
+collector, not more rules on the current ones. Do not pad them.
+
+**Contracts moved from v2 to v7, all allow-list or semantics amendments made
+under the user's standing authorization** (D17-D21): proactive severity is
+capped at medium rather than rejected; `Claude-SearchBot` is tracked; every
+diagnostic may read `pages[].status`; access may cite `robots.url` and
+`run_context.started_at`; freshness may read page type and cite external hits.
+
+**Two collector bugs were found by writing rules and fixed with tests:** a
+declared `sameAs` list was read as one URL (`3149cb4`), and pass 2 never
+updated `run_context.corroboration.method` (`d4ee898`).
+
+**Measured, not claimed:** full live audits of python.org, iflexbtw and
+indianexpress took 41 s, 77 s and 106 s wall-clock, each report schema-valid,
+and `tests/test_runner.py` asserts that every rule defined in any `rules.md`
+reaches the end-to-end report as exactly one outcome.
+
+**Known, not yet done:** the orchestrator does not yet arbitrate. On POCO,
+IDM-001 (no organization markup in the server response) is conditional on
+RND-001 (nothing is in the server response) and should be marked so. That is
+step 2.
+
+---
+
 ## 4. The remaining plan, in order
 
 The deadline is 24 hours from roughly 2026-09-12T12:00Z, so about eighteen hours
@@ -166,7 +215,7 @@ satisfy the consolidation rule, and a ninth would be the padding trap D5 names.
 
 | # | Step | Notes |
 |---|---|---|
-| 1 | **Detection rules, 6 skills** | Dependency order: access -> render -> identity -> answerability -> freshness -> arrival. Access and render come first because their failures condition everything downstream. Surface the first skill's rule set for human review before writing the other five, so a systematic problem is caught once rather than six times |
+| 1 | **Detection rules, 6 skills** — done at `d4ee898`, see 3a | Dependency order: access -> render -> identity -> answerability -> freshness -> arrival. Access and render come first because their failures condition everything downstream. Surface the first skill's rule set for human review before writing the other five, so a systematic problem is caught once rather than six times |
 | 2 | Orchestrator depth | Dedup by `(rule_id, scope.page_types, evidence_refs[].url)`; arbitration keeping the upstream-most finding; proactive recommendations as real work; `checks_passed[]` and `not_assessed[]`; full `run_context`; final schema validation |
 | 3 | 5 fixture archetypes | With pass/fail assertions. The only evidence for the generalization rubric row, which is currently asserted and unproven - this is where spare time should go before anywhere else |
 | 4 | **Adjudication, 6 sites** | The step that decides the score. Human-only. See section 5 |
