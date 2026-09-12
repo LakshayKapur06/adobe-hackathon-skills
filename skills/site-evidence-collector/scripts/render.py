@@ -25,19 +25,31 @@ iframe never responds:
   this way until killed at 20s.
 
 That much was known. What a real publisher then showed is that the quiet-period
-attempt does not merely fail on pathological pages, it fails on ordinary ones:
-on every sampled page of an ad-supported news site it returned no DOM within
-5s, while a real-time cap returned the full text in 7.9s. Its pages need about
-eight seconds to assemble, and third-party ad and tracker requests keep virtual
-time from ever advancing. Measured on one topic page and one article, the
-real-time cap, the load event and the two flags combined all extracted
-identical text (11660 and 10999 characters); the virtual-time attempt extracted
-nothing. On a client-rendered storefront it was slower for the same result
-(4.2s against 2.1s).
+attempt fails on ordinary pages too: on every sampled page of an ad-supported
+news site it returned no DOM within 5s, while a real-time cap returned the full
+text in 7.9s. Those pages need about eight seconds to assemble, and third-party
+ad and tracker requests keep virtual time from ever advancing.
 
-So it never wins, and it used to run first, spending half of each page's budget
-before the attempt that works. Hence one attempt, and a cap sized from what
-real pages need rather than from what an unloaded one does.
+But a real-time cap dumps at the load event, and a page that assembles itself
+*after* load is invisible to it. On that same site's subscription page the
+capped attempt returned a 33 KB body containing not one character of text,
+while a 5s virtual-time budget returned 3152 characters — the plans, the prices
+and the FAQ, all mounted after load. Nothing else available here can see past
+the load event: this module has no automation channel by design, so it cannot
+wait on a selector or poll the DOM.
+
+So neither flag is right on its own, and the original error was one of order
+rather than of choice. The quiet period used to run first, spending half of
+every page's budget before the attempt that usually works. Now the capped
+attempt runs first, and the quiet period runs only when the capped attempt came
+back with almost no text — the one signal that distinguishes "this page really
+has no content" from "this page has not assembled it yet". A page that renders
+to real text pays nothing for the second attempt, and a page that renders to
+nothing gets the only attempt that can help it.
+
+Virtual time is given a small budget with a real-time kill over it, because a
+larger budget stalls on pending requests: 5s of virtual time returned in 5.5s,
+while 15s of it took 32.6s for identical text.
 
 Discovery is portable: an explicit override first, then the PATH, then each
 platform's usual install locations. If nothing is found, rendering is simply
@@ -54,11 +66,17 @@ import tempfile
 import threading
 import time
 
+import extract
+
 ENV_OVERRIDES = ("CHROME_PATH", "CHROMIUM_PATH", "BROWSER_PATH")
 PATH_NAMES = ("google-chrome", "google-chrome-stable", "chromium", "chromium-browser", "chrome",
               "msedge", "microsoft-edge", "microsoft-edge-stable", "brave-browser", "brave")
-NAVIGATION_CAP_MS = 8000       # --timeout, in real time: a publisher's pages need ~8s
-PAGE_TIMEOUT_S = 11.0          # wall-clock kill, outside the browser, above the cap
+NAVIGATION_CAP_MS = 8000       # attempt 1: --timeout, real time. Publisher pages need ~8s
+CAP_ATTEMPT_S = 11.0           # attempt 1: wall-clock kill, above the navigation cap
+QUIET_PERIOD_MS = 5000         # attempt 2: --virtual-time-budget, to see past the load event
+SETTLE_ATTEMPT_S = 9.0         # attempt 2: wall-clock kill, the guarantee the flag lacks
+HYDRATION_FLOOR = 500          # attempt 1 text below this means "maybe not assembled yet"
+PAGE_TIMEOUT_S = 20.0          # both attempts together, for the few pages that need both
 MAX_CONCURRENT = 3
 
 
@@ -101,6 +119,16 @@ def find_browser():
     return None, note or "no Chromium-family browser found on PATH or in standard locations"
 
 
+def _text_len(html, url):
+    """How much text a DOM actually yields, by the same extractor the bundle uses.
+
+    Deciding on extracted text rather than on DOM size is the point: the page
+    that motivated the second attempt returned a 33 KB body carrying not one
+    character of text.
+    """
+    return extract.parse_document(html, url)["text_len"]
+
+
 def _kill_tree(process):
     try:
         if os.name == "nt":
@@ -129,19 +157,23 @@ class Renderer:
         name = os.path.splitext(os.path.basename(binary))[0] if binary else None
         self.label = "system-chromium:%s" % name if name else None
 
-    def _command(self, url, profile):
+    def _command(self, url, profile, settle):
         command = [self.binary, "--headless=new", "--disable-gpu", "--no-first-run",
                    "--no-default-browser-check", "--disable-extensions", "--disable-sync",
                    "--disable-background-networking", "--mute-audio", "--hide-scrollbars",
                    "--blink-settings=imagesEnabled=false",
-                   "--user-agent=%s" % self.user_agent, "--user-data-dir=%s" % profile,
-                   "--timeout=%d" % NAVIGATION_CAP_MS]
+                   "--user-agent=%s" % self.user_agent, "--user-data-dir=%s" % profile]
+        # Never both: --timeout is measured in virtual time whenever a virtual
+        # clock is running, so the pair waits forever on a page whose requests
+        # never settle. The wall-clock kill is what bounds the settle attempt.
+        command.append("--virtual-time-budget=%d" % QUIET_PERIOD_MS if settle
+                       else "--timeout=%d" % NAVIGATION_CAP_MS)
         command += ["--dump-dom", url]
         if os.name != "nt" and hasattr(os, "geteuid") and os.geteuid() == 0:
             command.insert(1, "--no-sandbox")     # Chromium refuses to sandbox as root
         return command
 
-    def _attempt(self, url, limit_s):
+    def _attempt(self, url, settle, limit_s):
         """One browser run. Returns ``(html or None, error or None)``."""
         profile = tempfile.mkdtemp(prefix="ara-render-")    # a fresh, throwaway browser profile
         try:
@@ -151,7 +183,7 @@ class Renderer:
             else:
                 kwargs["start_new_session"] = True
             try:
-                process = subprocess.Popen(self._command(url, profile), **kwargs)
+                process = subprocess.Popen(self._command(url, profile, settle), **kwargs)
             except OSError as exc:
                 return None, "browser failed to start: %s" % exc
             try:
@@ -167,9 +199,25 @@ class Renderer:
         return out.decode("utf-8", errors="replace"), None
 
     def render(self, url):
-        """Return ``(html or None, error or None, render_ms)`` within PAGE_TIMEOUT_S."""
+        """Return ``(html or None, error or None, render_ms)`` within PAGE_TIMEOUT_S.
+
+        The capped attempt first. The settle attempt only if that came back with
+        almost no text, and then whichever found more of it: a page really can
+        have nothing to say, and the second attempt is how we tell that apart
+        from a page that had not finished saying it.
+        """
         started = time.monotonic()
-        html, error = self._attempt(url, self.page_timeout)
+        html, error = self._attempt(url, False, min(CAP_ATTEMPT_S, self.page_timeout))
+        if html is not None and _text_len(html, url) >= HYDRATION_FLOOR:
+            return html, None, round((time.monotonic() - started) * 1000, 1)
+
+        remaining = self.page_timeout - (time.monotonic() - started)
+        if remaining > 1.0:
+            settled, settle_error = self._attempt(url, True, min(SETTLE_ATTEMPT_S, remaining))
+            if settled is not None and (html is None or _text_len(settled, url) > _text_len(html, url)):
+                html = settled
+            elif html is None:
+                error = "capped attempt: %s; settle attempt: %s" % (error, settle_error)
         elapsed = round((time.monotonic() - started) * 1000, 1)
         if html is None:
             return None, "render failed within %.0fs (%s)" % (self.page_timeout, error), elapsed

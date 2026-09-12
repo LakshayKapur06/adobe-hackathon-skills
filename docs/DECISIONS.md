@@ -225,7 +225,7 @@ make us crawl something forbidden. `looks_like_robots()` holds this test and
 zero rules" and "we were served a web page" are not the same observation in the
 bundle.
 
-### D13 — The render wait: one real-time capped attempt (revised)
+### D13 — The render wait: a capped attempt, then a conditional settle (revised twice)
 
 Waiting for the `load` event hung on pages with one resource that never
 settles; the `www.python.org` home page is a live example. The obvious fix,
@@ -259,19 +259,45 @@ topic page, an article and a client-rendered storefront:
 | real `--timeout=8000`, killed at 10s | **11660, 7.9s** | **10999, 8.6s** | 269 chars, 2.1s |
 | load event only, killed at 10s | 11660, 7.9s | 10999, 9.0s | 269 chars, 2.1s |
 
-Two conclusions. The 5s kill, not the flag, was what failed: these pages need
-about eight seconds to assemble. And the virtual-time attempt never wins
-anywhere — it loses outright twice and is slower for an identical result on the
-third. So it is gone, and with it the second attempt, which existed only
-because the first could hang without producing anything.
+The 5s kill, not the flag, was what failed: these pages need about eight
+seconds to assemble. The first conclusion drawn alongside it — that the
+virtual-time attempt never wins and should be deleted — **was wrong, and was
+corrected the same day.** It was generalised from three pages, not one of which
+was a page that assembles itself after the load event, which is the only case
+the flag exists for. A sample that excludes the case under test cannot retire
+the feature under test.
 
-**One attempt per page:** `--timeout=8000` in real time, with a wall-clock kill
-at 11s outside the browser as the guard of last resort. Re-verified on
-python.org, the original hang (2.2s, 7055 characters), on the local
-never-responding-iframe fixture that `tests/test_render.py` pins, and on the
-publisher: render failures went from 15 of 30 to **zero**, and coverage from 1
-page to 17. The pairing that caused the hang stays pinned by a test, so it
-cannot be revived by accident.
+The page that showed it was the same publisher's subscription page:
+
+| | capped attempt | 5s virtual time |
+|---|---|---|
+| `/subscribe` | 33 KB body, **0 characters of text** | **3152 characters**, plans and FAQ present |
+| a topic archive | 11660 characters | no DOM |
+
+A real-time cap dumps at the load event, so a page that mounts its content
+afterwards is invisible to it. Nothing else available here can see past that
+event: this module has no automation channel by design, so it cannot wait on a
+selector or poll the DOM.
+
+**So the original error was one of order, not of choice.** The quiet period
+used to run first, spending half of every page's budget before the attempt that
+usually works. It now runs second, and only when the capped attempt returned
+fewer than 500 characters of extracted text — the one signal separating "this
+page really has nothing to say" from "this page has not finished saying it".
+The decision is made on extracted text rather than DOM size, because the page
+that motivated it had a 33 KB body containing no text at all. Whichever attempt
+finds more text wins, so settling can never replace a real result with a worse
+one.
+
+Virtual time keeps a small budget under a real-time kill, since a larger one
+stalls on pending requests: a 5s budget returned in 5.5s, a 15s budget took
+32.6s for identical text.
+
+Measured after the change: `/subscribe` 0 to 3152 characters, the topic archive
+unchanged at 11627 and paying nothing for a second attempt, python.org — the
+original hang — 1.2s, render failures across the sampled site still zero. The
+flag pairing that caused that hang stays pinned by a test, so it cannot be
+revived by accident.
 
 Which pages get rendered is now chosen rather than incidental: one page of
 every `page_type` first, then the remainder. The budget cannot cover a large

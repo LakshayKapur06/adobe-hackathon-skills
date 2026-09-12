@@ -72,20 +72,23 @@ class TestRenderCommand(unittest.TestCase):
     def setUp(self):
         self.renderer = render.Renderer("chrome", fetch.USER_AGENT)
 
-    def test_the_navigation_cap_runs_in_real_time_with_no_virtual_clock(self):
-        # --timeout is measured in virtual time whenever a virtual-time budget
-        # is set, so the two must never appear together: that pairing waits
-        # forever on a page whose requests never settle. The budget is not used
-        # at all now, having returned no DOM on any sampled page of a real
-        # ad-supported site, but the combination stays pinned against a revival.
-        command = self.renderer._command("https://x.example/", "/tmp/p")
-        self.assertIn("--timeout=%d" % render.NAVIGATION_CAP_MS, command)
-        self.assertFalse(any(flag.startswith("--virtual-time-budget") for flag in command))
+    def test_the_two_clocks_are_never_combined(self):
+        # --timeout is measured in virtual time whenever a virtual clock is
+        # running, so the pair waits forever on a page whose requests never
+        # settle. Each attempt uses exactly one of them.
+        capped = self.renderer._command("https://x.example/", "/tmp/p", settle=False)
+        self.assertIn("--timeout=%d" % render.NAVIGATION_CAP_MS, capped)
+        self.assertFalse(any(f.startswith("--virtual-time-budget") for f in capped))
+        settled = self.renderer._command("https://x.example/", "/tmp/p", settle=True)
+        self.assertIn("--virtual-time-budget=%d" % render.QUIET_PERIOD_MS, settled)
+        self.assertFalse(any(f.startswith("--timeout") for f in settled))
 
-    def test_the_wall_clock_kill_sits_above_the_navigation_cap(self):
-        # The kill is the guard of last resort: if it fired first it would end
-        # navigations the cap was about to dump cleanly.
-        self.assertGreater(render.PAGE_TIMEOUT_S, render.NAVIGATION_CAP_MS / 1000.0 + 1.0)
+    def test_every_wall_clock_kill_sits_above_the_flag_it_bounds(self):
+        # A kill that fired first would end navigations the cap was about to
+        # dump cleanly; over the settle attempt it is the only bound there is.
+        self.assertGreater(render.CAP_ATTEMPT_S, render.NAVIGATION_CAP_MS / 1000.0 + 1.0)
+        self.assertGreater(render.SETTLE_ATTEMPT_S, render.QUIET_PERIOD_MS / 1000.0 + 1.0)
+        self.assertGreaterEqual(render.PAGE_TIMEOUT_S, render.CAP_ATTEMPT_S + render.SETTLE_ATTEMPT_S)
 
     def test_the_cap_allows_the_time_real_pages_need(self):
         # Measured: an ad-supported publisher's pages produced a DOM at 7.9s and
@@ -93,42 +96,64 @@ class TestRenderCommand(unittest.TestCase):
         self.assertGreaterEqual(render.NAVIGATION_CAP_MS, 8000)
 
     def test_the_browser_is_given_nothing_but_a_url(self):
-        command = self.renderer._command("https://x.example/", "/tmp/p")
-        self.assertEqual(command[-2:], ["--dump-dom", "https://x.example/"])
-        for flag in command[1:]:
-            self.assertFalse(flag.startswith("--remote-debugging"), flag)
-            self.assertFalse(flag.startswith("--js-flags"), flag)
+        for settle in (False, True):
+            command = self.renderer._command("https://x.example/", "/tmp/p", settle=settle)
+            self.assertEqual(command[-2:], ["--dump-dom", "https://x.example/"])
+            for flag in command[1:]:
+                self.assertFalse(flag.startswith("--remote-debugging"), flag)
+                self.assertFalse(flag.startswith("--js-flags"), flag)
 
 
-class ScriptedAttempt(render.Renderer):
-    """A Renderer whose single browser run is scripted, to test render() anywhere."""
+def _page(text):
+    return "<html><body><p>%s</p></body></html>" % text
 
-    def __init__(self, outcome):
+
+class ScriptedAttempts(render.Renderer):
+    """A Renderer whose browser runs are scripted, to test render() anywhere."""
+
+    def __init__(self, capped, settled):
         super().__init__("chrome", fetch.USER_AGENT)
-        self.outcome = outcome
+        self.outcomes = {False: capped, True: settled}
         self.attempts = []
 
-    def _attempt(self, url, limit_s):
-        self.attempts.append(limit_s)
-        return self.outcome
+    def _attempt(self, url, settle, limit_s):
+        self.attempts.append(settle)
+        return self.outcomes[settle]
 
 
-class TestOneAttempt(unittest.TestCase):
-    def test_a_page_is_rendered_in_exactly_one_attempt(self):
-        renderer = ScriptedAttempt(("<html>dumped</html>", None))
+class TestSecondAttemptIsConditional(unittest.TestCase):
+    """The settle attempt is paid for only where it can help."""
+
+    def test_a_page_with_real_text_is_rendered_once(self):
+        renderer = ScriptedAttempts((_page("x" * render.HYDRATION_FLOOR), None), (_page("later"), None))
         html, error, _ = renderer.render("https://x.example/")
-        self.assertEqual((html, error), ("<html>dumped</html>", None))
-        self.assertEqual(renderer.attempts, [render.PAGE_TIMEOUT_S])
+        self.assertIn("x" * 20, html)
+        self.assertIsNone(error)
+        self.assertEqual(renderer.attempts, [False])
 
-    def test_a_failure_is_not_retried_and_not_an_exception(self):
-        # A second attempt used to exist because the first could hang without
-        # producing anything. Nothing hangs now, and a retry would spend another
-        # page's worth of the render budget for a page that just produced none.
-        renderer = ScriptedAttempt((None, "browser exited with status 1"))
+    def test_a_page_that_renders_to_nothing_gets_the_settle_attempt(self):
+        # The case that motivated this: a 33 KB body with no text in it, whose
+        # content mounts after the load event the capped attempt dumps at.
+        renderer = ScriptedAttempts((_page(""), None), (_page("y" * 900), None))
+        html, error, _ = renderer.render("https://x.example/")
+        self.assertIn("y" * 20, html)
+        self.assertIsNone(error)
+        self.assertEqual(renderer.attempts, [False, True])
+
+    def test_the_capped_result_is_kept_when_settling_finds_no_more(self):
+        # A page can legitimately have almost nothing to say. Settling must not
+        # replace a real result with a worse one.
+        renderer = ScriptedAttempts((_page("short but real"), None), (_page(""), None))
+        html, _, _ = renderer.render("https://x.example/")
+        self.assertIn("short but real", html)
+        self.assertEqual(renderer.attempts, [False, True])
+
+    def test_both_attempts_failing_is_an_error_not_an_exception(self):
+        renderer = ScriptedAttempts((None, "no DOM within 11.0s"), (None, "browser exited with status 1"))
         html, error, _ = renderer.render("https://x.example/")
         self.assertIsNone(html)
-        self.assertEqual(len(renderer.attempts), 1)
-        self.assertIn("browser exited with status 1", error)
+        self.assertIn("capped attempt", error)
+        self.assertIn("settle attempt", error)
 
 
 @unittest.skipUnless(render.find_browser()[0], "no Chromium-family browser on this machine")
