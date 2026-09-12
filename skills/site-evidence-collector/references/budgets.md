@@ -8,10 +8,11 @@ narrows the claim and says so in the report.
 | Stage | Budget | On overrun |
 |---|---|---|
 | robots + sitemap | 15s | Continue without the sitemap. Discovery falls back to navigation and the link graph, and `crawl.sampling.strategy` records that. |
+| Well-known probe | 5s total, three paths | Paths not answered in time are recorded with `status: null`; the audit continues. |
 | First-party crawl | 90s | Stop. Report `crawl.fetched` against `crawl.discovered` so every denominator stays honest. |
 | Rendering | 60s, at most 3 concurrent renders | Remaining pages stay fetch-only and are marked degraded; render-delta rules on them become `not_assessed`. |
 | External probe | 90s | Partial results, `external.truncated = true`, and the frontier size still reported. |
-| Diagnosis + synthesis | 45s | Local and fast; no network, no overrun path needed. |
+| Diagnosis + synthesis | 40s | Local and fast; no network, no overrun path needed. |
 | **Global** | **300s**, enforced by the orchestrator | Whatever completed is reported; the rest becomes `not_assessed` with reason `budget_exhausted`. |
 
 ## Why the numbers are these numbers
@@ -19,6 +20,13 @@ narrows the claim and says so in the report.
 **15s for robots and sitemaps.** Both are single small documents on the critical
 path of everything else. A site that cannot serve them in fifteen seconds is
 telling us something, and waiting longer buys nothing.
+
+**5s for the well-known probe.** Three small fixed-path requests whose only
+job is to establish whether each file exists. Nothing downstream depends on
+them, and no major assistant is documented to read them, so they get a hard
+ceiling rather than a share that could grow. The 5s was taken from the
+diagnosis stage's headroom, which keeps the stage budgets summing to the 300s
+global deadline.
 
 **90s for the crawl.** The crawl is the only stage whose cost scales with site
 size, so it gets the largest single share. With bounded concurrency and typical
@@ -36,7 +44,7 @@ each is capped individually — Common Crawl is hard-limited to 10 seconds and i
 never allowed to block, being the slowest and least valuable of the keyless set.
 A slow third party must not be able to consume the audit.
 
-**45s for diagnosis.** Every diagnostic reads one local JSON file and applies
+**40s for diagnosis.** Every diagnostic reads one local JSON file and applies
 bounded arithmetic. This is generous on purpose: the remaining headroom in the
 300s global budget lives here.
 

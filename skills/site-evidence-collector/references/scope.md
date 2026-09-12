@@ -23,6 +23,7 @@ or the word "should", it belongs in a diagnostic.
 | Claims | Candidate strings with kind, normalised value, source URL, locator, method, observed count |
 | Off-site | Frontier size, truncation, origins with independence metadata, per-claim hits |
 | User-agent probe | Status and extracted-text length returned to each named AI crawler, on the home page and one deep page only |
+| Agent-facing discovery files | Status, presence and content type of `/llms.txt`, `/agents.md` and `/.well-known/ucp` — never their contents |
 
 ## Extracted text lives beside the bundle, not inside it
 
@@ -44,6 +45,21 @@ from probing the site, and because two URLs is enough to tell conditional
 serving from a one-off. Every probe respects robots.txt: a URL we are disallowed
 from is not requested under any user agent, and the probe never re-requests a
 URL that already errored.
+
+## Agent-facing discovery files, and why we look at all
+
+No major assistant is documented to consume `/llms.txt`, `/agents.md` or
+`/.well-known/ucp`. They are observed anyway, for one reason: so that anything
+the report says about them rests on what is actually at the origin, and can be
+pitched correctly — as a speculative, low-priority proactive item — rather than
+flagged as a defect the way a naive audit would. Absence is recorded like any
+other observation, never as an error.
+
+Each path is requested once, within a 5s total budget, and only if robots.txt
+permits it. Only the status, presence and content type are kept. The contents
+are never recorded: these files exist to be read by agents, which makes them
+the most direct way a site can put instructions in front of one, and the
+evidence bundle is not a channel for that.
 
 ## Not observed, on purpose
 

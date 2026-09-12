@@ -71,6 +71,8 @@ A diagnostic still fetches nothing.
   },
   "ua_probe": [ { "url": "https://example.com/", "user_agent": "GPTBot",
                   "status": 200, "text_len": 1840, "text_hash": "sha256:..." } ],
+  "well_known": [ { "path": "/llms.txt", "status": 404, "present": false,
+                    "content_type": "text/html" } ],
   "errors": [ { "url": "...", "stage": "fetch", "message": "timeout" } ]
 }
 ```
@@ -159,7 +161,7 @@ against visible text are short ones — a name, a price, a date — not prose.
 
 `additionalProperties: false` stops an invented *field*. It does not stop an
 invented *value*, and a rule branching on `page_type == "product"` fails
-silently and permanently if the collector writes `"products"`. These four are
+silently and permanently if the collector writes `"products"`. These five are
 therefore closed enums, and adding a member is a contract change:
 
 | Field | Permitted values |
@@ -168,11 +170,46 @@ therefore closed enums, and adding a member is a contract change:
 | `pages[].provenance.layer` | `first_party`, `third_party` |
 | `external.origins[].source_type` | `encyclopedic`, `retailer`, `directory`, `news`, `review`, `forum`, `social` |
 | Finding `evidence_refs[].layer` | `first_party`, `third_party` |
+| `well_known[].path` | `/llms.txt`, `/agents.md`, `/.well-known/ucp` |
 
 `other` is a real classification, not a failure marker: a page the classifier
 cannot place is `other` with a low `page_type_confidence`, and every rule that
 branches on page type must state what it does with `other` rather than assuming
 the case away.
+
+### Agent-facing discovery files (`well_known`)
+
+**No major assistant is documented to consume these files.** `/llms.txt`,
+`/agents.md` and `/.well-known/ucp` are observed so that a recommendation about
+them can be evidence-backed and correctly calibrated — as `proactive` and low
+priority — rather than asserted blind. This is the `llms.txt` position already
+recorded under "Deliberate exclusions" in `docs/DECISIONS.md`, extended to its
+two siblings: absence of any of them is never a defect, and no rule may treat it
+as one.
+
+The collector probes exactly those three paths at the resolved origin, once
+each, within a 5s total budget, and records the outcome whether the file is
+there or not. Absence is an observation, not an error, so a 404 is written to
+`well_known` and never to `errors[]`.
+
+| Field | Meaning |
+|---|---|
+| `path` | One of the three closed values above. Nothing else is ever probed under this key. |
+| `status` | The HTTP status received, or `null` when the request was made and no response came back — timeout, DNS or connection failure. |
+| `present` | `true` only for a 2xx response with a non-empty body. A 200 serving an empty file is not present. |
+| `content_type` | The `Content-Type` header as received, or `null` when there was none or no response. |
+
+**robots.txt is respected per path.** A path robots.txt disallows us from is
+not requested and gets no entry, which is why the array has at most three
+entries. A missing entry therefore means "not probed" and `status: null` means
+"probed and unreachable"; the two are never conflated, and a rule can tell which
+applies from `robots.groups`.
+
+Only the existence and shape of each file is recorded, never its contents.
+These files are written to be read by agents, which makes them the most direct
+channel a site has for putting instructions in front of one; recording the fact
+of the file without its text keeps that channel out of the evidence bundle
+entirely.
 
 ### Bounds, and what truncation means
 
@@ -333,7 +370,8 @@ completed is reported and the rest becomes `not_assessed` with reason
 | Stage | Budget | On overrun |
 |---|---|---|
 | robots + sitemap | 15s | continue without sitemap |
+| well-known probe | 5s total, three paths | record unreachable paths as `status: null` and continue |
 | first-party crawl | 90s | stop, report `crawl.fetched` vs `discovered` |
 | rendering | 60s, max 3 concurrent renders | remaining pages fetch-only, mark degraded |
 | external probe | 90s | partial results, `external.truncated = true` |
-| diagnosis + synthesis | 45s | n/a (local, fast) |
+| diagnosis + synthesis | 40s | n/a (local, fast) |

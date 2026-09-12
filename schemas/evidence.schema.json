@@ -18,6 +18,7 @@
     "canonical_claims",
     "external",
     "ua_probe",
+    "well_known",
     "errors"
   ],
   "properties": {
@@ -292,6 +293,23 @@
           "status": { "type": ["integer", "null"] },
           "text_len": { "type": ["integer", "null"], "minimum": 0 },
           "text_hash": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+
+    "well_known": {
+      "type": "array",
+      "description": "Agent-facing discovery files at the resolved origin. No major assistant is documented to consume them; they are observed so a recommendation about them can be evidence-backed and calibrated as proactive and low priority. Probed once each within 5s, robots-respecting; a disallowed path is not requested and has no entry. Absence is an observation, not an error. Existence and shape only, never contents.",
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "status", "present", "content_type"],
+        "properties": {
+          "path": { "enum": ["/llms.txt", "/agents.md", "/.well-known/ucp"] },
+          "status": { "type": ["integer", "null"] },
+          "present": { "type": "boolean" },
+          "content_type": { "type": ["string", "null"] }
         }
       }
     },

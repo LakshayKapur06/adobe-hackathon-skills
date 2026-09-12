@@ -58,6 +58,10 @@ directions, which is what makes fabricated evidence impossible.
 - `ua_probe[].status`
 - `ua_probe[].text_len`
 - `ua_probe[].text_hash`
+- `well_known`
+- `well_known[].path`
+- `well_known[].present`
+- `well_known[].status`
 - `pages[].page_type`
 - `site.resolved_origin`
 - `site.registrable_domain`

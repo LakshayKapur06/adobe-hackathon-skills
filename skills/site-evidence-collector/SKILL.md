@@ -82,19 +82,25 @@ about the same page — the worst failure mode available to an auditor.
    probing the site. Never probe a URL robots.txt disallows us from, under any
    user agent.
 
-8. **Extract claim candidates, do not interpret them.** Emit candidate strings
+8. **Record the agent-facing discovery files, present or not.** Request
+   `/llms.txt`, `/agents.md` and `/.well-known/ucp` at the resolved origin, once
+   each, within 5s in total, skipping any path robots.txt disallows. Record the
+   status, whether a non-empty 2xx body came back, and the content type — never
+   the contents. Absence is an observation to record, not an error to report.
+
+9. **Extract claim candidates, do not interpret them.** Emit candidate strings
    with kind, normalised value, source URL, locator and extraction method.
    Promotion of a candidate to a canonical claim is a judgement and belongs to
    `identity-and-markup`, which writes back before the second pass.
 
-9. **Probe off-site, keylessly, with a disclosed coverage bound.** Using the
+10. **Probe off-site, keylessly, with a disclosed coverage bound.** Using the
    canonical claims, query the keyless providers listed in
    `references/providers.md` and write `external.hits` in one schema regardless
    of which provider answered. Respect each third-party domain's own robots.txt.
    Record `frontier_size` and `truncated`. We do not have open-web recall and
    the evidence bundle must never imply that we do.
 
-10. **Write the bundle.** `workdir/evidence/evidence.json`, conforming to
+11. **Write the bundle.** `workdir/evidence/evidence.json`, conforming to
     `../../schemas/evidence.schema.json`, plus the text sidecars under
     `workdir/evidence/pages/`. Validate before returning.
 

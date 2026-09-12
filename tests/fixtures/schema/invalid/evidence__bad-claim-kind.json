@@ -442,5 +442,25 @@
       "url": "http://localhost:8000/about.html",
       "user_agent": "GPTBot"
     }
+  ],
+  "well_known": [
+    {
+      "content_type": "text/html",
+      "path": "/llms.txt",
+      "present": false,
+      "status": 404
+    },
+    {
+      "content_type": "text/html",
+      "path": "/agents.md",
+      "present": false,
+      "status": 404
+    },
+    {
+      "content_type": "text/html",
+      "path": "/.well-known/ucp",
+      "present": false,
+      "status": 404
+    }
   ]
 }
