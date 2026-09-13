@@ -9,7 +9,7 @@ description: >-
   something stable to test. Use as part of a website AI-readiness audit when a
   brand may be confused with another entity or described inconsistently.
 license: Apache-2.0
-allowed-tools: Read, Write
+allowed-tools: Read, Write, Bash
 ---
 
 # Identity and Markup

@@ -7,7 +7,7 @@ description: >-
   website AI-readiness audit when visitors arrive but do not stay. Reads a
   shared evidence bundle; never fetches, clicks or submits anything.
 license: Apache-2.0
-allowed-tools: Read, Write
+allowed-tools: Read, Write, Bash
 ---
 
 # Arrival and Engagement

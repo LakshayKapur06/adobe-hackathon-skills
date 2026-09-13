@@ -7,7 +7,7 @@ description: >-
   represented with stale or wrong facts. Reads a shared evidence bundle; never
   fetches anything and always reports its own coverage bound.
 license: Apache-2.0
-allowed-tools: Read, Write
+allowed-tools: Read, Write, Bash
 ---
 
 # Freshness and Corroboration

@@ -100,8 +100,12 @@ was measured against real sites and cut, the file says so and why.
 5. **Derive severity and priority** in one place, from what was observed:
    whether a stage is blocked, how widely, how central the content is, capped by
    confidence. No diagnostic assigns a severity.
-6. **Recommend beyond the problems.** Proactive recommendations are evidence-gated,
-   never above medium, and counted apart from problems.
+6. **Recommend beyond the problems.** Four proactive recommendations, each
+   triggered by something observed on this site and none restating a problem:
+   identity links for organization markup that has none, structured dates for
+   articles that only show them, a fixed prompt panel built from the site's own
+   facts to monitor how assistants describe it, and `/llms.txt`, labelled as
+   speculative. They are never above medium and are counted apart from problems.
 7. **Validate and write** `report.json` against its schema, and `report.md`
    from it.
 
@@ -175,7 +179,8 @@ restructure it.
     marketplace.json          the manifest: eight skills, one entrypoint
     skills/                   one folder per skill, each independently valid
     schemas/                  evidence, finding and report schemas
-    docs/                     decisions, contracts, rule format, handout
+    docs/                     decisions, contracts, rule format, handout;
+                              RUBRIC.md maps each rubric criterion to its files
     scripts/                  run_audit.py, check.py (build gate), package.sh
     samples/                  example outputs from the fixture sites
     tests/                    unit tests, archetype fixtures, verification records

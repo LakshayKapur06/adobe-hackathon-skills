@@ -7,7 +7,7 @@ description: >-
   and readable but still never quoted. Reads a shared evidence bundle; never
   fetches anything and never judges crawlability or freshness.
 license: Apache-2.0
-allowed-tools: Read, Write
+allowed-tools: Read, Write, Bash
 ---
 
 # Answerability

@@ -8,7 +8,7 @@ description: >-
   AI-readiness audit when a fact a human plainly sees may be absent from what a
   fetcher receives. Reads a shared evidence bundle; never fetches anything.
 license: Apache-2.0
-allowed-tools: Read, Write
+allowed-tools: Read, Write, Bash
 ---
 
 # Render and Extraction

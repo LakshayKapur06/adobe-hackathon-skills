@@ -9,7 +9,7 @@ description: >-
   audit when content that humans can see may be unreachable or unindexable by
   retrieval systems. Reads a shared evidence bundle; never fetches anything.
 license: Apache-2.0
-allowed-tools: Read, Write
+allowed-tools: Read, Write, Bash
 ---
 
 # Access and Indexability
