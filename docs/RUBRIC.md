@@ -20,6 +20,7 @@ discoverability and engagement, with few misses and few false positives.*
 | The collector's observations compared page by page with pages a person saved from a browser | `tests/g2-evidence-check.md` |
 | Every claim a rule makes about how an operator's crawler behaves, checked against that operator's documentation | `tests/rule-review.md` |
 | False positives found on live sites turned into tests that keep them fixed: a free app's zero price read as a contradicted price, a client network stall read as a slow server | `tests/test_identity_rules.py`, `tests/test_arrival_rules.py`, `docs/DECISIONS.md` |
+| Adjudication on six real sites the rules were not written against, checked by a person against pages saved from their own browser: every observation true; 2 of 11 conclusions wrong, both fixed at their pattern with tests; no false positive in the 9 findings on re-run; one latent pattern (founding years read from prose) found and closed | `tests/adjudication.md`, `tests/adjudication.csv`, `docs/DECISIONS.md` (D30, D31) |
 
 Engagement is deliberately narrow: one latency rule. Task completion,
 interstitials, anchors, above-the-fold completeness and orphan pages were
@@ -87,4 +88,34 @@ the entrypoint, not padding.*
 | Rules key on mechanisms and page types, never on the audited site's platform or domain; no diagnostic names a CMS or a site | each `rules.md` and `scripts/diagnose.py` |
 | Five fictional archetype sites standing for classes of real website, each with legitimate patterns placed to tempt a false positive, asserted in both directions: every expected finding and no other | `tests/fixtures/archetypes/` |
 | The audit degrades by capability, not by failure: without a browser or network it still runs and says what it could not check | `samples/spa-shell-no-browser/`, `README.md` (Running it) |
-| Bounded by a global deadline with per-stage budgets; real sites finished in 14 to 156 seconds | `skills/site-evidence-collector/references/budgets.md` |
+| Bounded by a global deadline with per-stage budgets; real sites finished in 14 to 178 seconds | `skills/site-evidence-collector/references/budgets.md` |
+| Six real sites audited without a line of site-specific code, then adjudicated by a person; each fix targets a pattern that recurs across the web, not the site | `tests/adjudication.md` |
+
+## Coverage of the failure modes the handout names
+
+The handout's example skill description names seven failure modes, and its
+appendix explains the mechanisms behind them. Each row says what this
+marketplace checks for it. Where coverage is deliberately partial, the row says
+why and points to the measurement: a check that cannot tell a defect from a
+healthy design would be reported as a finding on healthy sites.
+
+| Failure mode | Checked by | Deliberately not checked, and why |
+|---|---|---|
+| Crawlability | ACC-001 answer-time crawler shut out by a wildcard group; ACC-008 excluded by name; ACC-002 robots.txt erroring; ACC-006 crawler user-agent refused at the server; ACC-007 advertised URLs that error; ACC-009 unreadable declared sitemap. Retrieval crawlers are kept apart from training crawlers, because refusing one does not refuse the other | User-initiated fetchers (`ChatGPT-User` and similar): they fetch on a person's request, not by crawling (`access-and-indexability/references/rules.md`) |
+| Indexability | ACC-003 templates refusing indexing; ACC-004 templates forbidding snippets; ACC-005 pages declaring the home page canonical | — |
+| JS-render gaps | RND-001 content only after JavaScript, by template, with the shared path named; RND-002 a server response with no text and no browser to compare; RND-003 product prices only after rendering | — |
+| Missing or invalid structured data | IDM-001 no organization identity; IDM-002 `sameAs` that identifies nothing; IDM-003 JSON-LD no parser can read; IDM-004 marked-up price contradicting the page. Proactive: PRO-003 identity links, PRO-004 structured article dates | Microdata and RDFa are not parsed, so their presence makes IDM-001 not assessed rather than a finding |
+| Facts locked in non-text | RND-003 prices present only in scripts; RND-001 and RND-002 text present only in scripts | Text inside images, PDFs, canvas and iframes: the only image signal is a filename and alt-text keyword match, which fires on `pricing-hero.jpg`, and the collector sees no PDF or canvas content (`tests/rule-review.md`) |
+| Stale or uncorroborated facts | FRC-001 articles with no readable date; FRC-002 founding year contradicting Wikidata; PRO-004 dates shown but not structured. Corroboration covers an enumerable frontier (Wikipedia, Wikidata, the Wayback Machine, declared `sameAs` targets), and its size is reported | Open-web search: search engines disallow their result pages in robots.txt, and this audit obeys robots.txt on every host (`docs/DECISIONS.md`, deliberate exclusions) |
+| Entity ambiguity | Every claim is scored for ambiguity before anything off-site is asked (`identity-and-markup/scripts/promote.py`), and a highly ambiguous name is never compared with an external record (FRC-002); IDM-001 and IDM-002 find missing or empty identity; PRO-003 recommends identity links, at higher confidence for an ambiguous name; PRO-002 names the domain in its questions for an ambiguous name | — |
+| Weak on-site orientation, no context retention | ARR-001 a server slow enough to lose the arriving visitor before anything appears | Task completion, interstitials covering content, deep-link anchors, orphan pages: a read-only audit that never clicks cannot observe them, and the markers it can see fired on healthy pages, such as a paywall class on fully served articles and a closed cart drawer (`arrival-and-engagement/references/rules.md`) |
+
+The appendix's remaining concepts:
+
+| Concept | How the marketplace treats it |
+|---|---|
+| A. Let in, read, pick out | The three gates are the decomposition: access, render and extraction, then identity, answerability and freshness |
+| B. Assistants fetch at answer time | Answer-time retrieval crawlers are tracked separately from training crawlers (ACC-001, ACC-008) |
+| D. Agreement across the web, mistaken identity | FRC-002 and the corroboration pass; ambiguity scoring and the identity rules |
+| E. Personalization and prior context | What an assistant says to a particular person cannot be observed from the site, and probing live assistants during an audit is non-deterministic, so it is excluded from the audit (`docs/DECISIONS.md`). PRO-002 turns it into monitoring: a fixed panel of questions built from the site's own facts, asked of each assistant over time |
+| F. Email summaries | Out of scope for a website audit. The mechanism it describes, substance not available as readable text, is what RND-001 to RND-003 check on web pages |

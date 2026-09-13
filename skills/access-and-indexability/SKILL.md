@@ -5,9 +5,9 @@ description: >-
   at a stable address: AI-crawler policy in robots.txt, a robots.txt answering
   with errors, user-agent-conditional refusal, noindex and nosnippet directives
   in meta robots and X-Robots-Tag, canonicals collapsing pages into the home
-  page, and advertised URLs returning errors. Use as part of a website AI-readiness
-  audit when content that humans can see may be unreachable or unindexable by
-  retrieval systems. Reads a shared evidence bundle; never fetches anything.
+  page, advertised URLs returning errors, and declared sitemaps that cannot be
+  read. Use as part of a website AI-readiness audit when content that humans can
+  see may be unreachable or unindexable by retrieval systems. Reads a shared evidence bundle; never fetches anything.
 license: Apache-2.0
 allowed-tools: Read, Write, Bash
 ---

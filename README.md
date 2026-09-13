@@ -14,6 +14,22 @@ form, traverses a login, or sends anything but polite GET requests, and
 robots.txt is obeyed for the audited domain and for every third-party domain
 consulted.
 
+## For judges: where to look, in order
+
+1. **`docs/RUBRIC.md`** — each of the six rubric criteria mapped to the files
+   that answer it, and every failure mode the handout names mapped to the rules
+   that check it, or to the measurement that showed it cannot be checked
+   without false positives.
+2. **`samples/storefront-full/report.md`** — what a person receives: problems in
+   the order to fix them, each with evidence, severity, priority and a fix they
+   can verify.
+3. **`skills/audit-orchestrator/SKILL.md`**, then any diagnostic's
+   `references/rules.md` — the reasoning, one fixed 14-field block per rule.
+4. **`tests/adjudication.md`** — the audit run on six real sites and checked by a
+   person: what it got wrong, and how each error was fixed at its pattern.
+5. **`docs/DECISIONS.md`** — why it is built this way, including the decisions
+   revised when measurement proved them wrong.
+
 ## Running it
 
     python scripts/run_audit.py --url https://example.com --out runs/example/
@@ -36,7 +52,7 @@ public records lets it compare the site's claims with Wikipedia and Wikidata.
 Without either, the whole on-site audit still runs, and every check that needed
 the missing capability is listed as not assessed, with what would enable it,
 never as a pass. Run one audit at a time: the renderer shares the CPU. Audits of
-real sites finished in 14 to 156 seconds, inside the five-minute limit.
+real sites finished in 14 to 178 seconds, inside the five-minute limit.
 
 ## What you get
 
@@ -135,6 +151,11 @@ cut it.
   expected finding present, **no other finding present**, and named checks
   assessed and passing. Each carries legitimate patterns placed there to tempt a
   false positive.
+- **`tests/adjudication.md`** — the audit run on six real sites the rules were not
+  written against, each finding checked by a person against pages saved from
+  their own browser. Every observation was true; two conclusions of eleven were
+  wrong, both fixed at their pattern with tests, and a re-run showed no false
+  positive. Sites are described by type, not named.
 - **`tests/g2-evidence-check.md`** — the collector's observations compared, page
   by page, with pages and robots.txt files a person saved from their own browser.
 - **`tests/rule-review.md`** — every rule reviewed before it ran, every tightening

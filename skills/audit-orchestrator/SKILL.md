@@ -2,13 +2,16 @@
 name: audit-orchestrator
 description: >-
   Entrypoint for the agent-readiness marketplace. Given a website URL, runs the
-  observation skill once, dispatches the six mechanism diagnostics against the
-  shared evidence bundle, then merges, deduplicates, derives severity and
-  priority, and emits a single audit report of findings plus prioritised
-  suggested actions covering both AI discoverability and on-site engagement.
-  Use when asked to audit, diagnose or score a website for why AI assistants
-  miss, misstate or under-cite a brand, or why arriving visitors fail to
-  complete their task. Recommend-only: never modifies the audited site.
+  observation skill once, dispatches six mechanism diagnostics against the
+  shared evidence bundle (crawlability and indexability, JS-render gaps,
+  structured data and entity ambiguity, answerability, stale or uncorroborated
+  facts, arrival latency), then arbitrates overlapping findings, derives
+  severity and priority, adds evidence-gated proactive recommendations, and
+  emits one audit report (report.json and a readable report.md) of findings plus
+  prioritised suggested actions covering both AI discoverability and on-site
+  engagement. Use when asked to audit, diagnose or score a website for why AI
+  assistants miss, misstate or under-cite a brand, or why arriving visitors are
+  lost. Recommend-only: never modifies the audited site.
 license: Apache-2.0
 allowed-tools: Read, Write, Bash
 ---

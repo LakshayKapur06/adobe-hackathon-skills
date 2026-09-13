@@ -1,0 +1,12 @@
+site,site_type,rule_id,status,severity,verdict,note,after_fix,test
+S1,well-built minimal marketing site,IDM-001,found,medium,TP,"home page JSON-LD is WebPage, WebSite and ItemList only; no Organization, publisher, microdata or RDFa",unchanged,
+S1,well-built minimal marketing site,PRO-001,proactive,low,TP,/llms.txt answers 404; wording reads as optional,unchanged,
+S2,small storefront the adjudicator knows well,PRO-002,proactive,medium,TP,"assistant named the right website; the founding year was right for this brand but read from a sentence about the parent company, a pattern fixed in D31",founding question now asked only from organization markup,test_corroboration.TestPromotion.test_a_founding_year_from_prose_has_no_subject_to_assert
+S3,large e-commerce retailer,ACC-006,risk,medium,FP-INT,"AI crawler user-agents refused (403) where robots.txt admits them, but the Googlebot user-agent was refused too, in the probe and in curl: verification by address, not a block",not assessed,test_access_rules.TestACC006.test_googlebot_refused_too_reads_as_verification_not_a_block
+S3,large e-commerce retailer,IDM-001,found,medium,TP,"no Organization in the audit's fetch (one WebSite node) or the browser's (no JSON-LD); the site serves variants, the conclusion holds in both",unchanged,
+S3,large e-commerce retailer,PRO-001,proactive,low,TP,/llms.txt answers 404; wording reads as optional,unchanged,
+S4,documentation subdomain of a large company,RND-001,found,high,TP,"1155 of 67950 rendered characters present without JavaScript; the label said doc pages, but all were one application under a single path",relabelled to the shared path,test_render_rules.TestRND001.test_a_shared_path_names_the_application_not_the_guessed_type
+S4,documentation subdomain of a large company,IDM-001,found,medium,FP-EXC,"subdomain has no Organization markup; the company's main domain carries complete Organization markup with sameAs",not assessed,test_identity_rules.TestIDM001.test_a_subdomain_defers_to_its_main_domain
+S5,non-English (Hindi) news publisher,ACC-008,proactive,medium,TP,"robots.txt gives OAI-SearchBot, PerplexityBot and Claude-SearchBot their own groups with Disallow: /",unchanged,
+S5,non-English (Hindi) news publisher,PRO-001,proactive,low,TP,/llms.txt answers 404; wording reads as optional,unchanged,
+S6,university,PRO-001,proactive,low,TP,/llms.txt answers 404; wording reads as optional,unchanged,

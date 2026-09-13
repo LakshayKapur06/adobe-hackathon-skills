@@ -212,7 +212,8 @@ Files in `runs/adjudication/` (gitignored, on this machine only):
 | 2 | Look for misses under each site's passed and not-assessed lists; add a `MISS` row for each | **Human** | 30–60 min |
 | 3 | Apply the verdicts — **done** (D30, `contracts-v16`); if step 1 or 2 adds an FP or a MISS, follow the runbook below | Agent | per new item |
 | 4 | Second pass — **done** (`runs/adj3-*`) | Agent | — |
-| 4a | Merge `adjudication.filled.csv` with the user's xtremex answer and any MISS rows, copy to `tests/adjudication.csv`, commit; add the result to `docs/RUBRIC.md` under Detection accuracy (counts and rule ids only, D11) | Agent | 15 min |
+| 4a | Adjudication record — **done**: `tests/adjudication.md` and an anonymized `tests/adjudication.csv` (sites S1–S6 by type, D11), linked from `README.md` and `docs/RUBRIC.md`; xtremex PRO-002 is TP (D31 fixed the prose-year pattern it exposed). **Remaining: add the user's miss check** as a section of `tests/adjudication.md`, plus a row per MISS | Agent | 15 min |
+| 4b | `docs/RUBRIC.md` failure-mode coverage map, README "For judges" block, runtime range 14–178 s, entrypoint and access descriptions — **done** | Agent | — |
 | 5 | Judge read-through: `README.md` → `marketplace.json` → `skills/audit-orchestrator/SKILL.md` → each skill's `SKILL.md` and `references/rules.md` → `docs/RUBRIC.md`, running nothing; note anything unanswerable from the files alone | **Human** | 45–60 min |
 | 6 | Fix read-through gaps | Agent | 15–30 min |
 | 7 | Final package: `sh scripts/package.sh`, then the user submits `dist/agent-readiness-audit.zip` as built (never re-zipped by hand) | Agent, then human | 5 min |
