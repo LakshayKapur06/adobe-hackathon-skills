@@ -19,7 +19,7 @@ in `scripts/collect.py` and the diagnosis reserve in the orchestrator's `run.py`
 
 The stage budgets sum to 300s exactly. They are not expected to all be spent: on
 the sites this build was verified against, audits run one at a time finished in
-14 to 178 seconds.
+14 to 186 seconds.
 
 ## Why the numbers are these numbers
 

@@ -88,8 +88,8 @@ the entrypoint, not padding.*
 | Rules key on mechanisms and page types, never on the audited site's platform or domain; no diagnostic names a CMS or a site | each `rules.md` and `scripts/diagnose.py` |
 | Five fictional archetype sites standing for classes of real website, each with legitimate patterns placed to tempt a false positive, asserted in both directions: every expected finding and no other | `tests/fixtures/archetypes/` |
 | The audit degrades by capability, not by failure: without a browser or network it still runs and says what it could not check | `samples/spa-shell-no-browser/`, `README.md` (Running it) |
-| Bounded by a global deadline with per-stage budgets; real sites finished in 14 to 178 seconds | `skills/site-evidence-collector/references/budgets.md` |
-| Six real sites audited without a line of site-specific code, then adjudicated by a person; each fix targets a pattern that recurs across the web, not the site | `tests/adjudication.md` |
+| Bounded by a global deadline with per-stage budgets; real sites finished in 14 to 186 seconds | `skills/site-evidence-collector/references/budgets.md` |
+| Six real sites audited without a line of site-specific code, then adjudicated by a person; three more site classes (a large US storefront, a bot-protected French publisher, a documentation site) in the final audit, which found and fixed consent-banner text read as content and a sampling bias; each fix targets a pattern that recurs across the web, not the site | `tests/adjudication.md`, `docs/DECISIONS.md` (D38–D40) |
 
 ## Coverage of the failure modes the handout names
 

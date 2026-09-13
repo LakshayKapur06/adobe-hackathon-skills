@@ -52,7 +52,7 @@ public records lets it compare the site's claims with Wikipedia and Wikidata.
 Without either, the whole on-site audit still runs, and every check that needed
 the missing capability is listed as not assessed, with what would enable it,
 never as a pass. Run one audit at a time: the renderer shares the CPU. Audits of
-real sites finished in 14 to 178 seconds, inside the five-minute limit.
+real sites finished in 14 to 186 seconds, inside the five-minute limit.
 
 ## What you get
 

@@ -108,3 +108,23 @@ at these sites. The evidence for generalization is that each fix targets a
 pattern that recurs across the web (bot management, documentation subdomains,
 single-page applications under one path, prose dates), that each is tested on
 fictional data, and the archetype suite in `tests/fixtures/archetypes/`.
+
+## Final audit: three more site classes, run by the agent
+
+Before submission the audit was run on three more real sites of classes the
+adjudication had not covered, and every finding was checked against the saved
+evidence by the agent. These results were not adjudicated by a person.
+
+| Site type | First run | What was wrong | After the fixes |
+|---|---|---|---|
+| Large US storefront (Shopify, 1,984+ URLs) | 1 problem (IDM-001), no price finding | Nothing | Unchanged |
+| French national news publisher, bot-protected | 2 high RND-001 findings | Both false: the consent wall added 31,188 characters of partner list to every rendered page (D38). The article sample was also drawn entirely from a 20-page quiz section (D38) | 0 problems; the sample includes the news section |
+| Server-rendered documentation site | 1 problem (IDM-001) | Nothing | — |
+
+The fixes had a cost that the re-runs caught: with sampling spread across
+sections, the documentation subdomain's adjudicated RND-001 stopped firing, because
+its client-rendered CLI reference had been split across two URL-guessed page types.
+D40 made RND-001 group by the path an application is mounted under; the finding
+fires again in every run of that site, and one new finding appeared on S5, whose
+local video pages send 0 characters of server text ("pages under /local/…/video/").
+Wall times on these runs: 85 to 186 seconds.
