@@ -199,7 +199,24 @@ type vocabulary, fixed and re-verified. Its follow-ups became D23 (hidden server
 text measured, strata labelled as URL-pattern sampling strata, one audit at a
 time) and D24 (connection setup timed apart from the server, after a live
 client-network stall made ARR-001 fire). Contracts are at `contracts-v10`.
-Step 3 is done (D26): `tests/fixtures/archetypes/`. Next is step 4, adjudication.
+Step 3 is done (D26): `tests/fixtures/archetypes/`.
+
+**Step 4, adjudication, is in the user's hands.** Five sites were audited one at
+a time and a worksheet prepared in the gitignored `runs/adjudication/`
+(`WORKSHEET.md` with per-finding verification steps, `adjudication.csv` for
+verdicts): basecamp.com, bigbasket.com, docs.stripe.com, bhaskar.com, mit.edu.
+The sixth, a site the user knows intimately, is waiting for a URL: nishorama.in
+turned out to be a parked domain and nishorama.com fails TLS verification.
+Flipkart was dropped after it answered 403 to the audit, india.gov.in answers
+403, and IIT Delhi fails TLS verification. Running these audits caught one false
+positive before adjudication (IDM-004 on a free-app Offer at price zero, fixed
+in `075a594`). When the verdicts come back: apply the thresholds in
+`docs/HUMAN_PLAYBOOK.md`, turn every FP into a fixture, re-run at least three
+sites, and commit the CSV to `tests/adjudication.csv`.
+
+**One open decision for the user:** whether proactive recommendations should
+count in the report's `summary.total_findings`. Today they do, so a healthy site
+reports one or two low or medium proactive items as findings.
 
 ---
 
@@ -228,7 +245,7 @@ satisfy the consolidation rule, and a ninth would be the padding trap D5 names.
 | 1 | **Detection rules, 6 skills** — done at `d4ee898`, see 3a | Dependency order: access -> render -> identity -> answerability -> freshness -> arrival. Access and render come first because their failures condition everything downstream. Surface the first skill's rule set for human review before writing the other five, so a systematic problem is caught once rather than six times |
 | 2 | Orchestrator depth — done, see 3a | Dedup by `(rule_id, scope.page_types, evidence_refs[].url)`; arbitration keeping the upstream-most finding; proactive recommendations as real work; `checks_passed[]` and `not_assessed[]`; full `run_context`; final schema validation |
 | 3 | 5 fixture archetypes — done, see D26 | With pass/fail assertions. The only evidence for the generalization rubric row, which is currently asserted and unproven - this is where spare time should go before anywhere else |
-| 4 | **Adjudication, 6 sites** | The step that decides the score. Human-only. See section 5 |
+| 4 | **Adjudication, 6 sites** — in progress with the user, see 3a | The step that decides the score. Human-only. See section 5 |
 | 5 | Remediation-quality pass | Read only `what/where/why/how/success_criteria`, ignoring detection logic. Anything paste-able into an unrelated case study gets rewritten |
 | 6 | `README.md`, `docs/RUBRIC.md`, `samples/`, zip | RUBRIC maps the handout's six criteria to where the evidence lives. `samples/` holds 3 runs against local fixtures proving the degradation story: full capability, no browser, no egress |
 | 7 | Judge-simulation read-through | Human-only. See section 5 |
