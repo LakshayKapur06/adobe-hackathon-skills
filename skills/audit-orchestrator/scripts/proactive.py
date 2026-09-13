@@ -42,18 +42,23 @@ def pro_001(evidence, out):
         out["passed"].append({"rule_id": "PRO-001", "summary": "/llms.txt is present; nothing to recommend"})
         return
     origin = (evidence["site"]["resolved_origin"] or evidence["site"]["input"]).rstrip("/")
+    status = entry[0]["status"]
+    # A 2xx without a file is the site's page for unknown addresses or an empty
+    # body; saying "answered 200 and is not present" would read as a contradiction.
+    answer = ("answered HTTP %s with no file: an empty body or the site's page for unknown addresses" % status
+              if isinstance(status, int) and 200 <= status <= 299 else "answered HTTP %s" % status)
     out["findings"].append({
         "id": "F-001",
         "title": "Optional and speculative: publish /llms.txt",
-        "evidence": "/llms.txt at %s answered HTTP %s and is not present. No major assistant is documented to read this "
-                    "file, so this is listed only as a low-cost hedge, not as a gap." % (origin, entry[0]["status"]),
+        "evidence": "/llms.txt at %s %s, so no /llms.txt is published. No major assistant is documented to read this "
+                    "file, so this is listed only as a low-cost hedge, not as a gap." % (origin, answer),
         "suggested_action": {
             "summary": "If it costs little, publish a short /llms.txt; do not expect it to change how assistants see "
                        "the site.",
             "what": "Publish a plain-text /llms.txt summarising what the site is and linking its key pages.",
             "where": "%s/llms.txt" % origin,
             "why": "It is a proposed convention some tools read; no major assistant documents consuming it, which is "
-                   "why this is proactive and never a finding.",
+                   "why this is a suggestion and never reported as a problem.",
             "how": "Write a short markdown file: one paragraph describing the organization, then links to the pages "
                    "that answer the questions people ask about it. Keep it consistent with those pages.",
             "mechanism": "A possible, undocumented discovery channel for tools that adopt the convention.",
@@ -64,7 +69,7 @@ def pro_001(evidence, out):
         "symptom": ["invisible"], "confidence": "low",
         "impact": {"blocking": False, "breadth": "page", "content_importance": "secondary"},
         "scope": {"pages_affected": 0, "pages_examined": 0, "page_types": []},
-        "evidence_refs": [_ref(origin + "/llms.txt", "HTTP %s, not present" % entry[0]["status"],
+        "evidence_refs": [_ref(origin + "/llms.txt", "HTTP %s, no file published" % status,
                                evidence["run_context"]["started_at"])],
         "false_positive_controls_applied": [], "exceptions_checked": [],
     })

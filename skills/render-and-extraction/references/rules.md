@@ -207,8 +207,9 @@ in `scripts/diagnose.py`, one function per rule, in the order written here.
   then confirm with a plain fetch that the headings and body text are present.
   Mechanism improved: extraction of the page's text from the fetched response.
 - **Success criteria:** a plain fetch with no JavaScript of every URL cited
-  returns a `delta_ratio` below 0.8, with the page's main headings and body text
-  present in the server response.
+  returns the page's main headings and body text, so that at least a fifth of
+  what the rendered page shows (a `delta_ratio` below 0.8) is already in the
+  server response.
 - **Effort:** high
 
 ### RND-002 — The server response carries no text on any sampled page, and nothing was rendered

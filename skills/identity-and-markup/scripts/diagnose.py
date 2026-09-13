@@ -36,6 +36,9 @@ RealEstateAgent TravelAgency LodgingBusiness Hotel HealthAndBeautyBusiness Medic
 AutomotiveBusiness HomeAndConstructionBusiness EntertainmentBusiness EmploymentAgency SelfStorage ChildCare
 """.split())
 URL = re.compile(r"^https?://\S+$", re.I)
+# A schema.org type name. Types are quoted in evidence, and a site can put any
+# string in @type, so only names of this shape are quoted; others are counted.
+TYPE_NAME = re.compile(r"^[A-Za-z][A-Za-z0-9]{0,63}$")
 
 
 def is_2xx(status):
@@ -120,12 +123,15 @@ def idm_001(evidence, out):
                                     "enable_hint": "check https://%s/ for Organization JSON-LD, or audit %s directly"
                                                    % (parent, parent)})
         return
-    types = sorted({n["type"] for n in home["jsonld"] if n["type"]})
+    types = sorted({n["type"] for n in home["jsonld"] if n["type"] and TYPE_NAME.match(n["type"])})
+    unnamed = len({n["type"] for n in home["jsonld"] if n["type"] and not TYPE_NAME.match(n["type"])})
     out["findings"].append(finding(
         "IDM-001", "The home page carries no machine-readable organization identity",
         "The home page's server response has %s and none describes an organization%s; no 2xx about page carries one "
         "either, and no microdata or RDFa is present."
-        % (plural(len(home["jsonld"]), "JSON-LD node"), (" (types: %s)" % ", ".join(types)) if types else ""),
+        % (plural(len(home["jsonld"]), "JSON-LD node"),
+           (" (types: %s%s)" % (", ".join(types), ", and %s not quoted" % plural(unnamed, "non-schema.org type value")
+                                if unnamed else "")) if types or unnamed else ""),
         action("Add Organization JSON-LD with name, url, logo and sameAs to the home page.",
                "Add an Organization JSON-LD block, or the most specific subtype that applies, to the home page.",
                "The home page template's <head>, in the server response (%s)." % home["url"],
