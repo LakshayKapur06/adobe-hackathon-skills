@@ -15,6 +15,7 @@ Standard library only. No imports from any other skill.
 import argparse
 import json
 import os
+import re
 
 SKILL = "freshness-and-corroboration"
 SUPPORTED_SCHEMA_MAJOR = "1"
@@ -35,7 +36,7 @@ def dates_readable(page):
     """The collector reads month names in English only, so a date written in
     another language is invisible to it. Absence is judged only where it can
     be observed: pages declaring English, or declaring no language."""
-    return page["lang"] is None or page["lang"].strip().lower().split("-")[0] in ("en", "")
+    return page["lang"] is None or re.split(r"[-_]", page["lang"].strip().lower())[0] in ("en", "")
 
 
 def is_undated(page):
@@ -104,8 +105,10 @@ def frc_002(evidence, out):
     external = evidence["external"]
     if not evidence["run_context"]["capabilities"]["egress"] or not external["attempted"]:
         out["not_assessed"].append({"rule_id": "FRC-002", "reason":
-                                    "the off-site probe did not run (egress %s, attempted %s), so no claim was checked"
-                                    % (evidence["run_context"]["capabilities"]["egress"], external["attempted"]),
+                                    "the off-site check did not run (%s), so no claim was compared with a public record"
+                                    % ("third-party network access was unavailable"
+                                       if not evidence["run_context"]["capabilities"]["egress"]
+                                       else "nothing on the site was promoted as a claim to check"),
                                     "enable_hint": "run with network access to public records and without --no-egress"})
         return
     claims = [c for c in evidence["canonical_claims"]

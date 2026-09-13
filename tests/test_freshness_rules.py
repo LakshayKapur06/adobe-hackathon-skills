@@ -103,7 +103,7 @@ class TestFRC001(RuleCase):
         self.assertEqual(got, "not_assessed", "a date written in Hindi is invisible to the extractor, not absent")
         result = diagnose.diagnose(bundle(hindi))
         self.assertIn("3 further pages", [n for n in result["not_assessed"] if n["rule_id"] == "FRC-001"][0]["reason"])
-        english = [article("/en%d" % i, lang="en-GB") for i in range(2)] + [article("/x", lang=None)]
+        english = [article("/en%d" % i, lang="en-GB") for i in range(2)] + [article("/x", lang="en_US")]
         self.assertEqual(self.outcome(bundle(english), "FRC-001")[0], "fired")
 
     def test_refused_pages_never_count(self):

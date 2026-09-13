@@ -105,6 +105,10 @@ class Run:
         response = self.fetcher.get(url, deadline=deadline)
         mode, parsed, reason, parse_reason = robots.interpret(
             response.status, response.text, response.content_type)
+        if response.status is None and response.error:
+            # Keep the cause: "no response" alone cannot tell a reader whether the
+            # name did not resolve, the certificate failed or the host timed out.
+            reason = reason.replace("(no response)", "(no response: %s)" % response.error)
         entry = {"url": url, "status": response.status, "fetched": response.status is not None,
                  "mode": mode, "robots": parsed, "reason": reason, "parse_reason": parse_reason}
         if mode == "unreachable" or parse_reason == "not_plausibly_robots":

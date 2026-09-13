@@ -18,6 +18,7 @@ import datetime
 import json
 import os
 import sys
+import urllib.parse
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -142,6 +143,18 @@ def report_order(finding):
             1 if finding.get("conditional_on") else 0) + key[1:]
 
 
+def audited_host(site):
+    """The host that was audited, without a leading "www.".
+
+    A subdomain audit is reported under its own name: docs.example.com is not
+    example.com, and the report must not claim the parent was audited.
+    """
+    raw = site.get("resolved_origin") or site.get("input") or ""
+    host = urllib.parse.urlsplit(raw if "://" in raw else "https://" + raw).hostname or ""
+    host = host[4:] if host.startswith("www.") else host
+    return host or site.get("registrable_domain") or raw
+
+
 def assemble(evidence, findings, not_assessed, checks_passed, extra_degradations=()):
     extra_degradations = list(extra_degradations)
     proactive, pro_not_assessed, pro_passed = pro_mod.recommend(evidence)
@@ -182,7 +195,7 @@ def assemble(evidence, findings, not_assessed, checks_passed, extra_degradations
     for f in problems:
         counts[f["severity"]] += 1
 
-    site = evidence["site"].get("registrable_domain") or evidence["site"]["input"]
+    site = audited_host(evidence["site"])
 
     return {
         "site": site,

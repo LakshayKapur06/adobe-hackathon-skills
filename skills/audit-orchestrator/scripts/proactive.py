@@ -232,7 +232,7 @@ def pro_004(evidence, out):
     # not read, so an article showing one would silently drop out of the count.
     articles = [p for p in evidence["pages"] if _ok(p) and p["page_type"] == "article"
                 and (p["page_type_confidence"] or 0) >= 0.8 and p["dates"]["visible_dates"]
-                and (p["lang"] is None or p["lang"].strip().lower().split("-")[0] in ("en", ""))]
+                and (p["lang"] is None or re.split(r"[-_]", p["lang"].strip().lower())[0] in ("en", ""))]
     if len(articles) < 2:
         out["not_assessed"].append({"rule_id": "PRO-004", "reason":
                                     "%d sampled articles show a visible date; at least 2 are needed to judge the "

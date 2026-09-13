@@ -97,7 +97,13 @@ def render(report):
                "a browser rendered pages" if capabilities["js_render"] else "no browser was available",
                "off-site sources were consulted" if run["corroboration"]["attempted"] else "no off-site sources were consulted",
                run["elapsed_s"]), "",
-           "## At a glance", "",
+           ]
+    if not run["crawl"]["fetched"]:
+        causes = "; ".join(_line(d["reason"]) for d in run["degradations"] if d["what"] in ("crawl", "robots"))
+        out += ["> **This site could not be audited from here.** No page was fetched%s. Nothing below is a verdict "
+                "on the site: every check that needed its pages is listed as not assessed. Re-run when the site "
+                "answers this client and its robots.txt admits the audit." % ((": " + causes) if causes else ""), ""]
+    out += ["## At a glance", "",
            "- **%s found:** %d critical, %d high, %d medium, %d low." % (
                _count(summary["total_findings"], "problem", "problems"), summary["critical"], summary["high"],
                summary["medium"], summary["low"]),

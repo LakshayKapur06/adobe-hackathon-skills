@@ -139,6 +139,25 @@ class TestReportSummaryAndRendering(unittest.TestCase):
         self.assertIn("**JSON-LD:**", glossary)
         self.assertNotIn("**time to first byte:**", glossary, "only terms the report uses are defined")
 
+    def test_a_site_that_could_not_be_fetched_says_so_before_anything_else(self):
+        import render_report
+        report = self.report()
+        report["run_context"]["crawl"]["fetched"] = 0
+        report["run_context"]["degradations"] = [{"what": "crawl", "impact": "i",
+                                                  "reason": "robots.txt could not be fetched (no response: timed out)"}]
+        rendered = render_report.render(report)
+        notice = rendered.index("This site could not be audited from here")
+        self.assertLess(notice, rendered.index("## At a glance"))
+        self.assertIn("no response: timed out", rendered)
+
+    def test_the_report_names_the_host_that_was_audited(self):
+        for origin, expected in (("https://docs.example.com", "docs.example.com"),
+                                 ("https://www.example.co.uk", "example.co.uk"), ("http://localhost:8000", "localhost")):
+            self.assertEqual(assemble_report.audited_host({"input": origin, "resolved_origin": None,
+                                                           "registrable_domain": "example.com"}), expected)
+        self.assertEqual(assemble_report.audited_host({"input": "shop.example", "resolved_origin": None,
+                                                       "registrable_domain": None}), "shop.example")
+
     def test_observed_text_cannot_restructure_the_markdown(self):
         import render_report
         report = self.report()
