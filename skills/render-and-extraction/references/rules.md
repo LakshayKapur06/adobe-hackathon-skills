@@ -150,10 +150,17 @@ in `scripts/diagnose.py`, one function per rule, in the order written here.
   `pages[].rendered.delta_ratio`, `run_context.capabilities.js_render`.
 - **Threshold:** site-wide when JavaScript-dependent pages are at least 50% of
   comparable pages, number at least 2, and either include the home page or span
-  at least 2 page types; otherwise per primary page type, when
-  at least 2 comparable pages of the type are JavaScript-dependent and they are
-  at least 50% of that type's comparable pages; or when the home page is
-  JavaScript-dependent. Justification: rendering strategy is a property of a
+  at least 2 page types; otherwise per section, when at least 2 JavaScript-dependent
+  pages share a first path segment and the inner path segments common to them,
+  and they are at least 50% of the comparable pages matching that pattern; then,
+  for pages no section already reported, per primary page type, when at least 2
+  comparable pages of the type are JavaScript-dependent and they are at least 50%
+  of that type's comparable pages; or when the home page is JavaScript-dependent.
+  Sections come first because a client-side application is mounted under a path
+  while the URL-based page-type guess can split its pages across types
+  (`/cli/post` read as an article, `/cli/projects/catalog` as a category), and
+  because a template inside a section (`/local/…/video/`) must be judged against
+  its own pages, not against the section's server-rendered articles. Justification: rendering strategy is a property of a
   template or of the whole application, so a real dependency shows on most
   pages sharing it, while a single dependent page, such as one subscription page
   on a server-rendered publisher observed during G2, is a one-off widget page
@@ -172,6 +179,10 @@ in `scripts/diagnose.py`, one function per rule, in the order written here.
   text present in the server response but hidden with CSS counts as present, so
   a page that reveals server-sent text with script is never called
   JavaScript-dependent;
+  consent interfaces (cookie banners, consent walls and their partner lists) are
+  excluded from the text on both sides, because a consent manager injects them by
+  script on nearly every European site and one publisher's wall alone added
+  31,188 characters to every rendered page (D38);
   pages the render budget did not reach are left out of both numerator and
   denominator and the finding states how many were compared; a page whose
   rendered text merely duplicates another page's never reaches `pages[]`,

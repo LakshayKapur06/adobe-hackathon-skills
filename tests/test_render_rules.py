@@ -142,6 +142,31 @@ class TestRND001(RuleCase):
                          ("section", ["product"], "medium"))
         self.assertEqual(fired["title"], "Page content exists only after JavaScript runs (product)")
 
+    def test_an_application_under_one_path_is_found_across_guessed_types(self):
+        # Two dependent pages under /cli/ that the URL classifier filed as an
+        # article and a category: one per type, so type grouping alone missed it.
+        pages = [page("/", "home")] + [page("/a%d" % i) for i in range(6)] + \
+                [page("/cli/post", "article", 1135, 67169), page("/cli/projects/catalog", "category", 1135, 67179),
+                 page("/api", "doc"), page("/api/cards", "doc")]
+        fired = self.assertOutcome(bundle(pages), "RND-001", "fired")
+        self.assertEqual(len(fired), 1, "one finding for one application")
+        self.assertEqual(fired[0]["title"], "Page content exists only after JavaScript runs (pages under /cli/)")
+        self.assertEqual(fired[0]["scope"]["page_types"], ["article", "category"])
+
+    def test_a_template_inside_a_section_is_judged_against_its_own_pages(self):
+        videos = [page("/local/%s/video/story-%d" % (region, i), "other", 0, 1050)
+                  for i, region in enumerate(("mp", "haryana", "bihar"))]
+        articles = [page("/local/%s/news/report-%d" % (region, i), "article", 4000, 4100)
+                    for i, region in enumerate(("mp", "haryana", "bihar", "delhi"))]
+        fired = self.assertOutcome(bundle([page("/", "home")] + videos + articles), "RND-001", "fired")
+        self.assertEqual(fired[0]["title"], "Page content exists only after JavaScript runs (pages under /local/…/video/)")
+        self.assertEqual((fired[0]["scope"]["pages_affected"], fired[0]["scope"]["pages_examined"]), (3, 3))
+
+    def test_one_dependent_page_per_section_never_fires(self):
+        pages = [page("/", "home")] + [page("/a%d" % i) for i in range(6)] + \
+                [page("/subscribe", "other", 0, 3152), page("/help/widget", "doc", 100, 3000), page("/help/faq", "doc")]
+        self.assertOutcome(bundle(pages), "RND-001", "passed")
+
     def test_a_shared_path_names_the_application_not_the_guessed_type(self):
         pages = [page("/", "home")] + [page("/a%d" % i) for i in range(6)] + \
                 [page("/cli/%s" % name, "doc", 300, 4000) for name in ("docs", "help")] + [page("/api", "doc")]

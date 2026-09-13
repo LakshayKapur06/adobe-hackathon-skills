@@ -86,6 +86,17 @@ NO_BROWSER = {"reason": "no browser was available, so no page could be rendered 
               "enable_hint": "install a Chromium-based browser (Chrome, Edge or Chromium) and re-run without --no-render"}
 
 
+def first_segment(url):
+    segments = [s for s in urllib.parse.urlsplit(url).path.split("/") if s]
+    return segments[0].lower() if segments else ""
+
+
+def inner_segments(url):
+    """The path segments between the first and the last: a template's fixed parts."""
+    segments = [s.lower() for s in urllib.parse.urlsplit(url).path.split("/") if s]
+    return segments[1:-1]
+
+
 def shared_path(pages):
     """The deepest directory every URL sits under, such as "/cli/", or None.
 
@@ -120,15 +131,36 @@ def rnd_001(evidence, workdir, out):
     spans_site = (any(p["page_type"] == "home" for p in dependent)
                   or len({p["page_type"] for p in dependent}) >= 2)
     if len(dependent) >= 2 and len(dependent) * 2 >= len(pages) and spans_site:
-        groups.append(("site", dependent, pages))
+        groups.append(("site", dependent, pages, None))
     else:
+        # A client-side application is mounted under a path, and the URL-based
+        # page-type guess can file its pages under several types (/cli/post read
+        # as an article, /cli/projects/catalog as a category). So dependent pages
+        # are grouped by first path segment as well as by type, under the same
+        # threshold, and a page reported with its section is not reported again
+        # with its type.
+        covered = set()
+        for segment in sorted({first_segment(p["url"]) for p in dependent} - {""}):
+            in_segment = [p for p in dependent if first_segment(p["url"]) == segment]
+            # Narrow to the inner segments every dependent page shares, so a
+            # video template under /local/ is judged against other pages of that
+            # template, not against the section's server-rendered articles.
+            shared = set.intersection(*(set(inner_segments(p["url"])) for p in in_segment))
+            members = [p for p in pages if first_segment(p["url"]) == segment
+                       and shared <= set(inner_segments(p["url"]))]
+            hit = [p for p in in_segment if p in members]
+            if len(hit) >= 2 and len(hit) * 2 >= len(members):
+                order = [s for s in inner_segments(in_segment[0]["url"]) if s in shared]
+                label = "/%s/" % segment + ("…/%s/" % "/".join(order) if order else "")
+                groups.append(("section", hit, members, label))
+                covered.update(p["url"] for p in hit)
         for page_type in PRIMARY_TYPES:
             members = [p for p in pages if p["page_type"] == page_type]
-            hit = [p for p in dependent if p["page_type"] == page_type]
+            hit = [p for p in dependent if p["page_type"] == page_type and p["url"] not in covered]
             if not hit:
                 continue
             if page_type == "home" or (len(hit) >= 2 and len(hit) * 2 >= len(members)):
-                groups.append(("section", hit, members))
+                groups.append(("section", hit, members, shared_path(hit)))
     if not groups:
         out["passed"].append({"rule_id": "RND-001", "summary":
                               "No template depends on JavaScript for its text: %d of %s compared are "
@@ -137,12 +169,11 @@ def rnd_001(evidence, workdir, out):
         return
     unrendered = sum(1 for p in evidence["pages"]
                      if is_2xx(p["status"]) and is_html(p) and not p["rendered"]["available"])
-    for breadth, hit, members in groups:
+    for breadth, hit, members, under in groups:
         types = sorted({p["page_type"] for p in hit})
         empty_server = all(p["raw"]["text_len"] < EMPTY_TEXT for p in hit)
         primary = any(t in PRIMARY_TYPES for t in types)
-        where = "across the site" if breadth == "site" else "on %s pages" % types[0]
-        under = shared_path(hit) if breadth == "section" else None
+        where = "across the site" if breadth == "site" else "on %s pages" % " and ".join(types)
         if under:
             where += " under %s" % under
         out["findings"].append(finding(
