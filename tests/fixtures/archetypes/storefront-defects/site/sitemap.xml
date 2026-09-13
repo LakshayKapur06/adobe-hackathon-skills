@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>http://localhost:8000/</loc></url>
+  <url><loc>http://localhost:8000/collections/all</loc></url>
+  <url><loc>http://localhost:8000/collections/graphic-tees</loc></url>
+  <url><loc>http://localhost:8000/pages/about-us</loc></url>
+  <url><loc>http://localhost:8000/policies/refund-policy</loc></url>
+  <url><loc>http://localhost:8000/products/trail-tee</loc></url>
+  <url><loc>http://localhost:8000/products/harbor-hoodie</loc></url>
+  <url><loc>http://localhost:8000/products/summit-cap</loc></url>
+  <url><loc>http://localhost:8000/products/delta-socks</loc></url>
+  <url><loc>http://localhost:8000/products/canyon-jacket</loc></url>
+  <url><loc>http://localhost:8000/products/meadow-scarf</loc></url>
+  <url><loc>http://localhost:8000/products/ridge-gloves</loc></url>
+  <url><loc>http://localhost:8000/products/retired-classic-tee</loc></url>
+  <url><loc>http://localhost:8000/products/retired-logo-tee</loc></url>
+</urlset>

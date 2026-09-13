@@ -1,0 +1,33 @@
+{
+  "archetype": "crawler-restricted",
+  "real_world_class": "A site whose robots.txt admits only named crawlers, as sites that allowlist Googlebot do, or whose robots.txt endpoint is failing.",
+  "claim": "The audit obeys robots.txt for itself, requesting nothing but /robots.txt, and still reports what the policy or the failure costs, without reading an outage as a policy or a named opt-out as an accident.",
+  "mechanisms": ["robots compliance of the auditor itself", "collateral crawler exclusion", "named opt-out as proactive", "robots.txt server error"],
+  "server": {},
+  "variants": [
+    {
+      "name": "allowlist",
+      "render": false,
+      "findings": [
+        {"rule_id": "ACC-001", "status": "found", "severity": "critical", "breadth": "site"},
+        {"rule_id": "ACC-008", "status": "proactive", "severity": "medium"}
+      ],
+      "passed": ["ACC-002"],
+      "not_assessed": ["ACC-003", "ACC-006", "ACC-007", "IDM-001", "RND-002", "ARR-001", "PRO-001"],
+      "evidence": {"robots.parse_reason": "ok", "robots.ai_agents.OAI-SearchBot": "disallowed",
+                   "robots.ai_agents.Googlebot": "allowed", "crawl.fetched": 0},
+      "requests_only": ["/robots.txt"]
+    },
+    {
+      "name": "robots-503",
+      "render": false,
+      "server": {"status": {"/robots.txt": 503}},
+      "findings": [
+        {"rule_id": "ACC-002", "status": "risk", "confidence": "low"}
+      ],
+      "not_assessed": ["ACC-001", "ACC-008", "ACC-003", "IDM-001", "ARR-001"],
+      "evidence": {"robots.parse_reason": "server_error", "crawl.fetched": 0},
+      "requests_only": ["/robots.txt"]
+    }
+  ]
+}

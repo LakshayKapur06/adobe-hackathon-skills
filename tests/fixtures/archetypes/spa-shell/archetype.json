@@ -1,0 +1,35 @@
+{
+  "archetype": "spa-shell",
+  "real_world_class": "A client-rendered storefront or brand site whose server answers every path, robots.txt included, with one empty application shell and builds all content in the browser. The G2 check found a live instance.",
+  "claim": "The audit observes an empty server response with and without a browser, reports the one root cause at the right severity, marks the markup finding it explains as conditional, and never mistakes the shell's copies for distinct pages.",
+  "mechanisms": ["render gap", "soft-404 shell handling", "capability-dependent degradation", "canonical collapse", "arbitration"],
+  "server": {"shell": "shell.html"},
+  "variants": [
+    {
+      "name": "no-render",
+      "render": false,
+      "findings": [
+        {"rule_id": "RND-002", "status": "found", "confidence": "high", "severity": "critical"},
+        {"rule_id": "IDM-001", "status": "found", "conditional_on": ["RND-002"]},
+        {"rule_id": "PRO-001", "status": "proactive"}
+      ],
+      "passed": ["ACC-001", "ACC-008"],
+      "not_assessed": ["RND-001", "RND-003", "ACC-005", "ACC-007", "ACC-009", "ARR-001"],
+      "evidence": {"robots.parse_reason": "not_plausibly_robots", "discovery.soft_404.detected": true,
+                   "crawl.fetched": 1}
+    },
+    {
+      "name": "render",
+      "render": true,
+      "findings": [
+        {"rule_id": "RND-001", "status": "found", "severity": "critical", "breadth": "site", "confidence": "high"},
+        {"rule_id": "ACC-005", "status": "found"},
+        {"rule_id": "IDM-001", "status": "found", "conditional_on": ["RND-001"]},
+        {"rule_id": "PRO-001", "status": "proactive"}
+      ],
+      "passed": ["ACC-001", "ACC-007", "ARR-001"],
+      "not_assessed": ["RND-002", "RND-003"],
+      "evidence": {"discovery.soft_404.detected": true, "crawl.fetched": 5}
+    }
+  ]
+}

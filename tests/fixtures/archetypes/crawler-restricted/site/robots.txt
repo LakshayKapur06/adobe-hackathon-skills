@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: GPTBot
+Disallow: /
+
+Sitemap: http://localhost:8000/sitemap.xml

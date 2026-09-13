@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>http://localhost:8000/</loc></url>
+  <url><loc>http://localhost:8000/about</loc></url>
+  <url><loc>http://localhost:8000/privacy-policy</loc></url>
+  <url><loc>http://localhost:8000/tag/field-guides</loc></url>
+  <url><loc>http://localhost:8000/news/council-budget-vote</loc></url>
+  <url><loc>http://localhost:8000/news/river-survey-results</loc></url>
+  <url><loc>http://localhost:8000/news/rail-link-hearing</loc></url>
+  <url><loc>http://localhost:8000/blog/notes-from-the-desk</loc></url>
+  <url><loc>http://localhost:8000/blog/how-we-verify</loc></url>
+  <url><loc>http://localhost:8000/blog/reader-questions</loc></url>
+  <url><loc>http://localhost:8000/docs/style-guide</loc></url>
+  <url><loc>http://localhost:8000/docs/sourcing-handbook</loc></url>
+  <url><loc>http://localhost:8000/docs/corrections-process</loc></url>
+  <url><loc>http://localhost:8000/news/withdrawn-story</loc></url>
+</urlset>

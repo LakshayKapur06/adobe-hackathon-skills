@@ -634,3 +634,27 @@ concrete inconsistencies, each fixed:
 One limit is documented rather than changed: a collector that hangs past the
 orchestrator's backstop leaves no evidence bundle, so no report is written.
 Every collector stage is budget-bounded, so this needs a hang, not a slow site.
+
+### D26 — Step 3: five archetypes, asserted in both directions, and `contracts-v12`
+
+The plan allowed five fixture archetypes, not ten, and never named them. The five
+were chosen so that together every rule has a true positive and, wherever a rule
+can run, a true negative, while each carries real patterns built to tempt a false
+positive: a well-built minimal site, a client-rendered shell, a storefront with
+theme defects, a publisher with documentation, and a crawler-restricted site in
+two variants. From the ten in `docs/PLAN.md` they absorb the brochure site, the
+SPA shell, e-commerce, documentation, the publisher, the site that disallows us
+and the minimal well-built site. The multilingual site was dropped with its rule
+(hreflang was cut in D17's review), and the contradictory-facts site is the one
+case a fixture cannot run without egress, covered by unit tests instead.
+
+A variant asserts the exact finding set, so an unexpected finding fails; assessed
+passes, so a silent `not_assessed` cannot pose as a true negative; and literal
+evidence values. Removing one expected finding from a spec makes its run fail
+naming the finding, which is how the assertions were checked for teeth.
+
+A new test records every field each script reads over the archetype bundles and
+requires it inside the skill's allow-list. On its first run it found the access
+script reading `site.input`, the requested URL, as a fallback when robots.txt
+blocks the site before its origin resolves. The read is correct, so it is now
+declared: `access-and-indexability` may read `site.input` (`contracts-v12`).

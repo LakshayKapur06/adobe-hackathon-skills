@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>http://localhost:8000/</loc></url>
+  <url><loc>http://localhost:8000/about</loc></url>
+  <url><loc>http://localhost:8000/contact</loc></url>
+  <url><loc>http://localhost:8000/blog/launch-notes</loc></url>
+  <url><loc>http://localhost:8000/blog/materials-explained</loc></url>
+  <url><loc>http://localhost:8000/blog/care-guide</loc></url>
+  <url><loc>http://localhost:8000/docs/getting-started</loc></url>
+  <url><loc>http://localhost:8000/docs/configuration</loc></url>
+  <url><loc>http://localhost:8000/privacy-policy</loc></url>
+</urlset>

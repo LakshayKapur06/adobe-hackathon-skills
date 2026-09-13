@@ -17,10 +17,9 @@ should produce almost no findings. A rule set that lights this site up is
 measuring conformity rather than defects.
 
 Serve it with any static file server rooted at this directory; the absolute
-URLs inside it assume `http://localhost:8000`. The adversarial fixture set — a
-JS shell with an empty server response, a 300-product catalogue, a documentation
-site, a publisher, a multilingual site, a site that disallows us, a site
-returning 5xx — is a Day 5 deliverable per `docs/PLAN.md`, not optional polish.
+URLs inside it assume `http://localhost:8000`. The adversarial fixture set lives
+in `archetypes/`: five sites standing for classes of real website, run end to end
+with assertions in both directions, described in `archetypes/README.md`.
 
 ## `evidence/` and `findings/` — pipeline inputs
 

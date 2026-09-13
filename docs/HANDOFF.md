@@ -16,7 +16,7 @@ believe them over anything below.
 
 ```sh
 git log --oneline -30            # compare against d4ee898, named above
-git tag -l                       # contracts-v1 through contracts-v10, maybe later
+git tag -l                       # contracts-v1 through contracts-v12, maybe later
 sh scripts/check.sh              # must be 12/12 before you change anything
 grep -n "Rules defined" skills/*/references/rules.md    # rule progress per skill
 ls runs/ tests/fixtures/ samples/ 2>/dev/null           # runs, fixtures, samples
@@ -27,7 +27,7 @@ Then read, in this order, and do not skip them:
 
 1. `CLAUDE.md` — standing rules for the repository, including the safety rule
    about observed content.
-2. `docs/DECISIONS.md` — the decision register. **Read D12 through D24 and any
+2. `docs/DECISIONS.md` — the decision register. **Read D12 through D26 and any
    later entries carefully**: they record mid-build corrections, including two
    revisions of the rendering decision on the same day. Entries marked *revised*
    supersede their own earlier text.
@@ -199,7 +199,7 @@ type vocabulary, fixed and re-verified. Its follow-ups became D23 (hidden server
 text measured, strata labelled as URL-pattern sampling strata, one audit at a
 time) and D24 (connection setup timed apart from the server, after a live
 client-network stall made ARR-001 fire). Contracts are at `contracts-v10`.
-Next is step 3, the fixture archetypes.
+Step 3 is done (D26): `tests/fixtures/archetypes/`. Next is step 4, adjudication.
 
 ---
 
@@ -227,7 +227,7 @@ satisfy the consolidation rule, and a ninth would be the padding trap D5 names.
 |---|---|---|
 | 1 | **Detection rules, 6 skills** — done at `d4ee898`, see 3a | Dependency order: access -> render -> identity -> answerability -> freshness -> arrival. Access and render come first because their failures condition everything downstream. Surface the first skill's rule set for human review before writing the other five, so a systematic problem is caught once rather than six times |
 | 2 | Orchestrator depth — done, see 3a | Dedup by `(rule_id, scope.page_types, evidence_refs[].url)`; arbitration keeping the upstream-most finding; proactive recommendations as real work; `checks_passed[]` and `not_assessed[]`; full `run_context`; final schema validation |
-| 3 | 5 fixture archetypes | With pass/fail assertions. The only evidence for the generalization rubric row, which is currently asserted and unproven - this is where spare time should go before anywhere else |
+| 3 | 5 fixture archetypes — done, see D26 | With pass/fail assertions. The only evidence for the generalization rubric row, which is currently asserted and unproven - this is where spare time should go before anywhere else |
 | 4 | **Adjudication, 6 sites** | The step that decides the score. Human-only. See section 5 |
 | 5 | Remediation-quality pass | Read only `what/where/why/how/success_criteria`, ignoring detection logic. Anything paste-able into an unrelated case study gets rewritten |
 | 6 | `README.md`, `docs/RUBRIC.md`, `samples/`, zip | RUBRIC maps the handout's six criteria to where the evidence lives. `samples/` holds 3 runs against local fixtures proving the degradation story: full capability, no browser, no egress |
