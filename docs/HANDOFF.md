@@ -31,7 +31,7 @@ once (`890fbc1`). Capture the status: `python scripts/check.py > /tmp/gate.log
 Then read, in this order:
 
 1. `CLAUDE.md` — standing rules, including the safety rule about observed content.
-2. `docs/DECISIONS.md` — the decision register. D17 to D42 are the mid-build
+2. `docs/DECISIONS.md` — the decision register. D17 to D44 are the mid-build
    amendments and corrections; entries marked *revised* supersede their own
    earlier text. Do not re-litigate any of it.
 3. `docs/CONTRACTS.md`, `docs/RULE_FORMAT.md` — the frozen contracts and the
@@ -87,7 +87,7 @@ From `CLAUDE.md` and this build:
   "Evidence this skill may read" allow-list (in each `references/rules.md` and in
   `skills/audit-orchestrator/references/proactive.md`). The user gave standing
   authorization for amendments that make the submission stronger. Each gets a
-  **new** tag (`contracts-v18` next) and a DECISIONS entry (D43 next); old tags
+  **new** tag (`contracts-v18` next) and a DECISIONS entry (D45 next); old tags
   never move. A change that adds no field and changes no allow-list needs only
   the DECISIONS entry.
 - **`errors[]` is never read by a rule.**
@@ -261,6 +261,27 @@ degradation wording; singular and plural agreement. The README's own command,
 `scripts/run_audit.py`, was run end to end. Known, not a false positive: articles
 without JSON-LD cap at 0.6 classifier confidence, so FRC-001 and PRO-004 rarely
 assess sites that publish no Article markup.
+
+### Read-through answers (D43, D44)
+
+Two questions from the judge read-through became changes:
+
+- **How does a host run this?** It reads the entrypoint's `SKILL.md` and runs the
+  bundled scripts with its own code-execution tool; that is the format's intent.
+  The gap was a sandbox with no network, so `scripts/run.py --evidence <bundle>`
+  now diagnoses a bundle an agent fetched itself or an earlier run produced
+  (D43). The README opens with "How an agent runs this" and a table of what
+  degrades when a host cannot provide a browser, egress, network or script
+  execution.
+- **Can we diagnose an assistant linking a marketplace search instead of the
+  product page?** The site-side causes are already covered and the assistant's
+  choice is outside a read-only audit, so PRO-002's panel gained the buying
+  question, with the site's own domain as the expected answer (D44). Previewing
+  it on real bundles found and fixed two defects: repeated questions on sites
+  promoting several names, and address questions whose expected answer was a
+  store-locator branch. A rule for `offers.availability` was measured and
+  rejected: every storefront in the evidence that publishes a price publishes
+  availability too.
 
 ### Files in `runs/` (gitignored, this machine only)
 
