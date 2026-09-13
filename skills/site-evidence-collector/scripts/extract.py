@@ -29,6 +29,32 @@ P_CLOSERS = frozenset("""address article aside blockquote details div dl fieldse
     footer form h1 h2 h3 h4 h5 h6 header hr main nav ol p pre section table ul""".split())
 ANCHOR_CONTAINERS = frozenset({"section", "article"})
 BOILERPLATE_ROLES = frozenset({"navigation", "banner", "contentinfo", "complementary"})
+# Consent-manager interfaces. A cookie banner or consent wall is injected into
+# the page by script on almost every European site, often with a partner list
+# tens of thousands of characters long, and it is not the page's content. Read
+# as text, it made a server-rendered article look JavaScript-dependent: one
+# publisher's consent wall added 31,188 identical characters to every rendered
+# page. Its text is excluded from both the server response and the rendered
+# DOM, so the comparison stays symmetric. Matched on id and class tokens: a
+# consent-specific token alone, or "cookie" together with a banner-like token,
+# so a "cookie-recipes" section on a bakery's site keeps its text.
+_CONSENT_TOKENS = frozenset({"gdpr", "consent", "cmp", "tcf", "didomi", "onetrust", "optanon", "cookiebot",
+                             "cybotcookiebotdialog", "usercentrics", "truste", "trustarc", "iubenda", "osano",
+                             "cmplz", "axeptio", "quantcast", "cookieyes", "termly", "borlabs", "klaro",
+                             "cookielaw", "cookieconsent"})
+_COOKIE_COMPANIONS = frozenset({"banner", "notice", "bar", "wall", "popup", "modal", "dialog", "law", "overlay",
+                                "prompt", "message", "settings", "preferences"})
+_NEVER_CONSENT = frozenset({"html", "body", "main", "article", "head"})
+
+
+def _is_consent_ui(tag, attrs):
+    if tag in _NEVER_CONSENT:
+        return False
+    tokens = set(re.split(r"[^a-z0-9]+", ("%s %s" % (attrs.get("id") or "", attrs.get("class") or "")).lower()))
+    tokens.discard("")
+    if tokens & _CONSENT_TOKENS:
+        return True
+    return any(t.startswith("cookie") for t in tokens) and bool(tokens & _COOKIE_COMPANIONS)
 
 TEXT_IMAGE_HINTS = ("spec", "chart", "infographic", "table", "menu", "price", "pricing",
                     "diagram", "size-guide", "sizeguide", "size_chart", "comparison",
@@ -58,7 +84,16 @@ _MDY = re.compile(r"\b(%s)\.?\s+([0-3]?\d)(?:st|nd|rd|th)?,?\s+((?:19|20)\d{2})\
 # The amount after a currency sign, with either grouping convention: 1,499.00
 # and 1.499,00 both reach _readings, which tries each.
 _CURRENCY_AMOUNT = re.compile(
-    r"(?:[$€£¥₹]|\bRs\.?|\bINR|\bUSD|\bEUR|\bGBP)\s?(\d(?:[\d.,]*\d)?)")
+    r"([$€£¥₹]|\bRs\.?|\bINR|\bUSD|\bEUR|\bGBP)\s?(\d(?:[\d.,]*\d)?)")
+# The ISO 4217 codes each written sign can stand for. "$" is many currencies, so
+# it matches any of them; an amount is compared with a marked-up price only when
+# its sign can denote the currency the markup declares.
+_SIGN_CURRENCIES = {
+    "$": {"USD", "CAD", "AUD", "NZD", "SGD", "HKD", "TWD", "MXN", "ARS", "CLP", "COP", "BRL"},
+    "€": {"EUR"}, "£": {"GBP"}, "¥": {"JPY", "CNY"}, "₹": {"INR"},
+    "RS": {"INR", "PKR", "LKR", "NPR"}, "RS.": {"INR", "PKR", "LKR", "NPR"},
+    "INR": {"INR"}, "USD": {"USD"}, "EUR": {"EUR"}, "GBP": {"GBP"},
+}
 _NUMBER = re.compile(r"\d[\d,]*(?:\.\d+)?")
 
 
@@ -117,9 +152,11 @@ class _Parser(HTMLParser):
         page_level = not any(e["tag"] in ("article", "main", "section") for e in self.stack)
         boiler = role in BOILERPLATE_ROLES or tag in ("nav", "aside") or (
             tag in ("header", "footer") and page_level)
+        consent = _is_consent_ui(tag, attrs)
         self.stack.append({
             "tag": tag, "id": attrs.get("id"), "paired": False,
-            "skip": tag in SKIP_TEXT or hidden, "never_text": tag in SKIP_TEXT, "boiler": boiler,
+            "skip": tag in SKIP_TEXT or hidden or consent, "never_text": tag in SKIP_TEXT or consent,
+            "boiler": boiler,
             "heading": [] if tag in HEADINGS else None,
         })
 
@@ -495,7 +532,13 @@ def _price_contradicts(values, text):
     prices = _readings(marked.group(0)) if marked else set()
     if not prices:
         return False
-    shown = [_readings(m.group(1)) for m in _CURRENCY_AMOUNT.finditer(text)]
+    # A page showing an amount in another currency than the markup declares, as
+    # a store localizing its display by visitor location does, is showing a
+    # different fact, not contradicting the price. Only amounts whose sign can
+    # denote the declared currency are compared; with none declared, all are.
+    declared = (values.get("offers.priceCurrency") or values.get("priceCurrency") or "").strip().upper()
+    shown = [_readings(m.group(2)) for m in _CURRENCY_AMOUNT.finditer(text)
+             if not declared or declared in _SIGN_CURRENCIES.get(m.group(1).upper(), set())]
     shown = [s for s in shown if s]
     return bool(shown) and not any(abs(a - p) <= 0.005 for s in shown for a in s for p in prices)
 

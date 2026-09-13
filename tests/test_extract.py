@@ -155,6 +155,28 @@ class TestTextHelpers(unittest.TestCase):
         text = "Published 2024-12-31. Updated 1 August 2026 and again March 3, 2025. Not 2024-02-30."
         self.assertEqual(extract.visible_dates(text), ["2024-12-31", "2026-08-01", "2025-03-03"])
 
+    def test_consent_manager_text_is_not_page_text(self):
+        body = "<p>Barbara, la femme piano. " + "Biographie. " * 40 + "</p>"
+        walls = ('<div class="gdpr-lmd-wall gdpr-lmd-wall--no-blur"><p>Reject all cookies. Partners ' + "x" * 0
+                 + 'vendor list vendor list vendor list</p></div>',
+                 '<div id="onetrust-banner-sdk"><p>We value your privacy</p></div>',
+                 '<div id="CybotCookiebotDialog"><p>This website uses cookies</p></div>',
+                 '<div class="cookie-banner"><p>Accept cookies</p></div>')
+        plain = extract.parse_document("<html><body><main>%s</main></body></html>" % body, "https://x.example/a")
+        for wall in walls:
+            with self.subTest(wall=wall[:40]):
+                doc = extract.parse_document("<html><body><main>%s</main>%s</body></html>" % (body, wall),
+                                             "https://x.example/a")
+                self.assertEqual(doc["text"], plain["text"])
+                self.assertEqual(doc["hidden_text_len"], 0, "consent UI is not hidden content either")
+        bakery = extract.parse_document('<html><body><section class="cookie-recipes"><p>Oat cookies with raisins'
+                                        '</p></section><div class="consent-free-zone-of-body"></div></body></html>',
+                                        "https://x.example/b")
+        self.assertIn("Oat cookies with raisins", bakery["text"])
+        main = extract.parse_document('<html><body class="gdpr-page"><main class="gdpr"><p>Our GDPR guide</p>'
+                                      '</main></body></html>', "https://x.example/c")
+        self.assertIn("Our GDPR guide", main["text"], "body and main are never treated as consent UI")
+
     def test_a_price_written_in_another_locale_is_never_a_contradiction(self):
         same = [("Prijs €1.499,00", "1499.00"), ("Prezzo € 29,95", "29.95"), ("Price ₹1,499.00 MRP ₹1,999", "1499"),
                 ("Rs. 1,499", "1499.00"), ("$29.95", "29.95"), ("Preis 1.499,00 EUR", "1499,00")]
@@ -162,6 +184,16 @@ class TestTextHelpers(unittest.TestCase):
             self.assertFalse(extract._price_contradicts({"offers.price": price}, text), text)
         self.assertTrue(extract._price_contradicts({"offers.price": "1499.00"}, "Now €999,00"))
         self.assertTrue(extract._price_contradicts({"offers.price": "29.95"}, "Only $24.95 today"))
+
+    def test_an_amount_in_another_currency_is_a_different_fact_not_a_contradiction(self):
+        usd = {"offers.price": "95.00", "offers.priceCurrency": "USD"}
+        self.assertFalse(extract._price_contradicts(usd, "Wool Runner ₹7,999"), "display localized by location")
+        self.assertFalse(extract._price_contradicts(usd, "Wool Runner $95"))
+        self.assertTrue(extract._price_contradicts(usd, "Wool Runner $110"))
+        self.assertTrue(extract._price_contradicts({"offers.price": "1499", "offers.priceCurrency": "INR"},
+                                                   "Rs. 999 only"))
+        self.assertFalse(extract._price_contradicts({"offers.price": "20", "offers.priceCurrency": "CHF"}, "$25"),
+                         "a currency no shown sign can denote leaves nothing to compare")
 
     def test_numeric_dates_are_read_and_versions_are_not(self):
         text = "Posted 31/12/2025, updated 12.09.2026, US style 09/13/2026, 2026/03/04. Version 1.2.2026.1, 45/13/2026."

@@ -276,18 +276,27 @@ class Frontier:
 
 
 class Sampler:
-    """Equal allocation across page types, deterministic given the frontier.
+    """Equal allocation across page types, then across sections, deterministic.
 
     Each pick goes to the page type sampled least so far; ties go to the type
-    with more unsampled URLs, then alphabetically. Within a type, URLs without a
-    query string come first (faceted and sorted variants are the least
-    representative pages on a site), then shallower paths, then shorter ones.
+    with more unsampled URLs, then alphabetically. Within a type, each pick goes
+    to the section sampled least so far, a section being a first path segment
+    at one path depth; ties go to the section with more unsampled URLs. Within a
+    section, URLs without a query string come first (faceted and sorted variants
+    are the least representative pages on a site), then shallower paths, then
+    shorter ones.
+
+    Sections exist because "shallowest first" alone lets a type's outliers fill
+    it: on one publisher every sampled article came from a 20-page quiz section
+    at /memorable/blog/x, while thousands of news articles at
+    /international/article/2026/09/13/x sat deeper and were never sampled.
     """
 
     def __init__(self, frontier):
         self.frontier = frontier
         self.attempted = set()
         self.picked = {}
+        self.picked_sections = {}
 
     def mark(self, url):
         self.attempted.add(url)
@@ -300,10 +309,21 @@ class Sampler:
         if not candidates:
             return None
         page_type = min(candidates, key=lambda t: (self.picked.get(t, 0), -len(candidates[t]), t))
-        url = min(candidates[page_type], key=_sample_key)
+        sections = {}
+        for url in candidates[page_type]:
+            sections.setdefault(section_of(url), []).append(url)
+        section = min(sections, key=lambda s: (self.picked_sections.get((page_type, s), 0), -len(sections[s]), s))
+        url = min(sections[section], key=_sample_key)
         self.attempted.add(url)
         self.picked[page_type] = self.picked.get(page_type, 0) + 1
+        self.picked_sections[(page_type, section)] = self.picked_sections.get((page_type, section), 0) + 1
         return url
+
+
+def section_of(url):
+    """A URL's section: its first path segment and its path depth."""
+    segments = [s for s in urllib.parse.urlsplit(url).path.split("/") if s]
+    return (segments[0].lower() if len(segments) > 1 else "", len(segments))
 
 
 def _sample_key(url):

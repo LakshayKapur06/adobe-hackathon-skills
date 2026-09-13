@@ -582,6 +582,34 @@ if __name__ == "__main__":
     unittest.main()
 
 
+class TestSectionSampling(unittest.TestCase):
+    def test_a_small_shallow_section_cannot_fill_a_page_type(self):
+        frontier = discover.Frontier("news.example")
+        frontier.add("https://news.example/", "nav")
+        for name in ("mozart", "barbara", "tolkien", "voltaire", "napoleon"):
+            frontier.add("https://news.example/quiz/blog/%s" % name, "nav")
+        for section in ("international", "politique", "economie"):
+            for day in range(1, 8):
+                frontier.add("https://news.example/%s/article/2026/09/%02d/story-%d_65432%d.html"
+                             % (section, day, day, day), "sitemap")
+        sampler = discover.Sampler(frontier)
+        sampler.mark("https://news.example/")
+        picks = [sampler.next() for _ in range(9)]
+        quiz = [u for u in picks if "/quiz/" in u]
+        self.assertLessEqual(len(quiz), 3, picks)
+        self.assertEqual({u.split("/")[3] for u in picks if "/article/" in u}, {"international", "politique", "economie"})
+
+    def test_sampling_is_deterministic(self):
+        def run():
+            frontier = discover.Frontier("shop.example")
+            for i in range(20):
+                frontier.add("https://shop.example/products/item-%d" % i, "sitemap")
+                frontier.add("https://shop.example/collections/c%d/products/item-%d" % (i % 3, i), "nav")
+            sampler = discover.Sampler(frontier)
+            return [sampler.next() for _ in range(15)]
+        self.assertEqual(run(), run())
+
+
 class TestLargeSitemaps(unittest.TestCase):
     """A sitemap cut at the fetch cap is a large sitemap, not an unreadable one."""
 
