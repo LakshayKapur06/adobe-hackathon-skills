@@ -516,7 +516,7 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
             kept.append((target, response, doc))
             held.add(final)
         if time.monotonic() >= crawl_deadline and len(kept) < max_pages and sampler.next() is not None:
-            run.degrade("crawl", "the %ss crawl budget ran out after %d pages" % (budgets["crawl_s"], len(kept)),
+            run.degrade("crawl", "the %ss crawl budget ran out after %d page%s" % (budgets["crawl_s"], len(kept), "" if len(kept) == 1 else "s"),
                         "fewer pages were sampled than requested; every finding states its denominator")
         if collapsed_shell:
             run.error(origin + "/", "discovery",
@@ -626,7 +626,8 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
         run.degrade("render", "%d of %d pages failed to render (browser error or timeout)" % (render_failed, len(kept)),
                     "those pages are fetch-only and their raw-versus-rendered comparison is not assessed")
     if render_skipped:
-        run.degrade("render", "%d pages were not reached within the %ss render budget" % (render_skipped, budgets["render_s"]),
+        run.degrade("render", "%s not reached within the %ss render budget" % (
+            "1 page was" if render_skipped == 1 else "%d pages were" % render_skipped, budgets["render_s"]),
                     "those pages are fetch-only and their raw-versus-rendered comparison is not assessed")
     html_pages = [p for p in pages if p["status"] and 200 <= p["status"] <= 299]
     shells = [p for p in html_pages if p["raw"]["text_hash"] == baseline] if baseline else []

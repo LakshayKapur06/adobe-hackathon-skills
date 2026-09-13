@@ -107,8 +107,9 @@ def render(report):
            "- **%s found:** %d critical, %d high, %d medium, %d low." % (
                _count(summary["total_findings"], "problem", "problems"), summary["critical"], summary["high"],
                summary["medium"], summary["low"]),
-           "- **%s** that go beyond the problems." % _count(summary["proactive"], "suggested improvement",
-                                                          "suggested improvements"),
+           "- **%s** that %s beyond the problems." % (_count(summary["proactive"], "suggested improvement",
+                                                            "suggested improvements"),
+                                                     "goes" if summary["proactive"] == 1 else "go"),
            "- **%s passed**, and **%s** on this run (listed at the end, with what would make them checkable)." % (
                _count(len(report["checks_passed"]), "check", "checks"),
                _count(len(report["not_assessed"]), "could not be assessed", "could not be assessed")), ""]
