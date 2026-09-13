@@ -1,11 +1,11 @@
 # AI-readiness audit: 127.0.0.1
 
-Audited 2026-09-13T16:34:36Z. 5 of 5 discovered pages sampled; a browser rendered pages; no off-site sources were consulted; 5.0 seconds.
+Audited 2026-09-13T16:58:49Z. 5 of 5 discovered pages sampled; a browser rendered pages; no off-site sources were consulted; 5.0 seconds.
 
 ## At a glance
 
 - **3 problems found:** 1 critical, 1 high, 1 medium, 0 low.
-- **1 suggested improvement** that go beyond the problems.
+- **1 suggested improvement** that goes beyond the problems.
 - **8 checks passed**, and **12 could not be assessed** on this run (listed at the end, with what would make them checkable).
 
 This run had limits that narrow what it could see: external: third-party egress disabled (--no-egress); claims: no claim was promoted from the candidates observed.
@@ -16,27 +16,27 @@ This run had limits that narrow what it could see: external: third-party egress 
 
 **Critical** · priority **P0** (fix first: it blocks a stage of being found or used) · Being found and cited by AI assistants · confidence high · effort high
 
-- **What we saw:** 5 of 5 rendered pages compared across the site are JavaScript-dependent: at least 80% of their rendered text is missing from the server response. Examples: http://127.0.0.1:53327/ (server response 0 characters, rendered page 583); http://127.0.0.1:53327/warranty (server response 0 characters, rendered page 1968); http://127.0.0.1:53327/aboutus (server response 0 characters, rendered page 1712); http://127.0.0.1:53327/grievance (server response 0 characters, rendered page 1558); http://127.0.0.1:53327/extended-warranty (server response 0 characters, rendered page 2111). Every sampled HTML page was rendered.
+- **What we saw:** 5 of 5 rendered pages compared across the site are JavaScript-dependent: at least 80% of their rendered text is missing from the server response. Examples: http://127.0.0.1:61776/ (server response 0 characters, rendered page 583); http://127.0.0.1:61776/warranty (server response 0 characters, rendered page 1968); http://127.0.0.1:61776/aboutus (server response 0 characters, rendered page 1712); http://127.0.0.1:61776/grievance (server response 0 characters, rendered page 1558); http://127.0.0.1:61776/extended-warranty (server response 0 characters, rendered page 2111). Every sampled HTML page was rendered.
 - **Why it matters:** Text assembled in the browser does not exist for a fetcher that does not run scripts.
 - **What improves:** Extraction of the page's text from the fetched response.
 - **What to do:** Put the page's substance in the server response for the templates across the site.
 - **Where:** The routes cited and the rendering configuration of their templates.
 - **How:** Enable the framework's server rendering or static generation for these routes, or put a prerendering step in front of them serving the rendered HTML to every client alike; then confirm with a plain fetch that headings and body text are present.
 - **How you will know it worked:** A plain fetch with no JavaScript of every cited URL returns the main headings and body text, so that at least a fifth of what the rendered page shows is already in the server response.
-- **Pages behind this:** http://127.0.0.1:53327/, http://127.0.0.1:53327/aboutus, http://127.0.0.1:53327/extended-warranty, http://127.0.0.1:53327/grievance, http://127.0.0.1:53327/warranty (5 of 5 examined) · rule RND-001
+- **Pages behind this:** http://127.0.0.1:61776/, http://127.0.0.1:61776/aboutus, http://127.0.0.1:61776/extended-warranty, http://127.0.0.1:61776/grievance, http://127.0.0.1:61776/warranty (5 of 5 examined) · rule RND-001
 
 ### 2. Distinct pages declare the home page as their canonical URL
 
 **High** · priority **P1** (fix next) · Being found and cited by AI assistants · confidence high · effort medium
 
-- **What we saw:** 4 of 4 non-root 2xx pages that declare a canonical name http://127.0.0.1:53327/, the site root, as their canonical URL. Each tells an indexer it is a duplicate of the home page.
+- **What we saw:** 4 of 4 non-root 2xx pages that declare a canonical name http://127.0.0.1:61776/, the site root, as their canonical URL. Each tells an indexer it is a duplicate of the home page.
 - **Why it matters:** A canonical is per-page by definition, so a fixed value in a shared layout declares every page a duplicate of one.
 - **What improves:** Deep pages indexed as themselves.
 - **What to do:** Make each page's rel=canonical name its own URL.
 - **Where:** The shared layout, head component or application shell that emits rel=canonical on the URLs cited.
 - **How:** Generate the href from the request path, or from the router's resolved route in a client-rendered application, and make sure the server response carries the per-page value.
 - **How you will know it worked:** Every cited URL returns a canonical equal to its own final URL in the server response.
-- **Pages behind this:** http://127.0.0.1:53327/aboutus, http://127.0.0.1:53327/extended-warranty, http://127.0.0.1:53327/grievance, http://127.0.0.1:53327/warranty (4 of 4 examined) · rule ACC-005
+- **Pages behind this:** http://127.0.0.1:61776/aboutus, http://127.0.0.1:61776/extended-warranty, http://127.0.0.1:61776/grievance, http://127.0.0.1:61776/warranty (4 of 4 examined) · rule ACC-005
 
 ### 3. The home page carries no machine-readable organization identity
 
@@ -48,10 +48,10 @@ This run had limits that narrow what it could see: external: third-party egress 
 - **Why it matters:** It states the entity behind the site explicitly instead of leaving it to be inferred from a name.
 - **What improves:** Entity disambiguation.
 - **What to do:** Add an Organization JSON-LD block, or the most specific subtype that applies, to the home page.
-- **Where:** The home page template's <head>, in the server response (http://127.0.0.1:53327/).
+- **Where:** The home page template's <head>, in the server response (http://127.0.0.1:61776/).
 - **How:** Emit @type, name, url, logo and sameAs with the organization's profile URLs on other sites, plus legalName and address where they apply, generated server-side.
 - **How you will know it worked:** The home page's server response contains a JSON-LD node of an Organization type with at least name and url.
-- **Pages behind this:** http://127.0.0.1:53327/ (1 of 1 examined) · rule IDM-001
+- **Pages behind this:** http://127.0.0.1:61776/ (1 of 1 examined) · rule IDM-001
 
 ## Suggested improvements beyond the problems
 
@@ -59,14 +59,14 @@ This run had limits that narrow what it could see: external: third-party egress 
 
 **Low** · priority **P2** (plan it in) · Being found and cited by AI assistants · confidence low · effort low
 
-- **What we saw:** /llms.txt at http://127.0.0.1:53327 answered HTTP 200 with no file: an empty body or the site's page for unknown addresses, so no /llms.txt is published. No major assistant is documented to read this file, so this is listed only as a low-cost hedge, not as a gap.
+- **What we saw:** /llms.txt at http://127.0.0.1:61776 answered HTTP 200 with no file: an empty body or the site's page for unknown addresses, so no /llms.txt is published. No major assistant is documented to read this file, so this is listed only as a low-cost hedge, not as a gap.
 - **Why it matters:** It is a proposed convention some tools read; no major assistant documents consuming it, which is why this is a suggestion and never reported as a problem.
 - **What improves:** A possible, undocumented discovery channel for tools that adopt the convention.
 - **What to do:** Publish a plain-text /llms.txt summarising what the site is and linking its key pages.
-- **Where:** http://127.0.0.1:53327/llms.txt
+- **Where:** http://127.0.0.1:61776/llms.txt
 - **How:** Write a short markdown file: one paragraph describing the organization, then links to the pages that answer the questions people ask about it. Keep it consistent with those pages.
 - **How you will know it worked:** /llms.txt answers 200 with content that is not the site's soft-404 page.
-- **Pages behind this:** http://127.0.0.1:53327/llms.txt · rule PRO-001
+- **Pages behind this:** http://127.0.0.1:61776/llms.txt · rule PRO-001
 
 ## Checks that passed
 
@@ -84,7 +84,7 @@ This run had limits that narrow what it could see: external: third-party egress 
 - **ACC-009:** robots.txt was not parsed. *To enable:* applies only to sitemaps declared in a parsed robots.txt that answer this client
 - **ANS-001:** long-form article or doc pages of at least 1500 words sampled, news reporting excluded: 0; the recommendation needs 2. *To enable:* applies only to sites publishing long articles or documentation
 - **FRC-001:** article pages classified with confidence >= 0.8 sampled: 0; 2 are needed. *To enable:* applies to sites publishing articles; for articles in other languages, check by hand that each shows a date and carries datePublished
-- **FRC-002:** the off-site probe did not run (egress False, attempted False), so no claim was checked. *To enable:* run with network access to public records and without --no-egress
+- **FRC-002:** the off-site check did not run (third-party network access was unavailable), so no claim was compared with a public record. *To enable:* run with network access to public records and without --no-egress
 - **IDM-002:** no organization node on a 2xx page declares sameAs with its value recorded. *To enable:* applies only to organization markup that declares sameAs
 - **IDM-003:** no 2xx page carries any JSON-LD to parse. *To enable:* applies only to pages that emit JSON-LD
 - **IDM-004:** no 2xx page carries a commerce node (Product or Offer) stating a price above zero. *To enable:* applies only to pages with Offer or price markup

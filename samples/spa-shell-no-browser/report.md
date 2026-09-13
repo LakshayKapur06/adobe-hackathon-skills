@@ -1,11 +1,11 @@
 # AI-readiness audit: 127.0.0.1
 
-Audited 2026-09-13T16:34:42Z. 1 of 1 discovered pages sampled; no browser was available; no off-site sources were consulted; 0.0 seconds.
+Audited 2026-09-13T16:58:55Z. 1 of 1 discovered pages sampled; no browser was available; no off-site sources were consulted; 1.0 seconds.
 
 ## At a glance
 
 - **2 problems found:** 1 critical, 0 high, 1 medium, 0 low.
-- **1 suggested improvement** that go beyond the problems.
+- **1 suggested improvement** that goes beyond the problems.
 - **6 checks passed**, and **15 could not be assessed** on this run (listed at the end, with what would make them checkable).
 
 This run had limits that narrow what it could see: render: rendering disabled (--no-render); page-content: every one of 1 sampled URL returned the same server response as a path that cannot exist, and rendering is unavailable; external: third-party egress disabled (--no-egress); claims: no claim was promoted from the candidates observed.
@@ -16,14 +16,14 @@ This run had limits that narrow what it could see: render: rendering disabled (-
 
 **Critical** · priority **P0** (fix first: it blocks a stage of being found or used) · Being found and cited by AI assistants · confidence high · effort high
 
-- **What we saw:** The only 2xx HTML page sampled returned fewer than 200 characters of text in the server response (http://127.0.0.1:54891/: 0). The site answered two paths that cannot exist with the identical response, so every URL serves one empty application shell. No page was rendered because no browser was available, so what a browser would add is not measured here; what a fetcher that does not execute JavaScript receives is observed directly.
+- **What we saw:** The only 2xx HTML page sampled returned fewer than 200 characters of text in the server response (http://127.0.0.1:51261/: 0). The site answered two paths that cannot exist with the identical response, so every URL serves one empty application shell. No page was rendered because no browser was available, so what a browser would add is not measured here; what a fetcher that does not execute JavaScript receives is observed directly.
 - **Why it matters:** The server response is all a non-rendering fetcher ever reads.
 - **What improves:** Any text at all reaching a fetcher that does not execute scripts.
 - **What to do:** Serve content in the server response instead of only through client-side scripts.
 - **Where:** The application shell served at the URLs cited.
 - **How:** First open a cited URL in a normal browser with JavaScript disabled: if it shows a bot check or an 'enable JavaScript to continue' page rather than the site's application, the empty response comes from bot protection, and the fix is to admit verified crawlers there, not to change rendering. Otherwise adopt server-side rendering or static generation for the site's routes, or place a prerendering step in front of them serving the same rendered HTML to every client; re-run this audit with a browser available to measure the gap per template.
 - **How you will know it worked:** A plain fetch of the home page and each cited URL returns at least the page's main heading and body text in the server response.
-- **Pages behind this:** http://127.0.0.1:54891/ (1 of 1 examined) · rule RND-002
+- **Pages behind this:** http://127.0.0.1:51261/ (1 of 1 examined) · rule RND-002
 
 ### 2. The home page carries no machine-readable organization identity
 
@@ -35,10 +35,10 @@ This run had limits that narrow what it could see: render: rendering disabled (-
 - **Why it matters:** It states the entity behind the site explicitly instead of leaving it to be inferred from a name.
 - **What improves:** Entity disambiguation.
 - **What to do:** Add an Organization JSON-LD block, or the most specific subtype that applies, to the home page.
-- **Where:** The home page template's <head>, in the server response (http://127.0.0.1:54891/).
+- **Where:** The home page template's <head>, in the server response (http://127.0.0.1:51261/).
 - **How:** Emit @type, name, url, logo and sameAs with the organization's profile URLs on other sites, plus legalName and address where they apply, generated server-side.
 - **How you will know it worked:** The home page's server response contains a JSON-LD node of an Organization type with at least name and url.
-- **Pages behind this:** http://127.0.0.1:54891/ (1 of 1 examined) · rule IDM-001
+- **Pages behind this:** http://127.0.0.1:51261/ (1 of 1 examined) · rule IDM-001
 
 ## Suggested improvements beyond the problems
 
@@ -46,14 +46,14 @@ This run had limits that narrow what it could see: render: rendering disabled (-
 
 **Low** · priority **P2** (plan it in) · Being found and cited by AI assistants · confidence low · effort low
 
-- **What we saw:** /llms.txt at http://127.0.0.1:54891 answered HTTP 200 with no file: an empty body or the site's page for unknown addresses, so no /llms.txt is published. No major assistant is documented to read this file, so this is listed only as a low-cost hedge, not as a gap.
+- **What we saw:** /llms.txt at http://127.0.0.1:51261 answered HTTP 200 with no file: an empty body or the site's page for unknown addresses, so no /llms.txt is published. No major assistant is documented to read this file, so this is listed only as a low-cost hedge, not as a gap.
 - **Why it matters:** It is a proposed convention some tools read; no major assistant documents consuming it, which is why this is a suggestion and never reported as a problem.
 - **What improves:** A possible, undocumented discovery channel for tools that adopt the convention.
 - **What to do:** Publish a plain-text /llms.txt summarising what the site is and linking its key pages.
-- **Where:** http://127.0.0.1:54891/llms.txt
+- **Where:** http://127.0.0.1:51261/llms.txt
 - **How:** Write a short markdown file: one paragraph describing the organization, then links to the pages that answer the questions people ask about it. Keep it consistent with those pages.
 - **How you will know it worked:** /llms.txt answers 200 with content that is not the site's soft-404 page.
-- **Pages behind this:** http://127.0.0.1:54891/llms.txt · rule PRO-001
+- **Pages behind this:** http://127.0.0.1:51261/llms.txt · rule PRO-001
 
 ## Checks that passed
 
@@ -72,7 +72,7 @@ This run had limits that narrow what it could see: render: rendering disabled (-
 - **ANS-001:** long-form article or doc pages of at least 1500 words sampled, news reporting excluded: 0; the recommendation needs 2. *To enable:* applies only to sites publishing long articles or documentation
 - **ARR-001:** 2xx pages with a recorded time to first byte: 1; 5 are needed for a median. *To enable:* needs at least 5 sampled pages that answer this client
 - **FRC-001:** article pages classified with confidence >= 0.8 sampled: 0; 2 are needed. *To enable:* applies to sites publishing articles; for articles in other languages, check by hand that each shows a date and carries datePublished
-- **FRC-002:** the off-site probe did not run (egress False, attempted False), so no claim was checked. *To enable:* run with network access to public records and without --no-egress
+- **FRC-002:** the off-site check did not run (third-party network access was unavailable), so no claim was compared with a public record. *To enable:* run with network access to public records and without --no-egress
 - **IDM-002:** no organization node on a 2xx page declares sameAs with its value recorded. *To enable:* applies only to organization markup that declares sameAs
 - **IDM-003:** no 2xx page carries any JSON-LD to parse. *To enable:* applies only to pages that emit JSON-LD
 - **IDM-004:** no 2xx page carries a commerce node (Product or Offer) stating a price above zero. *To enable:* applies only to pages with Offer or price markup

@@ -1,5 +1,5 @@
 {
-  "audited_at": "2026-09-13T16:34:42Z",
+  "audited_at": "2026-09-13T16:58:55Z",
   "checks_passed": [
     {
       "rule_id": "ACC-001",
@@ -30,14 +30,14 @@
     {
       "category": "discoverability",
       "confidence": "high",
-      "evidence": "The only 2xx HTML page sampled returned fewer than 200 characters of text in the server response (http://127.0.0.1:54891/: 0). The site answered two paths that cannot exist with the identical response, so every URL serves one empty application shell. No page was rendered because no browser was available, so what a browser would add is not measured here; what a fetcher that does not execute JavaScript receives is observed directly.",
+      "evidence": "The only 2xx HTML page sampled returned fewer than 200 characters of text in the server response (http://127.0.0.1:51261/: 0). The site answered two paths that cannot exist with the identical response, so every URL serves one empty application shell. No page was rendered because no browser was available, so what a browser would add is not measured here; what a fetcher that does not execute JavaScript receives is observed directly.",
       "evidence_refs": [
         {
           "layer": "first_party",
           "method": "fetch",
           "observation": "server response text 0 characters",
-          "retrieved_at": "2026-09-13T16:34:42Z",
-          "url": "http://127.0.0.1:54891/"
+          "retrieved_at": "2026-09-13T16:58:55Z",
+          "url": "http://127.0.0.1:51261/"
         }
       ],
       "exceptions_checked": [
@@ -97,8 +97,8 @@
           "layer": "first_party",
           "method": "fetch",
           "observation": "JSON-LD types on the home page: none",
-          "retrieved_at": "2026-09-13T16:34:42Z",
-          "url": "http://127.0.0.1:54891/"
+          "retrieved_at": "2026-09-13T16:58:55Z",
+          "url": "http://127.0.0.1:51261/"
         }
       ],
       "exceptions_checked": [
@@ -136,7 +136,7 @@
         "success_criteria": "The home page's server response contains a JSON-LD node of an Organization type with at least name and url.",
         "summary": "Add Organization JSON-LD with name, url, logo and sameAs to the home page.",
         "what": "Add an Organization JSON-LD block, or the most specific subtype that applies, to the home page.",
-        "where": "The home page template's <head>, in the server response (http://127.0.0.1:54891/).",
+        "where": "The home page template's <head>, in the server response (http://127.0.0.1:51261/).",
         "why": "It states the entity behind the site explicitly instead of leaving it to be inferred from a name."
       },
       "symptom": [
@@ -147,14 +147,14 @@
     {
       "category": "discoverability",
       "confidence": "low",
-      "evidence": "/llms.txt at http://127.0.0.1:54891 answered HTTP 200 with no file: an empty body or the site's page for unknown addresses, so no /llms.txt is published. No major assistant is documented to read this file, so this is listed only as a low-cost hedge, not as a gap.",
+      "evidence": "/llms.txt at http://127.0.0.1:51261 answered HTTP 200 with no file: an empty body or the site's page for unknown addresses, so no /llms.txt is published. No major assistant is documented to read this file, so this is listed only as a low-cost hedge, not as a gap.",
       "evidence_refs": [
         {
           "layer": "first_party",
           "method": "fetch",
           "observation": "HTTP 200, no file published",
-          "retrieved_at": "2026-09-13T16:34:42Z",
-          "url": "http://127.0.0.1:54891/llms.txt"
+          "retrieved_at": "2026-09-13T16:58:55Z",
+          "url": "http://127.0.0.1:51261/llms.txt"
         }
       ],
       "exceptions_checked": [],
@@ -182,7 +182,7 @@
         "success_criteria": "/llms.txt answers 200 with content that is not the site's soft-404 page.",
         "summary": "If it costs little, publish a short /llms.txt; do not expect it to change how assistants see the site.",
         "what": "Publish a plain-text /llms.txt summarising what the site is and linking its key pages.",
-        "where": "http://127.0.0.1:54891/llms.txt",
+        "where": "http://127.0.0.1:51261/llms.txt",
         "why": "It is a proposed convention some tools read; no major assistant documents consuming it, which is why this is a suggestion and never reported as a problem."
       },
       "symptom": [
@@ -224,7 +224,7 @@
     },
     {
       "enable_hint": "run with network access to public records and without --no-egress",
-      "reason": "the off-site probe did not run (egress False, attempted False), so no claim was checked",
+      "reason": "the off-site check did not run (third-party network access was unavailable), so no claim was compared with a public record",
       "rule_id": "FRC-002"
     },
     {
@@ -309,8 +309,8 @@
         "what": "claims"
       }
     ],
-    "elapsed_s": 0.0,
-    "finished_at": "2026-09-13T16:34:42Z",
+    "elapsed_s": 1.0,
+    "finished_at": "2026-09-13T16:58:56Z",
     "sampling": {
       "strata": [
         {
@@ -321,7 +321,7 @@
       ],
       "strategy": "stratified:nav"
     },
-    "started_at": "2026-09-13T16:34:42Z"
+    "started_at": "2026-09-13T16:58:55Z"
   },
   "site": "127.0.0.1",
   "summary": {

@@ -1,16 +1,16 @@
 {
   "schema_version": "1.0.0",
   "site": {
-    "input": "http://127.0.0.1:64599",
-    "resolved_origin": "http://127.0.0.1:64599",
+    "input": "http://127.0.0.1:58409",
+    "resolved_origin": "http://127.0.0.1:58409",
     "registrable_domain": "127.0.0.1",
     "detected_locales": [
       "en"
     ]
   },
   "run_context": {
-    "started_at": "2026-09-13T16:34:14Z",
-    "finished_at": "2026-09-13T16:34:35Z",
+    "started_at": "2026-09-13T16:58:09Z",
+    "finished_at": "2026-09-13T16:58:48Z",
     "capabilities": {
       "js_render": true,
       "egress": true,
@@ -30,7 +30,7 @@
   },
   "robots": {
     "fetched": true,
-    "url": "http://127.0.0.1:64599/robots.txt",
+    "url": "http://127.0.0.1:58409/robots.txt",
     "status": 200,
     "parse_ok": true,
     "parse_reason": "ok",
@@ -57,12 +57,12 @@
       "Bingbot": "allowed"
     },
     "sitemaps": [
-      "http://127.0.0.1:64599/sitemap.xml"
+      "http://127.0.0.1:58409/sitemap.xml"
     ]
   },
   "sitemaps": [
     {
-      "url": "http://127.0.0.1:64599/sitemap.xml",
+      "url": "http://127.0.0.1:58409/sitemap.xml",
       "status": 200,
       "url_count": 14,
       "lastmod_present_ratio": 0.0,
@@ -119,19 +119,19 @@
   },
   "pages": [
     {
-      "url": "http://127.0.0.1:64599/",
-      "final_url": "http://127.0.0.1:64599/",
+      "url": "http://127.0.0.1:58409/",
+      "final_url": "http://127.0.0.1:58409/",
       "status": 200,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T16:34:14Z",
+      "fetched_at": "2026-09-13T16:58:09Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
         "cache_control": null
       },
       "meta_robots": [],
-      "canonical": "http://127.0.0.1:64599/",
+      "canonical": "http://127.0.0.1:58409/",
       "canonical_self": true,
       "lang": "en",
       "hreflang": [],
@@ -255,8 +255,8 @@
           ],
           "values": {
             "name": "Northwind Threads",
-            "url": "http://127.0.0.1:64599/",
-            "logo": "http://127.0.0.1:64599/logo.png",
+            "url": "http://127.0.0.1:58409/",
+            "logo": "http://127.0.0.1:58409/logo.png",
             "sameAs": " |  | "
           },
           "contradicts_visible_text": false
@@ -278,10 +278,10 @@
       },
       "obstructions": [],
       "timing": {
-        "ttfb_ms": 15.8,
-        "connect_ms": 14.6,
-        "fetch_ms": 16.0,
-        "render_ms": 596.2
+        "ttfb_ms": 1.5,
+        "connect_ms": 0.4,
+        "fetch_ms": 1.6,
+        "render_ms": 637.6
       },
       "provenance": {
         "layer": "first_party",
@@ -289,12 +289,12 @@
       }
     },
     {
-      "url": "http://127.0.0.1:64599/products/trail-tee",
-      "final_url": "http://127.0.0.1:64599/products/trail-tee",
+      "url": "http://127.0.0.1:58409/products/trail-tee",
+      "final_url": "http://127.0.0.1:58409/products/trail-tee",
       "status": 200,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T16:34:16Z",
+      "fetched_at": "2026-09-13T16:58:11Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
@@ -304,7 +304,7 @@
         "noindex",
         "max-snippet:-1"
       ],
-      "canonical": "http://127.0.0.1:64599/products/trail-tee",
+      "canonical": "http://127.0.0.1:58409/products/trail-tee",
       "canonical_self": true,
       "lang": "en",
       "hreflang": [],
@@ -410,10 +410,10 @@
       },
       "obstructions": [],
       "timing": {
-        "ttfb_ms": 5.0,
-        "connect_ms": 3.9,
-        "fetch_ms": 5.2,
-        "render_ms": 1226.7
+        "ttfb_ms": 9.8,
+        "connect_ms": 8.8,
+        "fetch_ms": 10.0,
+        "render_ms": 1287.3
       },
       "provenance": {
         "layer": "first_party",
@@ -421,19 +421,19 @@
       }
     },
     {
-      "url": "http://127.0.0.1:64599/collections/all",
-      "final_url": "http://127.0.0.1:64599/collections/all",
+      "url": "http://127.0.0.1:58409/collections/all",
+      "final_url": "http://127.0.0.1:58409/collections/all",
       "status": 200,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T16:34:16Z",
+      "fetched_at": "2026-09-13T16:58:11Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
         "cache_control": null
       },
       "meta_robots": [],
-      "canonical": "http://127.0.0.1:64599/collections/all",
+      "canonical": "http://127.0.0.1:58409/collections/all",
       "canonical_self": true,
       "lang": "en",
       "hreflang": [],
@@ -561,10 +561,10 @@
       },
       "obstructions": [],
       "timing": {
-        "ttfb_ms": 10.7,
-        "connect_ms": 9.6,
-        "fetch_ms": 10.9,
-        "render_ms": 1290.5
+        "ttfb_ms": 25.2,
+        "connect_ms": 24.1,
+        "fetch_ms": 25.5,
+        "render_ms": 1283.3
       },
       "provenance": {
         "layer": "first_party",
@@ -572,19 +572,19 @@
       }
     },
     {
-      "url": "http://127.0.0.1:64599/pages/about-us",
-      "final_url": "http://127.0.0.1:64599/pages/about-us",
+      "url": "http://127.0.0.1:58409/pages/about-us",
+      "final_url": "http://127.0.0.1:58409/pages/about-us",
       "status": 200,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T16:34:16Z",
+      "fetched_at": "2026-09-13T16:58:11Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
         "cache_control": null
       },
       "meta_robots": [],
-      "canonical": "http://127.0.0.1:64599/pages/about-us",
+      "canonical": "http://127.0.0.1:58409/pages/about-us",
       "canonical_self": true,
       "lang": "en",
       "hreflang": [],
@@ -670,10 +670,10 @@
       },
       "obstructions": [],
       "timing": {
-        "ttfb_ms": 14.7,
-        "connect_ms": 13.5,
-        "fetch_ms": 14.9,
-        "render_ms": 1227.8
+        "ttfb_ms": 13.9,
+        "connect_ms": 12.7,
+        "fetch_ms": 14.1,
+        "render_ms": 1298.3
       },
       "provenance": {
         "layer": "first_party",
@@ -681,19 +681,19 @@
       }
     },
     {
-      "url": "http://127.0.0.1:64599/policies/refund-policy",
-      "final_url": "http://127.0.0.1:64599/policies/refund-policy",
+      "url": "http://127.0.0.1:58409/policies/refund-policy",
+      "final_url": "http://127.0.0.1:58409/policies/refund-policy",
       "status": 200,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T16:34:16Z",
+      "fetched_at": "2026-09-13T16:58:11Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
         "cache_control": null
       },
       "meta_robots": [],
-      "canonical": "http://127.0.0.1:64599/policies/refund-policy",
+      "canonical": "http://127.0.0.1:58409/policies/refund-policy",
       "canonical_self": true,
       "lang": "en",
       "hreflang": [],
@@ -779,10 +779,10 @@
       },
       "obstructions": [],
       "timing": {
-        "ttfb_ms": 14.4,
-        "connect_ms": 13.5,
-        "fetch_ms": 14.7,
-        "render_ms": 1126.2
+        "ttfb_ms": 14.7,
+        "connect_ms": 13.3,
+        "fetch_ms": 14.8,
+        "render_ms": 1084.1
       },
       "provenance": {
         "layer": "first_party",
@@ -790,12 +790,12 @@
       }
     },
     {
-      "url": "http://127.0.0.1:64599/products/summit-cap",
-      "final_url": "http://127.0.0.1:64599/products/summit-cap",
+      "url": "http://127.0.0.1:58409/products/summit-cap",
+      "final_url": "http://127.0.0.1:58409/products/summit-cap",
       "status": 200,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T16:34:16Z",
+      "fetched_at": "2026-09-13T16:58:11Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
@@ -805,7 +805,7 @@
         "noindex",
         "max-snippet:-1"
       ],
-      "canonical": "http://127.0.0.1:64599/products/summit-cap",
+      "canonical": "http://127.0.0.1:58409/products/summit-cap",
       "canonical_self": true,
       "lang": "en",
       "hreflang": [],
@@ -911,10 +911,10 @@
       },
       "obstructions": [],
       "timing": {
-        "ttfb_ms": 14.1,
-        "connect_ms": 13.1,
-        "fetch_ms": 14.3,
-        "render_ms": 1120.0
+        "ttfb_ms": 14.5,
+        "connect_ms": 13.7,
+        "fetch_ms": 14.7,
+        "render_ms": 1134.4
       },
       "provenance": {
         "layer": "first_party",
@@ -922,12 +922,12 @@
       }
     },
     {
-      "url": "http://127.0.0.1:64599/collections/graphic-tees",
-      "final_url": "http://127.0.0.1:64599/collections/graphic-tees",
+      "url": "http://127.0.0.1:58409/collections/graphic-tees",
+      "final_url": "http://127.0.0.1:58409/collections/graphic-tees",
       "status": 200,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T16:34:16Z",
+      "fetched_at": "2026-09-13T16:58:11Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
@@ -937,7 +937,7 @@
         "noindex",
         "follow"
       ],
-      "canonical": "http://127.0.0.1:64599/collections/graphic-tees",
+      "canonical": "http://127.0.0.1:58409/collections/graphic-tees",
       "canonical_self": true,
       "lang": "en",
       "hreflang": [],
@@ -1065,10 +1065,10 @@
       },
       "obstructions": [],
       "timing": {
-        "ttfb_ms": 18.6,
-        "connect_ms": 17.5,
-        "fetch_ms": 18.8,
-        "render_ms": 1118.3
+        "ttfb_ms": 14.8,
+        "connect_ms": 14.0,
+        "fetch_ms": 15.0,
+        "render_ms": 1059.3
       },
       "provenance": {
         "layer": "first_party",
@@ -1076,12 +1076,12 @@
       }
     },
     {
-      "url": "http://127.0.0.1:64599/products/delta-socks",
-      "final_url": "http://127.0.0.1:64599/products/delta-socks",
+      "url": "http://127.0.0.1:58409/products/delta-socks",
+      "final_url": "http://127.0.0.1:58409/products/delta-socks",
       "status": 200,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T16:34:16Z",
+      "fetched_at": "2026-09-13T16:58:11Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
@@ -1091,7 +1091,7 @@
         "noindex",
         "max-snippet:-1"
       ],
-      "canonical": "http://127.0.0.1:64599/products/delta-socks",
+      "canonical": "http://127.0.0.1:58409/products/delta-socks",
       "canonical_self": true,
       "lang": "en",
       "hreflang": [],
@@ -1198,9 +1198,9 @@
       "obstructions": [],
       "timing": {
         "ttfb_ms": 14.8,
-        "connect_ms": 13.8,
-        "fetch_ms": 15.1,
-        "render_ms": 1095.2
+        "connect_ms": 13.9,
+        "fetch_ms": 14.9,
+        "render_ms": 1165.7
       },
       "provenance": {
         "layer": "first_party",
@@ -1208,12 +1208,12 @@
       }
     },
     {
-      "url": "http://127.0.0.1:64599/products/meadow-scarf",
-      "final_url": "http://127.0.0.1:64599/products/meadow-scarf",
+      "url": "http://127.0.0.1:58409/products/meadow-scarf",
+      "final_url": "http://127.0.0.1:58409/products/meadow-scarf",
       "status": 200,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T16:34:16Z",
+      "fetched_at": "2026-09-13T16:58:11Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
@@ -1223,7 +1223,7 @@
         "noindex",
         "max-snippet:-1"
       ],
-      "canonical": "http://127.0.0.1:64599/products/meadow-scarf",
+      "canonical": "http://127.0.0.1:58409/products/meadow-scarf",
       "canonical_self": true,
       "lang": "en",
       "hreflang": [],
@@ -1340,10 +1340,10 @@
       },
       "obstructions": [],
       "timing": {
-        "ttfb_ms": 14.7,
-        "connect_ms": 13.1,
-        "fetch_ms": 15.1,
-        "render_ms": 1096.0
+        "ttfb_ms": 15.3,
+        "connect_ms": 14.4,
+        "fetch_ms": 15.4,
+        "render_ms": 1168.1
       },
       "provenance": {
         "layer": "first_party",
@@ -1351,12 +1351,12 @@
       }
     },
     {
-      "url": "http://127.0.0.1:64599/products/ridge-gloves",
-      "final_url": "http://127.0.0.1:64599/products/ridge-gloves",
+      "url": "http://127.0.0.1:58409/products/ridge-gloves",
+      "final_url": "http://127.0.0.1:58409/products/ridge-gloves",
       "status": 200,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T16:34:16Z",
+      "fetched_at": "2026-09-13T16:58:11Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
@@ -1366,7 +1366,7 @@
         "noindex",
         "max-snippet:-1"
       ],
-      "canonical": "http://127.0.0.1:64599/products/ridge-gloves",
+      "canonical": "http://127.0.0.1:58409/products/ridge-gloves",
       "canonical_self": true,
       "lang": "en",
       "hreflang": [],
@@ -1483,10 +1483,10 @@
       },
       "obstructions": [],
       "timing": {
-        "ttfb_ms": 14.3,
-        "connect_ms": 13.2,
-        "fetch_ms": 14.5,
-        "render_ms": 1060.0
+        "ttfb_ms": 15.2,
+        "connect_ms": 14.0,
+        "fetch_ms": 15.4,
+        "render_ms": 1108.1
       },
       "provenance": {
         "layer": "first_party",
@@ -1494,12 +1494,12 @@
       }
     },
     {
-      "url": "http://127.0.0.1:64599/products/canyon-jacket",
-      "final_url": "http://127.0.0.1:64599/products/canyon-jacket",
+      "url": "http://127.0.0.1:58409/products/canyon-jacket",
+      "final_url": "http://127.0.0.1:58409/products/canyon-jacket",
       "status": 200,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T16:34:16Z",
+      "fetched_at": "2026-09-13T16:58:11Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
@@ -1509,7 +1509,7 @@
         "noindex",
         "max-snippet:-1"
       ],
-      "canonical": "http://127.0.0.1:64599/products/canyon-jacket",
+      "canonical": "http://127.0.0.1:58409/products/canyon-jacket",
       "canonical_self": true,
       "lang": "en",
       "hreflang": [],
@@ -1615,10 +1615,10 @@
       },
       "obstructions": [],
       "timing": {
-        "ttfb_ms": 13.8,
-        "connect_ms": 13.0,
-        "fetch_ms": 13.9,
-        "render_ms": 902.7
+        "ttfb_ms": 1.8,
+        "connect_ms": 0.5,
+        "fetch_ms": 2.0,
+        "render_ms": 944.5
       },
       "provenance": {
         "layer": "first_party",
@@ -1626,12 +1626,12 @@
       }
     },
     {
-      "url": "http://127.0.0.1:64599/products/harbor-hoodie",
-      "final_url": "http://127.0.0.1:64599/products/harbor-hoodie",
+      "url": "http://127.0.0.1:58409/products/harbor-hoodie",
+      "final_url": "http://127.0.0.1:58409/products/harbor-hoodie",
       "status": 200,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T16:34:16Z",
+      "fetched_at": "2026-09-13T16:58:11Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
@@ -1641,7 +1641,7 @@
         "noindex",
         "max-snippet:-1"
       ],
-      "canonical": "http://127.0.0.1:64599/products/harbor-hoodie",
+      "canonical": "http://127.0.0.1:58409/products/harbor-hoodie",
       "canonical_self": true,
       "lang": "en",
       "hreflang": [],
@@ -1747,10 +1747,10 @@
       },
       "obstructions": [],
       "timing": {
-        "ttfb_ms": 18.7,
-        "connect_ms": 17.4,
-        "fetch_ms": 18.9,
-        "render_ms": 951.0
+        "ttfb_ms": 20.5,
+        "connect_ms": 19.3,
+        "fetch_ms": 20.7,
+        "render_ms": 925.6
       },
       "provenance": {
         "layer": "first_party",
@@ -1758,12 +1758,12 @@
       }
     },
     {
-      "url": "http://127.0.0.1:64599/products/retired-logo-tee",
-      "final_url": "http://127.0.0.1:64599/products/retired-logo-tee",
+      "url": "http://127.0.0.1:58409/products/retired-logo-tee",
+      "final_url": "http://127.0.0.1:58409/products/retired-logo-tee",
       "status": 404,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T16:34:16Z",
+      "fetched_at": "2026-09-13T16:58:11Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
@@ -1815,9 +1815,9 @@
       },
       "obstructions": [],
       "timing": {
-        "ttfb_ms": 14.0,
-        "connect_ms": 12.7,
-        "fetch_ms": 14.2,
+        "ttfb_ms": 13.6,
+        "connect_ms": 12.4,
+        "fetch_ms": 13.7,
         "render_ms": null
       },
       "provenance": {
@@ -1826,12 +1826,12 @@
       }
     },
     {
-      "url": "http://127.0.0.1:64599/products/retired-classic-tee",
-      "final_url": "http://127.0.0.1:64599/products/retired-classic-tee",
+      "url": "http://127.0.0.1:58409/products/retired-classic-tee",
+      "final_url": "http://127.0.0.1:58409/products/retired-classic-tee",
       "status": 404,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T16:34:16Z",
+      "fetched_at": "2026-09-13T16:58:11Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
@@ -1883,9 +1883,9 @@
       },
       "obstructions": [],
       "timing": {
-        "ttfb_ms": 14.6,
-        "connect_ms": 13.7,
-        "fetch_ms": 14.8,
+        "ttfb_ms": 20.4,
+        "connect_ms": 19.1,
+        "fetch_ms": 20.6,
         "render_ms": null
       },
       "provenance": {
@@ -1897,313 +1897,313 @@
   "link_graph": {
     "edges": [
       [
-        "http://127.0.0.1:64599/",
-        "http://127.0.0.1:64599/collections/all"
+        "http://127.0.0.1:58409/",
+        "http://127.0.0.1:58409/collections/all"
       ],
       [
-        "http://127.0.0.1:64599/",
-        "http://127.0.0.1:64599/collections/graphic-tees"
+        "http://127.0.0.1:58409/",
+        "http://127.0.0.1:58409/collections/graphic-tees"
       ],
       [
-        "http://127.0.0.1:64599/",
-        "http://127.0.0.1:64599/pages/about-us"
+        "http://127.0.0.1:58409/",
+        "http://127.0.0.1:58409/pages/about-us"
       ],
       [
-        "http://127.0.0.1:64599/",
-        "http://127.0.0.1:64599/policies/refund-policy"
+        "http://127.0.0.1:58409/",
+        "http://127.0.0.1:58409/policies/refund-policy"
       ],
       [
-        "http://127.0.0.1:64599/",
-        "http://127.0.0.1:64599/products/trail-tee"
+        "http://127.0.0.1:58409/",
+        "http://127.0.0.1:58409/products/trail-tee"
       ],
       [
-        "http://127.0.0.1:64599/",
-        "http://127.0.0.1:64599/products/harbor-hoodie"
+        "http://127.0.0.1:58409/",
+        "http://127.0.0.1:58409/products/harbor-hoodie"
       ],
       [
-        "http://127.0.0.1:64599/",
-        "http://127.0.0.1:64599/products/summit-cap"
+        "http://127.0.0.1:58409/",
+        "http://127.0.0.1:58409/products/summit-cap"
       ],
       [
-        "http://127.0.0.1:64599/",
-        "http://127.0.0.1:64599/products/delta-socks"
+        "http://127.0.0.1:58409/",
+        "http://127.0.0.1:58409/products/delta-socks"
       ],
       [
-        "http://127.0.0.1:64599/",
-        "http://127.0.0.1:64599/products/canyon-jacket"
+        "http://127.0.0.1:58409/",
+        "http://127.0.0.1:58409/products/canyon-jacket"
       ],
       [
-        "http://127.0.0.1:64599/",
-        "http://127.0.0.1:64599/products/meadow-scarf"
+        "http://127.0.0.1:58409/",
+        "http://127.0.0.1:58409/products/meadow-scarf"
       ],
       [
-        "http://127.0.0.1:64599/",
-        "http://127.0.0.1:64599/products/ridge-gloves"
+        "http://127.0.0.1:58409/",
+        "http://127.0.0.1:58409/products/ridge-gloves"
       ],
       [
-        "http://127.0.0.1:64599/products/trail-tee",
-        "http://127.0.0.1:64599/"
+        "http://127.0.0.1:58409/products/trail-tee",
+        "http://127.0.0.1:58409/"
       ],
       [
-        "http://127.0.0.1:64599/products/trail-tee",
-        "http://127.0.0.1:64599/collections/all"
+        "http://127.0.0.1:58409/products/trail-tee",
+        "http://127.0.0.1:58409/collections/all"
       ],
       [
-        "http://127.0.0.1:64599/products/trail-tee",
-        "http://127.0.0.1:64599/collections/graphic-tees"
+        "http://127.0.0.1:58409/products/trail-tee",
+        "http://127.0.0.1:58409/collections/graphic-tees"
       ],
       [
-        "http://127.0.0.1:64599/products/trail-tee",
-        "http://127.0.0.1:64599/pages/about-us"
+        "http://127.0.0.1:58409/products/trail-tee",
+        "http://127.0.0.1:58409/pages/about-us"
       ],
       [
-        "http://127.0.0.1:64599/products/trail-tee",
-        "http://127.0.0.1:64599/policies/refund-policy"
+        "http://127.0.0.1:58409/products/trail-tee",
+        "http://127.0.0.1:58409/policies/refund-policy"
       ],
       [
-        "http://127.0.0.1:64599/collections/all",
-        "http://127.0.0.1:64599/"
+        "http://127.0.0.1:58409/collections/all",
+        "http://127.0.0.1:58409/"
       ],
       [
-        "http://127.0.0.1:64599/collections/all",
-        "http://127.0.0.1:64599/collections/graphic-tees"
+        "http://127.0.0.1:58409/collections/all",
+        "http://127.0.0.1:58409/collections/graphic-tees"
       ],
       [
-        "http://127.0.0.1:64599/collections/all",
-        "http://127.0.0.1:64599/pages/about-us"
+        "http://127.0.0.1:58409/collections/all",
+        "http://127.0.0.1:58409/pages/about-us"
       ],
       [
-        "http://127.0.0.1:64599/collections/all",
-        "http://127.0.0.1:64599/policies/refund-policy"
+        "http://127.0.0.1:58409/collections/all",
+        "http://127.0.0.1:58409/policies/refund-policy"
       ],
       [
-        "http://127.0.0.1:64599/collections/all",
-        "http://127.0.0.1:64599/products/trail-tee"
+        "http://127.0.0.1:58409/collections/all",
+        "http://127.0.0.1:58409/products/trail-tee"
       ],
       [
-        "http://127.0.0.1:64599/collections/all",
-        "http://127.0.0.1:64599/products/harbor-hoodie"
+        "http://127.0.0.1:58409/collections/all",
+        "http://127.0.0.1:58409/products/harbor-hoodie"
       ],
       [
-        "http://127.0.0.1:64599/collections/all",
-        "http://127.0.0.1:64599/products/summit-cap"
+        "http://127.0.0.1:58409/collections/all",
+        "http://127.0.0.1:58409/products/summit-cap"
       ],
       [
-        "http://127.0.0.1:64599/collections/all",
-        "http://127.0.0.1:64599/products/delta-socks"
+        "http://127.0.0.1:58409/collections/all",
+        "http://127.0.0.1:58409/products/delta-socks"
       ],
       [
-        "http://127.0.0.1:64599/collections/all",
-        "http://127.0.0.1:64599/products/canyon-jacket"
+        "http://127.0.0.1:58409/collections/all",
+        "http://127.0.0.1:58409/products/canyon-jacket"
       ],
       [
-        "http://127.0.0.1:64599/collections/all",
-        "http://127.0.0.1:64599/products/meadow-scarf"
+        "http://127.0.0.1:58409/collections/all",
+        "http://127.0.0.1:58409/products/meadow-scarf"
       ],
       [
-        "http://127.0.0.1:64599/collections/all",
-        "http://127.0.0.1:64599/products/ridge-gloves"
+        "http://127.0.0.1:58409/collections/all",
+        "http://127.0.0.1:58409/products/ridge-gloves"
       ],
       [
-        "http://127.0.0.1:64599/pages/about-us",
-        "http://127.0.0.1:64599/"
+        "http://127.0.0.1:58409/pages/about-us",
+        "http://127.0.0.1:58409/"
       ],
       [
-        "http://127.0.0.1:64599/pages/about-us",
-        "http://127.0.0.1:64599/collections/all"
+        "http://127.0.0.1:58409/pages/about-us",
+        "http://127.0.0.1:58409/collections/all"
       ],
       [
-        "http://127.0.0.1:64599/pages/about-us",
-        "http://127.0.0.1:64599/collections/graphic-tees"
+        "http://127.0.0.1:58409/pages/about-us",
+        "http://127.0.0.1:58409/collections/graphic-tees"
       ],
       [
-        "http://127.0.0.1:64599/pages/about-us",
-        "http://127.0.0.1:64599/policies/refund-policy"
+        "http://127.0.0.1:58409/pages/about-us",
+        "http://127.0.0.1:58409/policies/refund-policy"
       ],
       [
-        "http://127.0.0.1:64599/policies/refund-policy",
-        "http://127.0.0.1:64599/"
+        "http://127.0.0.1:58409/policies/refund-policy",
+        "http://127.0.0.1:58409/"
       ],
       [
-        "http://127.0.0.1:64599/policies/refund-policy",
-        "http://127.0.0.1:64599/collections/all"
+        "http://127.0.0.1:58409/policies/refund-policy",
+        "http://127.0.0.1:58409/collections/all"
       ],
       [
-        "http://127.0.0.1:64599/policies/refund-policy",
-        "http://127.0.0.1:64599/collections/graphic-tees"
+        "http://127.0.0.1:58409/policies/refund-policy",
+        "http://127.0.0.1:58409/collections/graphic-tees"
       ],
       [
-        "http://127.0.0.1:64599/policies/refund-policy",
-        "http://127.0.0.1:64599/pages/about-us"
+        "http://127.0.0.1:58409/policies/refund-policy",
+        "http://127.0.0.1:58409/pages/about-us"
       ],
       [
-        "http://127.0.0.1:64599/products/summit-cap",
-        "http://127.0.0.1:64599/"
+        "http://127.0.0.1:58409/products/summit-cap",
+        "http://127.0.0.1:58409/"
       ],
       [
-        "http://127.0.0.1:64599/products/summit-cap",
-        "http://127.0.0.1:64599/collections/all"
+        "http://127.0.0.1:58409/products/summit-cap",
+        "http://127.0.0.1:58409/collections/all"
       ],
       [
-        "http://127.0.0.1:64599/products/summit-cap",
-        "http://127.0.0.1:64599/collections/graphic-tees"
+        "http://127.0.0.1:58409/products/summit-cap",
+        "http://127.0.0.1:58409/collections/graphic-tees"
       ],
       [
-        "http://127.0.0.1:64599/products/summit-cap",
-        "http://127.0.0.1:64599/pages/about-us"
+        "http://127.0.0.1:58409/products/summit-cap",
+        "http://127.0.0.1:58409/pages/about-us"
       ],
       [
-        "http://127.0.0.1:64599/products/summit-cap",
-        "http://127.0.0.1:64599/policies/refund-policy"
+        "http://127.0.0.1:58409/products/summit-cap",
+        "http://127.0.0.1:58409/policies/refund-policy"
       ],
       [
-        "http://127.0.0.1:64599/collections/graphic-tees",
-        "http://127.0.0.1:64599/"
+        "http://127.0.0.1:58409/collections/graphic-tees",
+        "http://127.0.0.1:58409/"
       ],
       [
-        "http://127.0.0.1:64599/collections/graphic-tees",
-        "http://127.0.0.1:64599/collections/all"
+        "http://127.0.0.1:58409/collections/graphic-tees",
+        "http://127.0.0.1:58409/collections/all"
       ],
       [
-        "http://127.0.0.1:64599/collections/graphic-tees",
-        "http://127.0.0.1:64599/pages/about-us"
+        "http://127.0.0.1:58409/collections/graphic-tees",
+        "http://127.0.0.1:58409/pages/about-us"
       ],
       [
-        "http://127.0.0.1:64599/collections/graphic-tees",
-        "http://127.0.0.1:64599/policies/refund-policy"
+        "http://127.0.0.1:58409/collections/graphic-tees",
+        "http://127.0.0.1:58409/policies/refund-policy"
       ],
       [
-        "http://127.0.0.1:64599/collections/graphic-tees",
-        "http://127.0.0.1:64599/products/trail-tee"
+        "http://127.0.0.1:58409/collections/graphic-tees",
+        "http://127.0.0.1:58409/products/trail-tee"
       ],
       [
-        "http://127.0.0.1:64599/collections/graphic-tees",
-        "http://127.0.0.1:64599/products/harbor-hoodie"
+        "http://127.0.0.1:58409/collections/graphic-tees",
+        "http://127.0.0.1:58409/products/harbor-hoodie"
       ],
       [
-        "http://127.0.0.1:64599/collections/graphic-tees",
-        "http://127.0.0.1:64599/products/summit-cap"
+        "http://127.0.0.1:58409/collections/graphic-tees",
+        "http://127.0.0.1:58409/products/summit-cap"
       ],
       [
-        "http://127.0.0.1:64599/collections/graphic-tees",
-        "http://127.0.0.1:64599/products/delta-socks"
+        "http://127.0.0.1:58409/collections/graphic-tees",
+        "http://127.0.0.1:58409/products/delta-socks"
       ],
       [
-        "http://127.0.0.1:64599/collections/graphic-tees",
-        "http://127.0.0.1:64599/products/canyon-jacket"
+        "http://127.0.0.1:58409/collections/graphic-tees",
+        "http://127.0.0.1:58409/products/canyon-jacket"
       ],
       [
-        "http://127.0.0.1:64599/collections/graphic-tees",
-        "http://127.0.0.1:64599/products/meadow-scarf"
+        "http://127.0.0.1:58409/collections/graphic-tees",
+        "http://127.0.0.1:58409/products/meadow-scarf"
       ],
       [
-        "http://127.0.0.1:64599/collections/graphic-tees",
-        "http://127.0.0.1:64599/products/ridge-gloves"
+        "http://127.0.0.1:58409/collections/graphic-tees",
+        "http://127.0.0.1:58409/products/ridge-gloves"
       ],
       [
-        "http://127.0.0.1:64599/products/delta-socks",
-        "http://127.0.0.1:64599/"
+        "http://127.0.0.1:58409/products/delta-socks",
+        "http://127.0.0.1:58409/"
       ],
       [
-        "http://127.0.0.1:64599/products/delta-socks",
-        "http://127.0.0.1:64599/collections/all"
+        "http://127.0.0.1:58409/products/delta-socks",
+        "http://127.0.0.1:58409/collections/all"
       ],
       [
-        "http://127.0.0.1:64599/products/delta-socks",
-        "http://127.0.0.1:64599/collections/graphic-tees"
+        "http://127.0.0.1:58409/products/delta-socks",
+        "http://127.0.0.1:58409/collections/graphic-tees"
       ],
       [
-        "http://127.0.0.1:64599/products/delta-socks",
-        "http://127.0.0.1:64599/pages/about-us"
+        "http://127.0.0.1:58409/products/delta-socks",
+        "http://127.0.0.1:58409/pages/about-us"
       ],
       [
-        "http://127.0.0.1:64599/products/delta-socks",
-        "http://127.0.0.1:64599/policies/refund-policy"
+        "http://127.0.0.1:58409/products/delta-socks",
+        "http://127.0.0.1:58409/policies/refund-policy"
       ],
       [
-        "http://127.0.0.1:64599/products/meadow-scarf",
-        "http://127.0.0.1:64599/"
+        "http://127.0.0.1:58409/products/meadow-scarf",
+        "http://127.0.0.1:58409/"
       ],
       [
-        "http://127.0.0.1:64599/products/meadow-scarf",
-        "http://127.0.0.1:64599/collections/all"
+        "http://127.0.0.1:58409/products/meadow-scarf",
+        "http://127.0.0.1:58409/collections/all"
       ],
       [
-        "http://127.0.0.1:64599/products/meadow-scarf",
-        "http://127.0.0.1:64599/collections/graphic-tees"
+        "http://127.0.0.1:58409/products/meadow-scarf",
+        "http://127.0.0.1:58409/collections/graphic-tees"
       ],
       [
-        "http://127.0.0.1:64599/products/meadow-scarf",
-        "http://127.0.0.1:64599/pages/about-us"
+        "http://127.0.0.1:58409/products/meadow-scarf",
+        "http://127.0.0.1:58409/pages/about-us"
       ],
       [
-        "http://127.0.0.1:64599/products/meadow-scarf",
-        "http://127.0.0.1:64599/policies/refund-policy"
+        "http://127.0.0.1:58409/products/meadow-scarf",
+        "http://127.0.0.1:58409/policies/refund-policy"
       ],
       [
-        "http://127.0.0.1:64599/products/ridge-gloves",
-        "http://127.0.0.1:64599/"
+        "http://127.0.0.1:58409/products/ridge-gloves",
+        "http://127.0.0.1:58409/"
       ],
       [
-        "http://127.0.0.1:64599/products/ridge-gloves",
-        "http://127.0.0.1:64599/collections/all"
+        "http://127.0.0.1:58409/products/ridge-gloves",
+        "http://127.0.0.1:58409/collections/all"
       ],
       [
-        "http://127.0.0.1:64599/products/ridge-gloves",
-        "http://127.0.0.1:64599/collections/graphic-tees"
+        "http://127.0.0.1:58409/products/ridge-gloves",
+        "http://127.0.0.1:58409/collections/graphic-tees"
       ],
       [
-        "http://127.0.0.1:64599/products/ridge-gloves",
-        "http://127.0.0.1:64599/pages/about-us"
+        "http://127.0.0.1:58409/products/ridge-gloves",
+        "http://127.0.0.1:58409/pages/about-us"
       ],
       [
-        "http://127.0.0.1:64599/products/ridge-gloves",
-        "http://127.0.0.1:64599/policies/refund-policy"
+        "http://127.0.0.1:58409/products/ridge-gloves",
+        "http://127.0.0.1:58409/policies/refund-policy"
       ],
       [
-        "http://127.0.0.1:64599/products/canyon-jacket",
-        "http://127.0.0.1:64599/"
+        "http://127.0.0.1:58409/products/canyon-jacket",
+        "http://127.0.0.1:58409/"
       ],
       [
-        "http://127.0.0.1:64599/products/canyon-jacket",
-        "http://127.0.0.1:64599/collections/all"
+        "http://127.0.0.1:58409/products/canyon-jacket",
+        "http://127.0.0.1:58409/collections/all"
       ],
       [
-        "http://127.0.0.1:64599/products/canyon-jacket",
-        "http://127.0.0.1:64599/collections/graphic-tees"
+        "http://127.0.0.1:58409/products/canyon-jacket",
+        "http://127.0.0.1:58409/collections/graphic-tees"
       ],
       [
-        "http://127.0.0.1:64599/products/canyon-jacket",
-        "http://127.0.0.1:64599/pages/about-us"
+        "http://127.0.0.1:58409/products/canyon-jacket",
+        "http://127.0.0.1:58409/pages/about-us"
       ],
       [
-        "http://127.0.0.1:64599/products/canyon-jacket",
-        "http://127.0.0.1:64599/policies/refund-policy"
+        "http://127.0.0.1:58409/products/canyon-jacket",
+        "http://127.0.0.1:58409/policies/refund-policy"
       ],
       [
-        "http://127.0.0.1:64599/products/harbor-hoodie",
-        "http://127.0.0.1:64599/"
+        "http://127.0.0.1:58409/products/harbor-hoodie",
+        "http://127.0.0.1:58409/"
       ],
       [
-        "http://127.0.0.1:64599/products/harbor-hoodie",
-        "http://127.0.0.1:64599/collections/all"
+        "http://127.0.0.1:58409/products/harbor-hoodie",
+        "http://127.0.0.1:58409/collections/all"
       ],
       [
-        "http://127.0.0.1:64599/products/harbor-hoodie",
-        "http://127.0.0.1:64599/collections/graphic-tees"
+        "http://127.0.0.1:58409/products/harbor-hoodie",
+        "http://127.0.0.1:58409/collections/graphic-tees"
       ],
       [
-        "http://127.0.0.1:64599/products/harbor-hoodie",
-        "http://127.0.0.1:64599/pages/about-us"
+        "http://127.0.0.1:58409/products/harbor-hoodie",
+        "http://127.0.0.1:58409/pages/about-us"
       ],
       [
-        "http://127.0.0.1:64599/products/harbor-hoodie",
-        "http://127.0.0.1:64599/policies/refund-policy"
+        "http://127.0.0.1:58409/products/harbor-hoodie",
+        "http://127.0.0.1:58409/policies/refund-policy"
       ]
     ],
     "orphans": [
-      "http://127.0.0.1:64599/products/retired-logo-tee",
-      "http://127.0.0.1:64599/products/retired-classic-tee"
+      "http://127.0.0.1:58409/products/retired-logo-tee",
+      "http://127.0.0.1:58409/products/retired-classic-tee"
     ],
     "max_depth_from_home": 1
   },
@@ -2213,7 +2213,7 @@
       "kind": "legal_name",
       "value_raw": "Northwind Threads",
       "value_normalized": "northwind threads",
-      "source_url": "http://127.0.0.1:64599/",
+      "source_url": "http://127.0.0.1:58409/",
       "locator": "name",
       "extraction_method": "jsonld",
       "observed_count": 8
@@ -2223,7 +2223,7 @@
       "kind": "price",
       "value_raw": "₹999.00",
       "value_normalized": "₹999.00",
-      "source_url": "http://127.0.0.1:64599/products/trail-tee",
+      "source_url": "http://127.0.0.1:58409/products/trail-tee",
       "locator": "text@102",
       "extraction_method": "visible_text",
       "observed_count": 7
@@ -2233,7 +2233,7 @@
       "kind": "price",
       "value_raw": "1499.00",
       "value_normalized": "1499.00",
-      "source_url": "http://127.0.0.1:64599/products/meadow-scarf",
+      "source_url": "http://127.0.0.1:58409/products/meadow-scarf",
       "locator": "offers.price",
       "extraction_method": "jsonld",
       "observed_count": 2
@@ -2243,7 +2243,7 @@
       "kind": "product_name",
       "value_raw": "Canyon Jacket",
       "value_normalized": "canyon jacket",
-      "source_url": "http://127.0.0.1:64599/products/canyon-jacket",
+      "source_url": "http://127.0.0.1:58409/products/canyon-jacket",
       "locator": "name",
       "extraction_method": "jsonld",
       "observed_count": 2
@@ -2253,7 +2253,7 @@
       "kind": "product_name",
       "value_raw": "Delta Socks",
       "value_normalized": "delta socks",
-      "source_url": "http://127.0.0.1:64599/products/delta-socks",
+      "source_url": "http://127.0.0.1:58409/products/delta-socks",
       "locator": "name",
       "extraction_method": "jsonld",
       "observed_count": 2
@@ -2263,7 +2263,7 @@
       "kind": "product_name",
       "value_raw": "Harbor Hoodie",
       "value_normalized": "harbor hoodie",
-      "source_url": "http://127.0.0.1:64599/products/harbor-hoodie",
+      "source_url": "http://127.0.0.1:58409/products/harbor-hoodie",
       "locator": "name",
       "extraction_method": "jsonld",
       "observed_count": 2
@@ -2273,7 +2273,7 @@
       "kind": "product_name",
       "value_raw": "Meadow Scarf",
       "value_normalized": "meadow scarf",
-      "source_url": "http://127.0.0.1:64599/products/meadow-scarf",
+      "source_url": "http://127.0.0.1:58409/products/meadow-scarf",
       "locator": "name",
       "extraction_method": "jsonld",
       "observed_count": 2
@@ -2283,7 +2283,7 @@
       "kind": "product_name",
       "value_raw": "Ridge Gloves",
       "value_normalized": "ridge gloves",
-      "source_url": "http://127.0.0.1:64599/products/ridge-gloves",
+      "source_url": "http://127.0.0.1:58409/products/ridge-gloves",
       "locator": "name",
       "extraction_method": "jsonld",
       "observed_count": 2
@@ -2293,7 +2293,7 @@
       "kind": "product_name",
       "value_raw": "Summit Cap",
       "value_normalized": "summit cap",
-      "source_url": "http://127.0.0.1:64599/products/summit-cap",
+      "source_url": "http://127.0.0.1:58409/products/summit-cap",
       "locator": "name",
       "extraction_method": "jsonld",
       "observed_count": 2
@@ -2303,7 +2303,7 @@
       "kind": "product_name",
       "value_raw": "Trail Tee",
       "value_normalized": "trail tee",
-      "source_url": "http://127.0.0.1:64599/products/trail-tee",
+      "source_url": "http://127.0.0.1:58409/products/trail-tee",
       "locator": "name",
       "extraction_method": "jsonld",
       "observed_count": 2
@@ -2313,7 +2313,7 @@
       "kind": "tagline",
       "value_raw": "Northwind Threads",
       "value_normalized": "northwind threads",
-      "source_url": "http://127.0.0.1:64599/",
+      "source_url": "http://127.0.0.1:58409/",
       "locator": "h1",
       "extraction_method": "visible_text",
       "observed_count": 1
@@ -2422,8 +2422,8 @@
         "source_type": "encyclopedic",
         "urls": [
           "https://en.wikipedia.org/wiki/F_Sharp_%28programming_language%29",
-          "https://en.wikipedia.org/wiki/Dave_Wedge",
-          "https://en.wikipedia.org/wiki/Microsoft_SQL_Server"
+          "https://en.wikipedia.org/wiki/Microsoft_SQL_Server",
+          "https://en.wikipedia.org/wiki/Dave_Wedge"
         ],
         "syndication_cluster": null,
         "brand_owned": false
@@ -2433,98 +2433,98 @@
   },
   "ua_probe": [
     {
-      "url": "http://127.0.0.1:64599/",
+      "url": "http://127.0.0.1:58409/",
       "user_agent": "browser-ua",
       "status": 200,
       "text_len": 1574,
       "text_hash": "sha256:99f5577a928c26cbe6df27b7562dc7056ec628754f72b8676c70b65b97a55bc6"
     },
     {
-      "url": "http://127.0.0.1:64599/",
+      "url": "http://127.0.0.1:58409/",
       "user_agent": "GPTBot",
       "status": 403,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:64599/",
+      "url": "http://127.0.0.1:58409/",
       "user_agent": "ClaudeBot",
       "status": 200,
       "text_len": 1574,
       "text_hash": "sha256:99f5577a928c26cbe6df27b7562dc7056ec628754f72b8676c70b65b97a55bc6"
     },
     {
-      "url": "http://127.0.0.1:64599/",
+      "url": "http://127.0.0.1:58409/",
       "user_agent": "PerplexityBot",
       "status": 200,
       "text_len": 1574,
       "text_hash": "sha256:99f5577a928c26cbe6df27b7562dc7056ec628754f72b8676c70b65b97a55bc6"
     },
     {
-      "url": "http://127.0.0.1:64599/",
+      "url": "http://127.0.0.1:58409/",
       "user_agent": "OAI-SearchBot",
       "status": 200,
       "text_len": 1574,
       "text_hash": "sha256:99f5577a928c26cbe6df27b7562dc7056ec628754f72b8676c70b65b97a55bc6"
     },
     {
-      "url": "http://127.0.0.1:64599/",
+      "url": "http://127.0.0.1:58409/",
       "user_agent": "CCBot",
       "status": 200,
       "text_len": 1574,
       "text_hash": "sha256:99f5577a928c26cbe6df27b7562dc7056ec628754f72b8676c70b65b97a55bc6"
     },
     {
-      "url": "http://127.0.0.1:64599/",
+      "url": "http://127.0.0.1:58409/",
       "user_agent": "Googlebot",
       "status": 200,
       "text_len": 1574,
       "text_hash": "sha256:99f5577a928c26cbe6df27b7562dc7056ec628754f72b8676c70b65b97a55bc6"
     },
     {
-      "url": "http://127.0.0.1:64599/pages/about-us",
+      "url": "http://127.0.0.1:58409/pages/about-us",
       "user_agent": "browser-ua",
       "status": 200,
       "text_len": 1813,
       "text_hash": "sha256:55a6c7b937b50a120fbb8f17a5c9f228a0fbb6d7284b6c2762907b8d6e9a4ee9"
     },
     {
-      "url": "http://127.0.0.1:64599/pages/about-us",
+      "url": "http://127.0.0.1:58409/pages/about-us",
       "user_agent": "GPTBot",
       "status": 403,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:64599/pages/about-us",
+      "url": "http://127.0.0.1:58409/pages/about-us",
       "user_agent": "ClaudeBot",
       "status": 200,
       "text_len": 1813,
       "text_hash": "sha256:55a6c7b937b50a120fbb8f17a5c9f228a0fbb6d7284b6c2762907b8d6e9a4ee9"
     },
     {
-      "url": "http://127.0.0.1:64599/pages/about-us",
+      "url": "http://127.0.0.1:58409/pages/about-us",
       "user_agent": "PerplexityBot",
       "status": 200,
       "text_len": 1813,
       "text_hash": "sha256:55a6c7b937b50a120fbb8f17a5c9f228a0fbb6d7284b6c2762907b8d6e9a4ee9"
     },
     {
-      "url": "http://127.0.0.1:64599/pages/about-us",
+      "url": "http://127.0.0.1:58409/pages/about-us",
       "user_agent": "OAI-SearchBot",
       "status": 200,
       "text_len": 1813,
       "text_hash": "sha256:55a6c7b937b50a120fbb8f17a5c9f228a0fbb6d7284b6c2762907b8d6e9a4ee9"
     },
     {
-      "url": "http://127.0.0.1:64599/pages/about-us",
+      "url": "http://127.0.0.1:58409/pages/about-us",
       "user_agent": "CCBot",
       "status": 200,
       "text_len": 1813,
       "text_hash": "sha256:55a6c7b937b50a120fbb8f17a5c9f228a0fbb6d7284b6c2762907b8d6e9a4ee9"
     },
     {
-      "url": "http://127.0.0.1:64599/pages/about-us",
+      "url": "http://127.0.0.1:58409/pages/about-us",
       "user_agent": "Googlebot",
       "status": 200,
       "text_len": 1813,
@@ -2553,12 +2553,12 @@
   ],
   "errors": [
     {
-      "url": "http://127.0.0.1:64599/products/retired-logo-tee",
+      "url": "http://127.0.0.1:58409/products/retired-logo-tee",
       "stage": "fetch",
       "message": "returned HTTP 404"
     },
     {
-      "url": "http://127.0.0.1:64599/products/retired-classic-tee",
+      "url": "http://127.0.0.1:58409/products/retired-classic-tee",
       "stage": "fetch",
       "message": "returned HTTP 404"
     },
