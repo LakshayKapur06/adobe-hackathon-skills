@@ -194,7 +194,7 @@ class TestProactive(unittest.TestCase):
     def test_ambiguous_name_is_flagged_in_the_panel(self):
         claims = [self.claim("legal_name", "poco", ambiguity="high"), self.claim("founded_year", "2018", cid="C-002")]
         got, f = self.outcome(self.evidence(claims), "PRO-002")
-        self.assertIn("ambiguous", f["evidence"])
+        self.assertIn("may be shared with other organizations", f["evidence"])
         self.assertIn("What is poco, and what is its official website? (expected: localhost)", f["suggested_action"]["how"])
         self.assertIn("When was poco (localhost) founded? (expected: 2018)", f["suggested_action"]["how"])
 

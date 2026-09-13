@@ -48,6 +48,14 @@ class TestPromotion(unittest.TestCase):
         self.assertEqual(confidence("visible_text", 5), "medium")
         self.assertEqual(confidence("visible_text", 1), "low")
 
+    def test_a_founding_year_from_prose_has_no_subject_to_assert(self):
+        def confidence(method, count):
+            claims = promote.promote({"claim_candidates": [candidate("founded_year", "2008", method, count)]})
+            return claims[0]["first_party_confidence"]
+        self.assertEqual(confidence("visible_text", 9), "low", "a parent company's or a headline's year")
+        self.assertEqual(confidence("jsonld", 1), "medium")
+        self.assertEqual(confidence("jsonld", 5), "high")
+
     def test_a_generic_name_is_flagged_ambiguous(self):
         def ambiguity(name):
             claims = promote.promote({"claim_candidates": [candidate("legal_name", name)]})

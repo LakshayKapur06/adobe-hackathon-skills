@@ -45,6 +45,13 @@ def _confidence(candidate):
     """
     structured = candidate["extraction_method"] == "jsonld"
     repeated = candidate["observed_count"] >= REPEATED
+    if candidate["kind"] == "founded_year" and not structured:
+        # "Founded in 2008" or "since 2024" in prose has no subject the audit
+        # can check: the year may be a parent company's, a product line's or a
+        # news story's. A foundingDate inside the site's own organization markup
+        # is attached to that organization by structure. Only that is asserted;
+        # a year from prose alone is never promoted above low (D31).
+        return "low"
     if structured and repeated:
         return "high"
     if structured or repeated:

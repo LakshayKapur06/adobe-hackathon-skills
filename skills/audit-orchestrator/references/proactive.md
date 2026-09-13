@@ -113,7 +113,8 @@ punctuation. A value that fails is dropped; if the name fails, there is no panel
   name, founding year and address kinds; the value filter above; the name
   question expects the site's own domain rather than the name repeated, since
   an assistant names the right website only if it resolved the right entity;
-  when the name was scored ambiguous, every other question carries the domain
+  when the name was scored of medium or high ambiguity, every other question
+  carries the domain
   so its answer is about this organization, and the recommendation says so.
 - **Legitimate exceptions:** an organization already monitoring assistant
   answers; not detectable, and harmless, which is why this is proactive.

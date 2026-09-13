@@ -778,3 +778,27 @@ Each fix has a unit test, and the retailer's pattern is a permanent archetype
 variant (`storefront-defects / bot-verification-edge`). Before the fixes: 2 false
 positives in 11 findings. Both are removed at their pattern, not special-cased
 to the site.
+
+### D31 — A founding year is asserted only where the markup says whose it is
+
+Adjudication asked the prompt panel's questions of a real assistant for the
+user's own site. The site's about page says its parent company was founded in
+2008, and the audit had promoted "2008" as the brand's founding year from that
+prose. For that brand the year happens to be right, but the pattern is not: the
+visible-text extractor matches "founded in", "established" and "since" followed
+by a year with no way to know whose year it is. Re-reading the saved runs found
+the same pattern producing a wrong claim at medium confidence: a news
+publisher's home page yielded "since 2024" from a headline. Medium confidence
+is enough to seed the prompt panel (PRO-002) and the Wikidata comparison
+(FRC-002).
+
+A `foundingDate` inside the site's own organization JSON-LD is attached to that
+organization by structure. So `promote.py` now never promotes a founding year
+found only in prose above `low`, and both consumers already require at least
+`medium`. The cost is a miss where a site states its founding year only in prose;
+under this rubric that is the right side to err on. No contract changed.
+
+The same test showed the assistant naming several unrelated companies that share
+the brand's one-word name, which the audit had scored `medium` ambiguity. The
+panel added the domain to its questions only at `high`. It now does so at
+`medium` too, which makes the questions more precise and cannot mislead.

@@ -92,7 +92,9 @@ def pro_002(evidence, out):
                                     "enable_hint": "state the organization's name in Organization JSON-LD"})
         return
     name = names[0]["value_normalized"]
-    ambiguous = names[0]["entity_ambiguity"] == "high"
+    # Medium counts too: a single distinctive word is shared by unrelated
+    # companies often enough, and naming the domain costs the panel nothing.
+    ambiguous = names[0]["entity_ambiguity"] in ("medium", "high")
     origin = (evidence["site"]["resolved_origin"] or evidence["site"]["input"]).rstrip("/")
     domain = origin.split("://", 1)[-1].split("/", 1)[0].split(":", 1)[0]
     domain = domain[4:] if domain.startswith("www.") else domain
@@ -111,8 +113,9 @@ def pro_002(evidence, out):
         "evidence": "This audit observes the site, not assistants' answers, by design. %s promoted with at "
                     "least medium first-party confidence, which gives a panel whose expected answers are known: %s.%s"
                     % ("1 claim was" if len(claims) == 1 else "%d claims were" % len(claims), "; ".join(panel[:6]),
-                       " The name was scored ambiguous, so the other questions name the domain, and the first "
-                       "shows whether assistants find this organization from its name alone." if ambiguous else ""),
+                       " The name may be shared with other organizations, so the other questions name the domain, "
+                       "and the first shows whether assistants find this organization from its name alone."
+                       if ambiguous else ""),
         "suggested_action": {
             "summary": "Ask the same questions of the main assistants monthly and record whether each answer matches "
                        "the site.",
