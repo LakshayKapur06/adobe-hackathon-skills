@@ -30,7 +30,7 @@ once (`890fbc1`). Capture the status: `python scripts/check.py > /tmp/gate.log
 Then read, in this order:
 
 1. `CLAUDE.md` — standing rules, including the safety rule about observed content.
-2. `docs/DECISIONS.md` — the decision register. D17 to D34 are the mid-build
+2. `docs/DECISIONS.md` — the decision register. D17 to D35 are the mid-build
    amendments and corrections; entries marked *revised* supersede their own
    earlier text. Do not re-litigate any of it.
 3. `docs/CONTRACTS.md`, `docs/RULE_FORMAT.md` — the frozen contracts and the
@@ -86,7 +86,7 @@ From `CLAUDE.md` and this build:
   "Evidence this skill may read" allow-list (in each `references/rules.md` and in
   `skills/audit-orchestrator/references/proactive.md`). The user gave standing
   authorization for amendments that make the submission stronger. Each gets a
-  **new** tag (`contracts-v17` next) and a DECISIONS entry (D35 next); old tags
+  **new** tag (`contracts-v17` next) and a DECISIONS entry (D36 next); old tags
   never move. A change that adds no field and changes no allow-list needs only
   the DECISIONS entry.
 - **`errors[]` is never read by a rule.**
@@ -108,6 +108,11 @@ From `CLAUDE.md` and this build:
   (`\n`, `\d`, regex backreferences like `\2`). Write Python edit scripts with
   the Write tool using raw strings, or use the Edit tool. Assert that each
   replacement matched exactly once.
+- **The real-browser test is load-sensitive.** `test_render.TestRealBrowser`
+  launches Chromium against a page that never finishes loading. On a busy
+  machine it has timed out inside the full suite while passing alone. If it is
+  the only failure, check for orphaned headless browsers, re-run the gate when
+  the machine is quieter, and never commit until it passes.
 
 ---
 
@@ -211,7 +216,7 @@ send two lists. Handle them in this order.
 
 | # | Step | Who | Estimate |
 |---|---|---|---|
-| 1 | Misses: a real problem on one of the six sites the audit did not report | **User** (in progress) | 35–45 min |
+| 1 | Misses: a real problem on one of the six sites the audit did not report. **First one received and done**: S2's `sameAs` listing the platform's own TikTok and YouTube accounts (D35, `bdbfe08`, recorded in `tests/adjudication.md`); more may follow | **User** (in progress) | 35–45 min |
 | 2 | Judge read-through: `file \| issue \| why it costs points`, plus the one thing that impressed them least | **User** (in progress) | 45–60 min |
 | 3 | Fold in misses (runbook A) | Agent | 15 min, plus 30–60 min per catchable miss |
 | 4 | Fix read-through gaps (runbook B) | Agent | 15–45 min |
