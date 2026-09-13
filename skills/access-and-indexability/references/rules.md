@@ -70,6 +70,7 @@ directions, which is what makes fabricated evidence impossible.
 - `well_known[].status`
 - `pages[].page_type`
 - `site.resolved_origin`
+- `site.input`
 - `site.registrable_domain`
 - `site.detected_locales`
 - `schema_version`
