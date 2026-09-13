@@ -110,9 +110,11 @@ punctuation. A value that fails is dropped; if the name fails, there is no panel
 - **Minimum evidence:** the qualifying name. Without one, `not_assessed`: a panel
   built on a low-confidence or unsafe name would ask about the wrong thing.
 - **False-positive controls:** only claims of at least medium confidence; only
-  name, founding year and address kinds; the value filter above; when the name
-  was scored ambiguous, the recommendation says so and tells the reader to add
-  the domain to each prompt.
+  name, founding year and address kinds; the value filter above; the name
+  question expects the site's own domain rather than the name repeated, since
+  an assistant names the right website only if it resolved the right entity;
+  when the name was scored ambiguous, every other question carries the domain
+  so its answer is about this organization, and the recommendation says so.
 - **Legitimate exceptions:** an organization already monitoring assistant
   answers; not detectable, and harmless, which is why this is proactive.
 - **Confidence:** medium.

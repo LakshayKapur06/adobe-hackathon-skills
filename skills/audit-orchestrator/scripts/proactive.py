@@ -70,10 +70,12 @@ def pro_001(evidence, out):
     })
 
 
+# The name question expects the site's own domain, not the name back: an
+# assistant names the right website only if it resolved the right entity.
 QUESTIONS = {
-    "legal_name": "What is {name}, and what does it do?",
-    "founded_year": "When was {name} founded?",
-    "address": "Where is {name} based?",
+    "legal_name": "What is {name}, and what is its official website?",
+    "founded_year": "When was {subject} founded?",
+    "address": "Where is {subject} based?",
 }
 
 
@@ -90,22 +92,27 @@ def pro_002(evidence, out):
                                     "enable_hint": "state the organization's name in Organization JSON-LD"})
         return
     name = names[0]["value_normalized"]
-    panel = []
-    for claim in claims:
-        question = QUESTIONS.get(claim["kind"])
-        if question:
-            panel.append("%s (expected: %s)" % (question.format(name=name, value=claim["value_normalized"]),
-                                                claim["value_normalized"]))
     ambiguous = names[0]["entity_ambiguity"] == "high"
     origin = (evidence["site"]["resolved_origin"] or evidence["site"]["input"]).rstrip("/")
+    domain = origin.split("://", 1)[-1].split("/", 1)[0].split(":", 1)[0]
+    domain = domain[4:] if domain.startswith("www.") else domain
+    # An ambiguous name gets the domain in every other question, so those answers
+    # are about this organization; the name question stays bare, because whether
+    # an assistant finds this organization from the name alone is what it tests.
+    subject = "%s (%s)" % (name, domain) if ambiguous else name
+    panel = []
+    for claim in claims:
+        question = QUESTIONS[claim["kind"]].format(name=name, subject=subject)
+        expected = domain if claim["kind"] == "legal_name" else claim["value_normalized"]
+        panel.append("%s (expected: %s)" % (question, expected))
     out["findings"].append({
         "id": "F-001",
         "title": "Monitor how assistants describe %s with a fixed prompt panel" % name,
         "evidence": "This audit observes the site, not assistants' answers, by design. %s promoted with at "
                     "least medium first-party confidence, which gives a panel whose expected answers are known: %s.%s"
                     % ("1 claim was" if len(claims) == 1 else "%d claims were" % len(claims), "; ".join(panel[:6]),
-                       " The name was scored ambiguous, so answers may describe a different entity; add the domain to "
-                       "each prompt." if ambiguous else ""),
+                       " The name was scored ambiguous, so the other questions name the domain, and the first "
+                       "shows whether assistants find this organization from its name alone." if ambiguous else ""),
         "suggested_action": {
             "summary": "Ask the same questions of the main assistants monthly and record whether each answer matches "
                        "the site.",

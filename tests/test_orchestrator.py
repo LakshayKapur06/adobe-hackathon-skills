@@ -192,8 +192,11 @@ class TestProactive(unittest.TestCase):
         self.assertEqual(self.outcome(self.evidence(claims), "PRO-002")[0], "not_assessed")
 
     def test_ambiguous_name_is_flagged_in_the_panel(self):
-        got, f = self.outcome(self.evidence([self.claim("legal_name", "poco", ambiguity="high")]), "PRO-002")
+        claims = [self.claim("legal_name", "poco", ambiguity="high"), self.claim("founded_year", "2018", cid="C-002")]
+        got, f = self.outcome(self.evidence(claims), "PRO-002")
         self.assertIn("ambiguous", f["evidence"])
+        self.assertIn("What is poco, and what is its official website? (expected: localhost)", f["suggested_action"]["how"])
+        self.assertIn("When was poco (localhost) founded? (expected: 2018)", f["suggested_action"]["how"])
 
     def test_identity_links_are_recommended_only_where_none_exist(self):
         e = self.evidence([self.claim("legal_name", "fixture instruments")])

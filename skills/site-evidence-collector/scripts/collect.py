@@ -842,6 +842,9 @@ def corroborate(workdir, no_egress=False, budgets=None):
                     "canonical_claims is empty, so corroboration had nothing to ask about")
     evidence["errors"] = run.errors
     evidence["run_context"]["degradations"] = run.degradations
+    # Pass 2 is observation too, off-site. Left at pass 1's clock, the report's
+    # elapsed time would omit the external probe.
+    evidence["run_context"]["finished_at"] = _utc()
     with open(evidence_path, "w", encoding="utf-8", newline="\n") as handle:
         json.dump(evidence, handle, indent=2, ensure_ascii=False)
         handle.write("\n")
