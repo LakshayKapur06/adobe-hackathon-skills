@@ -16,7 +16,7 @@ believe them over anything below.
 
 ```sh
 git log --oneline -30            # compare against d4ee898, named above
-git tag -l                       # contracts-v1 through contracts-v7, maybe later
+git tag -l                       # contracts-v1 through contracts-v10, maybe later
 sh scripts/check.sh              # must be 12/12 before you change anything
 grep -n "Rules defined" skills/*/references/rules.md    # rule progress per skill
 ls runs/ tests/fixtures/ samples/ 2>/dev/null           # runs, fixtures, samples
@@ -27,7 +27,7 @@ Then read, in this order, and do not skip them:
 
 1. `CLAUDE.md` — standing rules for the repository, including the safety rule
    about observed content.
-2. `docs/DECISIONS.md` — the decision register. **Read D12 through D21 and any
+2. `docs/DECISIONS.md` — the decision register. **Read D12 through D24 and any
    later entries carefully**: they record mid-build corrections, including two
    revisions of the rendering decision on the same day. Entries marked *revised*
    supersede their own earlier text.
@@ -194,10 +194,12 @@ observed site text kept out of PRO-002's prompts; one diagnostic failing now
 costs only its own rules. Live POCO report order: RND-001 critical P0, ACC-005
 medium, IDM-001 medium marked conditional on RND-001, PRO-001 low.
 
-**In flight with the user:** completing `tests/g2-evidence-check.md` from files
-the user saves into the gitignored `runs/g2-inputs/` (see its README), compared
-against the re-runs `runs/g2-ie`, `g2-iflex`, `g2-poco`, `g2-poco-norender`,
-`g2-g360`.
+**G2 is complete** (`tests/g2-evidence-check.md`): one FAIL, the URL-only page
+type vocabulary, fixed and re-verified. Its follow-ups became D23 (hidden server
+text measured, strata labelled as URL-pattern sampling strata, one audit at a
+time) and D24 (connection setup timed apart from the server, after a live
+client-network stall made ARR-001 fire). Contracts are at `contracts-v10`.
+Next is step 3, the fixture archetypes.
 
 ---
 
