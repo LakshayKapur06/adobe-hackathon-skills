@@ -18,7 +18,7 @@
     },
     {
       "enable_hint": "applies only to pages with Offer or price markup",
-      "reason": "no 2xx page states a price in JSON-LD",
+      "reason": "no 2xx page carries a commerce node (Product or Offer) stating a price above zero",
       "rule_id": "IDM-004"
     }
   ]

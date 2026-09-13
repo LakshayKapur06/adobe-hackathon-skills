@@ -157,6 +157,19 @@ class TestIDM004(RuleCase):
         self.assertEqual((got, f["confidence"], f["impact"]["breadth"]), ("fired", "high", "section"))
         self.assertIn("999.00", f["evidence"])
 
+    def test_a_free_app_offer_on_a_news_page_is_not_a_price(self):
+        # Adjudication run, Hindi news site: every page carries a MobileApplication
+        # node with offers.price 0 while market widgets show rupee amounts.
+        app = node("MobileApplication", {"name": "News app", "offers.price": "0", "offers.priceCurrency": "INR"},
+                   contradicts=True)
+        pages = [page("/", "home", [ORG, app])] + [page("/n%d" % i, "article", [app]) for i in range(3)]
+        self.assertEqual(self.outcome(bundle(pages), "IDM-004")[0], "not_assessed")
+
+    def test_a_zero_priced_product_is_not_assessed_either(self):
+        free = node("Product", {"name": "Sample", "offers.price": "0.00"}, contradicts=True)
+        self.assertEqual(self.outcome(bundle([page("/", "home", [ORG]), page("/p", "product", [free])]),
+                                      "IDM-004")[0], "not_assessed")
+
     def test_single_page_is_medium(self):
         got, f = self.outcome(bundle([page("/", "home", [ORG]), self.product("/p1", True)]), "IDM-004")
         self.assertEqual(f["confidence"], "medium")

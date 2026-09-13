@@ -239,17 +239,32 @@ def idm_003(evidence, out):
         exceptions=["lenient consumers tolerating the error: not relied upon"]))
 
 
+COMMERCE_TYPES = ("Product", "ProductGroup", "IndividualProduct", "Offer", "AggregateOffer")
+
+
+def marked_price(node):
+    """The positive price a commerce node states, or None."""
+    if node["type"] not in COMMERCE_TYPES:
+        return None
+    raw = node["values"].get("offers.price") or node["values"].get("price") or ""
+    try:
+        value = float(raw.replace(",", ""))
+    except ValueError:
+        return None
+    return value if value > 0 else None
+
+
 def states_price(node):
-    return "offers.price" in node["values"] or "price" in node["values"]
+    return marked_price(node) is not None
 
 
 def idm_004(evidence, out):
     priced = [p for p in ok_pages(evidence) if any(states_price(n) for n in p["jsonld"])]
     if not priced:
-        out["not_assessed"].append({"rule_id": "IDM-004", "reason": "no 2xx page states a price in JSON-LD",
+        out["not_assessed"].append({"rule_id": "IDM-004", "reason": "no 2xx page carries a commerce node (Product or Offer) stating a price above zero",
                                     "enable_hint": "applies only to pages with Offer or price markup"})
         return
-    hit = [p for p in priced if any(n["contradicts_visible_text"] for n in p["jsonld"])]
+    hit = [p for p in priced if any(states_price(n) and n["contradicts_visible_text"] for n in p["jsonld"])]
     if not hit:
         out["passed"].append({"rule_id": "IDM-004", "summary":
                               "No marked-up price contradicts the visible prices (%s with price markup)"
@@ -257,7 +272,7 @@ def idm_004(evidence, out):
         return
 
     def marked(page):
-        node = [n for n in page["jsonld"] if n["contradicts_visible_text"]][0]
+        node = [n for n in page["jsonld"] if states_price(n) and n["contradicts_visible_text"]][0]
         return node["values"].get("offers.price") or node["values"].get("price")
 
     out["findings"].append(finding(
@@ -280,7 +295,8 @@ def idm_004(evidence, out):
         scope={"pages_affected": len(hit), "pages_examined": len(priced),
                "page_types": sorted({p["page_type"] for p in hit})},
         refs=[ref(p, "markup price %s is not among the prices shown" % marked(p)) for p in hit],
-        controls=["a price absent from visible text is never a contradiction",
+        controls=["commerce nodes only, and a price of zero never counts",
+                  "a price absent from visible text is never a contradiction",
                   "a page showing the marked-up price among others matches", "2xx pages only"],
         exceptions=["server-side currency conversion or a different default variant: undetectable, medium confidence "
                     "on a single page"]))

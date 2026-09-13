@@ -252,23 +252,33 @@ in `scripts/diagnose.py`, one function per rule, in the order written here.
   reports a price no visitor sees. Google's structured data policy requires the
   markup to be "a true representation of the page content", and a misleading
   price is the case where the gap between the two reaches a buyer.
-- **Signal:** a 2xx page has a JSON-LD entry with `contradicts_visible_text`
-  true. The collector sets it only when the markup states a price, the page's
-  visible server text shows at least one currency amount, and none of those
-  amounts equals the marked-up price.
+- **Signal:** a 2xx page has a JSON-LD commerce node (`Product`,
+  `ProductGroup`, `IndividualProduct`, `Offer` or `AggregateOffer`) stating a
+  price above zero, with `contradicts_visible_text` true. The collector sets
+  that flag only when the markup states a price, the page's visible server text
+  shows at least one currency amount, and none of those amounts equals the
+  marked-up price.
 - **Evidence read:** `pages[].url`, `pages[].status`, `pages[].page_type`,
   `pages[].jsonld[].type`, `pages[].jsonld[].values`,
   `pages[].jsonld[].contradicts_visible_text`.
 - **Threshold:** one page. Justification: each contradiction is a direct
   observation of a wrong price on a specific product; `breadth` carries how many
   pages show it, and confidence carries whether one page could be a one-off.
-- **Minimum evidence:** at least one 2xx page with a JSON-LD entry stating a price
-  (`offers.price` or `price` in its values). Otherwise `not_assessed`.
+- **Minimum evidence:** at least one 2xx page with a commerce node stating a
+  price above zero (`offers.price` or `price` in its values). Otherwise
+  `not_assessed`.
 - **False-positive controls:** the collector's definition is deliberately
   narrow: a price missing from the visible text never counts (that is a render
   gap, owned by `render-and-extraction`), and a sale page showing both the old
-  and the new price matches the marked-up one; only 2xx pages count.
-- **Legitimate exceptions:** a price converted into the visitor's currency on
+  and the new price matches the marked-up one; only 2xx pages count; only
+  commerce nodes count, and a price of zero never does. The last two were added
+  when the first adjudication runs met a Hindi news site whose every page
+  carries a `MobileApplication` node with `offers.price` of `0` for its free
+  app, while market widgets on the same pages show rupee amounts: the markup
+  was never a claim about anything the page sells.
+- **Legitimate exceptions:** a site-wide promotion of a free app or service
+  expressed as an `Offer` at price zero; excluded by the commerce-type and
+  above-zero controls. A price converted into the visitor's currency on
   the server, so the markup states the base-currency amount and the page shows
   a converted one; not detectable from the evidence, which is why a single
   affected page is medium confidence. A variant selector whose default variant
