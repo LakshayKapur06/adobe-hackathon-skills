@@ -742,7 +742,7 @@ def _page_evidence(key, response, doc, rendered, render_ms, pages_dir, run):
                  "boilerplate_ratio": doc["boilerplate_ratio"],
                  "longest_block_words": doc["longest_block_words"],
                  "heading_density_per_1k": doc["heading_density_per_1k"]},
-        "dates": {"visible_dates": extract.visible_dates(doc["text"]),
+        "dates": {"visible_dates": extract.visible_dates(doc["text"], time_dates=doc["time_dates"]),
                   "schema_date_modified": modified, "schema_date_published": published,
                   "http_last_modified": headers.get("last-modified")},
         "obstructions": obstructions,

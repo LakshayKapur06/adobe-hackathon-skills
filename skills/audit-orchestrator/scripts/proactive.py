@@ -212,8 +212,11 @@ def pro_003(evidence, out):
 
 def pro_004(evidence, out):
     """Articles show a date and state none in structured data."""
+    # Only English or undeclared pages: a date written in another language is
+    # not read, so an article showing one would silently drop out of the count.
     articles = [p for p in evidence["pages"] if _ok(p) and p["page_type"] == "article"
-                and (p["page_type_confidence"] or 0) >= 0.8 and p["dates"]["visible_dates"]]
+                and (p["page_type_confidence"] or 0) >= 0.8 and p["dates"]["visible_dates"]
+                and (p["lang"] is None or p["lang"].strip().lower().split("-")[0] in ("en", ""))]
     if len(articles) < 2:
         out["not_assessed"].append({"rule_id": "PRO-004", "reason":
                                     "%d sampled articles show a visible date; at least 2 are needed to judge the "
@@ -250,7 +253,7 @@ def pro_004(evidence, out):
         "symptom": ["misrepresented"], "confidence": "medium",
         "impact": {"blocking": False, "breadth": "section", "content_importance": "secondary"},
         "scope": {"pages_affected": len(bare), "pages_examined": len(articles), "page_types": ["article"]},
-        "evidence_refs": [_page_ref(p, "visible date %s, no structured date" % p["dates"]["visible_dates"][0])
+        "evidence_refs": [_page_ref(p, "a date is shown on the page; no datePublished or dateModified")
                           for p in bare],
         "false_positive_controls_applied": [], "exceptions_checked": [],
     })

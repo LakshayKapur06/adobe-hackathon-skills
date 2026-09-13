@@ -66,7 +66,11 @@ G2 sites finished in 14 to 94 seconds, inside the handout's five-minute limit.
 3. **Validate the evidence before anyone reads it.** Check the bundle against
    `../../schemas/evidence.schema.json` with `scripts/jsonschema_lite.py`. An
    invalid bundle stops the run: a diagnostic that reads a malformed bundle
-   produces confidently wrong findings.
+   produces confidently wrong findings. Then promote and corroborate:
+   `identity-and-markup` (`../identity-and-markup/scripts/promote.py`) decides
+   which candidate strings the site really asserts about itself, and the
+   collector's second pass asks public records about those alone. Pass 2 can only add breadth; if it fails,
+   the first-pass bundle stands and the run continues.
 
 4. **Diagnose in dependency order.** Run the six diagnostics against the same
    evidence bundle. Ordering is a design output, not an implementation detail
@@ -100,8 +104,9 @@ G2 sites finished in 14 to 94 seconds, inside the handout's five-minute limit.
 8. **Add proactive recommendations.** Emit strengthening actions that are
    warranted by the evidence even where no defect was found, marked
    `status: proactive`. These never exceed `medium` severity and are always
-   `P2` or `P3`, so they cannot crowd out a real defect. The two, and the rule
-   that keeps observed site text out of them, are specified in
+   `P2` or `P3`, so they cannot crowd out a real defect, and none restates a
+   diagnostic's finding. The four, and the rule that keeps observed site text
+   out of them, are specified in
    `references/proactive.md` and implemented in `scripts/proactive.py`.
 
 9. **Assemble and validate.** Build the report with

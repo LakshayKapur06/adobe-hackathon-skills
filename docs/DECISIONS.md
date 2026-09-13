@@ -713,3 +713,32 @@ single-language sites that need none), recommending FAQ markup (Google restricte
 its display in 2023, so the recommendation would be dated advice), and
 recommending `/agents.md` (no consumer documents reading it, so the
 recommendation could not name a mechanism it improves).
+
+### D29 — `contracts-v15`: a date the audit cannot read is never reported as absent
+
+Re-running the adjudication sites on the final code showed a Hindi news site
+whose articles recorded no visible date at all. Its articles carry structured
+dates, so nothing fired, but the evidence exposed a generalization hole: the
+collector read ISO dates and English month names only. An article in Hindi,
+French or German, or an English one showing "12/09/2026" or "Sep 12" with the
+full date only in a `<time datetime>` attribute, would have recorded no visible
+date, and FRC-001 would have reported articles showing no date. That is a false
+observation, the worst kind of false positive.
+
+Two layers, because either alone leaves a gap:
+
+- **The collector reads more of what pages show.** Numeric dates
+  (`31/12/2025`, `12.09.2026`, `2026/03/04`) and the `datetime` of visible
+  `<time>` elements now count. Numeric dates whose parts are both 12 or less are
+  read day-first; no rule depends on which day such a date names, only on a date
+  being shown, and PRO-004's observation no longer quotes the value. Version
+  strings such as `1.2.2026.1` are not read as dates.
+- **The rules judge absence only where it is observable.** FRC-001 and PRO-004
+  count only articles whose `lang` is English or undeclared. Articles in other
+  languages are set aside and counted in the not-assessed reason, with a hint to
+  check them by hand. A table of month names in every language would be larger,
+  still incomplete, and a false positive the first time a language was missing
+  from it.
+
+`pages[].lang` joins the allow-lists of `freshness-and-corroboration` and the
+orchestrator's proactive recommendations; the evidence schema is unchanged.

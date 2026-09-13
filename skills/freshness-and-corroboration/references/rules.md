@@ -34,6 +34,7 @@ directions, which is what makes fabricated evidence impossible.
 - `pages[].status`
 - `pages[].page_type`
 - `pages[].page_type_confidence`
+- `pages[].lang`
 - `canonical_claims[].id`
 - `external.hits[].retrieved_at`
 - `canonical_claims`
@@ -128,9 +129,10 @@ Both are implemented in `scripts/diagnose.py`.
   guessed from indirect signals.
 - **Signal:** 2xx pages classified `article` with `page_type_confidence` of at
   least 0.8 whose `dates.schema_date_published`, `dates.schema_date_modified`
-  are both null and whose `dates.visible_dates` is empty.
+  are both null and whose `dates.visible_dates` is empty, among those whose
+  `lang` is English or undeclared.
 - **Evidence read:** `pages[].url`, `pages[].status`, `pages[].page_type`,
-  `pages[].page_type_confidence`, `pages[].dates.visible_dates`,
+  `pages[].page_type_confidence`, `pages[].lang`, `pages[].dates.visible_dates`,
   `pages[].dates.schema_date_modified`, `pages[].dates.schema_date_published`.
 - **Threshold:** at least 2 such pages, making up at least 50% of the qualifying
   article pages. Justification: publishing systems apply date output per
@@ -138,8 +140,12 @@ Both are implemented in `scripts/diagnose.py`.
   while a single undated page is typically an evergreen page the classifier
   placed among articles; the share and the floor separate those.
 - **Minimum evidence:** at least 2 qualifying article pages (2xx, `article`,
-  confidence at least 0.8). Fewer is `not_assessed`.
-- **False-positive controls:** only 2xx pages; the 0.8 classifier floor keeps
+  confidence at least 0.8, `lang` English or undeclared). Fewer is
+  `not_assessed`, and the reason counts the articles set aside for language.
+- **False-positive controls:** only 2xx pages; only pages whose `lang` is
+  English or undeclared, because the collector reads ISO, numeric and
+  English-language dates and `<time datetime>` values, so "13 सितंबर 2026" or
+  "13 septembre 2026" would read as no date at all; the 0.8 classifier floor keeps
   listing pages out, since on the G2 sites blog indexes classified as `article`
   scored 0.6 while real articles scored 0.9; any visible date counts as a date,
   including a sidebar date, so boilerplate can only stop the rule, never fire it;

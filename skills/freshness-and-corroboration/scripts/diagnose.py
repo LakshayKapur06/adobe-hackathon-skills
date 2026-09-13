@@ -31,20 +31,33 @@ def plural(n, word, many=None):
     return "%d %s" % (n, word if n == 1 else (many or word + "s"))
 
 
+def dates_readable(page):
+    """The collector reads month names in English only, so a date written in
+    another language is invisible to it. Absence is judged only where it can
+    be observed: pages declaring English, or declaring no language."""
+    return page["lang"] is None or page["lang"].strip().lower().split("-")[0] in ("en", "")
+
+
 def is_undated(page):
     dates = page["dates"]
     return not dates["schema_date_published"] and not dates["schema_date_modified"] and not dates["visible_dates"]
 
 
 def frc_001(evidence, out):
-    articles = [p for p in evidence["pages"]
-                if is_2xx(p["status"]) and p["page_type"] == "article"
-                and (p["page_type_confidence"] or 0) >= ARTICLE_CONFIDENCE]
+    classified = [p for p in evidence["pages"]
+                  if is_2xx(p["status"]) and p["page_type"] == "article"
+                  and (p["page_type_confidence"] or 0) >= ARTICLE_CONFIDENCE]
+    articles = [p for p in classified if dates_readable(p)]
     if len(articles) < 2:
+        other = len(classified) - len(articles)
         out["not_assessed"].append({"rule_id": "FRC-001", "reason":
-                                    "article pages classified with confidence >= 0.8 sampled: %d; 2 are needed"
-                                    % len(articles),
-                                    "enable_hint": "applies to sites publishing articles"})
+                                    "article pages classified with confidence >= 0.8 sampled: %d; 2 are needed%s"
+                                    % (len(articles), " (%s declaring a language other than English, whose written "
+                                       "dates the audit cannot read, set aside)" % plural(other, "further page")
+                                       if other else ""),
+                                    "enable_hint": "applies to sites publishing articles; for articles in other "
+                                                   "languages, check by hand that each shows a date and carries "
+                                                   "datePublished"})
         return
     undated = [p for p in articles if is_undated(p)]
     if len(undated) < 2 or len(undated) * 2 < len(articles):
@@ -79,6 +92,8 @@ def frc_001(evidence, out):
                            "layer": p["provenance"]["layer"], "method": p["provenance"]["method"],
                            "retrieved_at": p["fetched_at"]} for p in undated],
         "false_positive_controls_applied": ["2xx pages only", "article classifier confidence >= 0.8",
+                                            "only pages in English or with no declared language, whose dates the "
+                                            "audit can read",
                                             "any visible date counts, including boilerplate dates",
                                             "HTTP Last-Modified not accepted as an article date"],
         "exceptions_checked": ["evergreen undated reference pages: undetectable, confidence medium and a 2-page floor"],

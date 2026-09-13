@@ -48,6 +48,12 @@ _MONTHS = {m: i for i, m in enumerate(
 _MONTH_ALT = "|".join(sorted(set(list(_MONTHS) + [m[:3] for m in _MONTHS] + ["sept"]), key=len, reverse=True))
 _ISO_DATE = re.compile(r"\b((?:19|20)\d{2})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])\b")
 _DMY = re.compile(r"\b([0-3]?\d)(?:st|nd|rd|th)?\s+(%s)\.?,?\s+((?:19|20)\d{2})\b" % _MONTH_ALT, re.I)
+# Numeric dates. Day-first and month-first cannot be told apart when both parts
+# are 12 or less; those are read day-first, as most of the world writes them.
+# No rule relies on which day such a date names, only on a date being shown.
+_NUMERIC_DATE = re.compile(r"(?<![\d./-])([0-3]?\d)([/.])([0-3]?\d)\2((?:19|20)\d{2})(?!\d|[./-]\d)")
+_YMD_SLASH = re.compile(r"(?<![\d./-])((?:19|20)\d{2})([/.])(0?[1-9]|1[0-2])\2([0-3]?\d)(?!\d|[./-]\d)")
+_TIME_DATETIME = re.compile(r"^\s*((?:19|20)\d{2})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])")
 _MDY = re.compile(r"\b(%s)\.?\s+([0-3]?\d)(?:st|nd|rd|th)?,?\s+((?:19|20)\d{2})\b" % _MONTH_ALT, re.I)
 _CURRENCY_AMOUNT = re.compile(
     r"(?:[$€£¥₹]|\bRs\.?|\bINR|\bUSD|\bEUR|\bGBP)\s?(\d[\d,]*(?:\.\d{1,2})?)")
@@ -86,6 +92,9 @@ class _Parser(HTMLParser):
         # page text or its length, but a fetcher that ignores CSS extracts it,
         # so its size is recorded separately rather than lost.
         self.hidden_chars = 0
+        # Dates from the datetime attribute of visible <time> elements, which
+        # often show only "Sep 12" or "2 hours ago" as text.
+        self.time_dates = []
         self._jsonld_buf = None
         self._open_link = None
 
@@ -200,6 +209,10 @@ class _Parser(HTMLParser):
                                         "text_likely": any(h in hint for h in TEXT_IMAGE_HINTS)})
         elif tag == "br":
             self.stream.append(" ")
+        elif tag == "time" and not self._skipping() and "hidden" not in attrs:
+            match = _TIME_DATETIME.match(attrs.get("datetime") or "")
+            if match:
+                self.time_dates.append("%s-%s-%s" % match.groups())
 
         if tag == "a" and attrs.get("href") is not None and not self._skipping():
             if self._open_link is not None:
@@ -329,6 +342,7 @@ def parse_document(html, base_url):
         "microdata_or_rdfa": parser.microdata_or_rdfa,
         "obstructions": [{"kind": k, "evidence": v} for k, v in sorted(parser.obstructions.items())],
         "hidden_text_len": parser.hidden_chars,
+        "time_dates": parser.time_dates,
         "word_count": words,
         "boilerplate_ratio": round(parser.boiler_chars / parser.total_chars, 3) if parser.total_chars else None,
         "longest_block_words": max((len(line.split()) for line in lines), default=0),
@@ -346,8 +360,9 @@ def excerpt(text, limit=EXCERPT_CHARS):
     return cut.rsplit(" ", 1)[0] if " " in cut else cut
 
 
-def visible_dates(text, cap=20):
-    """Dates written in the visible text, normalised to ISO 8601, in order."""
+def visible_dates(text, cap=20, time_dates=()):
+    """Dates shown on the page, normalised to ISO 8601: first those carried by
+    visible <time datetime> elements, then those written in the text, in order."""
     found = []
 
     def add(year, month, day):
@@ -358,7 +373,17 @@ def visible_dates(text, cap=20):
         if value not in found:
             found.append(value)
 
+    for value in time_dates:
+        add(*value.split("-"))
+        if len(found) >= cap:
+            return found
     events = []
+    for m in _NUMERIC_DATE.finditer(text):
+        first, second = int(m.group(1)), int(m.group(3))
+        day, month = (second, first) if second > 12 >= first else (first, second)
+        events.append((m.start(), m.group(4), month, day))
+    for m in _YMD_SLASH.finditer(text):
+        events.append((m.start(), m.group(1), m.group(3), m.group(4)))
     for m in _ISO_DATE.finditer(text):
         events.append((m.start(), m.group(1), m.group(2), m.group(3)))
     for m in _DMY.finditer(text):

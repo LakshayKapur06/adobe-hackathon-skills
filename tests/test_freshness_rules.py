@@ -28,11 +28,11 @@ SCHEMAS = {name: json.loads((ROOT / "schemas" / name).read_text(encoding="utf-8"
 NOW = "2026-09-13T00:00:00Z"
 
 
-def article(path, confidence=0.9, published=None, visible=(), status=200, page_type="article"):
+def article(path, confidence=0.9, published=None, visible=(), status=200, page_type="article", lang="en"):
     p = copy.deepcopy(BASE["pages"][1])
     url = "http://localhost:8000" + path
     p.update({"url": url, "final_url": url, "status": status, "page_type": page_type,
-              "page_type_confidence": confidence})
+              "page_type_confidence": confidence, "lang": lang})
     p["dates"] = {"visible_dates": list(visible), "schema_date_modified": None,
                   "schema_date_published": published, "http_last_modified": "Fri, 11 Sep 2026 08:09:09 GMT"}
     return p
@@ -96,6 +96,15 @@ class TestFRC001(RuleCase):
     def test_low_confidence_listings_never_count(self):
         pages = [article("/blog%d" % i, confidence=0.6) for i in range(4)]
         self.assertEqual(self.outcome(bundle(pages), "FRC-001")[0], "not_assessed")
+
+    def test_dates_in_languages_the_audit_cannot_read_are_never_called_absent(self):
+        hindi = [article("/hi%d" % i, lang="hi-IN") for i in range(3)]
+        got, _ = self.outcome(bundle(hindi), "FRC-001")
+        self.assertEqual(got, "not_assessed", "a date written in Hindi is invisible to the extractor, not absent")
+        result = diagnose.diagnose(bundle(hindi))
+        self.assertIn("3 further pages", [n for n in result["not_assessed"] if n["rule_id"] == "FRC-001"][0]["reason"])
+        english = [article("/en%d" % i, lang="en-GB") for i in range(2)] + [article("/x", lang=None)]
+        self.assertEqual(self.outcome(bundle(english), "FRC-001")[0], "fired")
 
     def test_refused_pages_never_count(self):
         self.assertEqual(self.outcome(bundle([article("/a%d" % i, status=403) for i in range(3)]), "FRC-001")[0],

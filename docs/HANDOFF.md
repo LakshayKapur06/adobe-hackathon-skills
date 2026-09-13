@@ -16,7 +16,7 @@ believe them over anything below.
 
 ```sh
 git log --oneline -30            # compare against d4ee898, named above
-git tag -l                       # contracts-v1 through contracts-v12, maybe later
+git tag -l                       # contracts-v1 through contracts-v15, maybe later
 sh scripts/check.sh              # must be 12/12 before you change anything
 grep -n "Rules defined" skills/*/references/rules.md    # rule progress per skill
 ls runs/ tests/fixtures/ samples/ 2>/dev/null           # runs, fixtures, samples
@@ -205,8 +205,9 @@ Step 3 is done (D26): `tests/fixtures/archetypes/`.
 a time and a worksheet prepared in the gitignored `runs/adjudication/`
 (`WORKSHEET.md` with per-finding verification steps, `adjudication.csv` for
 verdicts): basecamp.com, bigbasket.com, docs.stripe.com, bhaskar.com, mit.edu.
-The sixth, a site the user knows intimately, is waiting for a URL: nishorama.in
-turned out to be a parked domain and nishorama.com fails TLS verification.
+The sixth, a site the user knows intimately, is xtremexmartialarts.com (a Shopify
+store; nishorama.in turned out to be a parked domain and nishorama.com fails TLS
+verification).
 Flipkart was dropped after it answered 403 to the audit, india.gov.in answers
 403, and IIT Delhi fails TLS verification. Running these audits caught one false
 positive before adjudication (IDM-004 on a free-app Offer at price zero, fixed
@@ -214,9 +215,18 @@ in `075a594`). When the verdicts come back: apply the thresholds in
 `docs/HUMAN_PLAYBOOK.md`, turn every FP into a fixture, re-run at least three
 sites, and commit the CSV to `tests/adjudication.csv`.
 
-**One open decision for the user:** whether proactive recommendations should
-count in the report's `summary.total_findings`. Today they do, so a healthy site
-reports one or two low or medium proactive items as findings.
+**The endgame, after the section above was written.** The open question on the
+summary was settled by D27 (`contracts-v13`): the summary counts problems only,
+`summary.proactive` counts the rest, and `report.md` renders the report for a
+non-expert. D28 (`contracts-v14`) added PRO-003 (identity links for organization
+markup that has none) and PRO-004 (structured dates for articles that only show
+them). D29 (`contracts-v15`) stopped FRC-001 and PRO-004 judging dates in languages the
+collector cannot read. Step 5 (remediation-quality pass) and step 6 (`README.md`,
+`docs/RUBRIC.md`, `samples/` built by `scripts/build_samples.py`) are done. The
+six adjudication sites were re-run with the final code into `runs/adj2-*`, and
+the worksheet regenerated from those. What remains is section 5: adjudication,
+the second pass after fixes, and the judge read-through, then
+`scripts/package.sh`.
 
 ---
 
@@ -246,8 +256,8 @@ satisfy the consolidation rule, and a ninth would be the padding trap D5 names.
 | 2 | Orchestrator depth — done, see 3a | Dedup by `(rule_id, scope.page_types, evidence_refs[].url)`; arbitration keeping the upstream-most finding; proactive recommendations as real work; `checks_passed[]` and `not_assessed[]`; full `run_context`; final schema validation |
 | 3 | 5 fixture archetypes — done, see D26 | With pass/fail assertions. The only evidence for the generalization rubric row, which is currently asserted and unproven - this is where spare time should go before anywhere else |
 | 4 | **Adjudication, 6 sites** — in progress with the user, see 3a | The step that decides the score. Human-only. See section 5 |
-| 5 | Remediation-quality pass | Read only `what/where/why/how/success_criteria`, ignoring detection logic. Anything paste-able into an unrelated case study gets rewritten |
-| 6 | `README.md`, `docs/RUBRIC.md`, `samples/`, zip | RUBRIC maps the handout's six criteria to where the evidence lives. `samples/` holds 3 runs against local fixtures proving the degradation story: full capability, no browser, no egress |
+| 5 | Remediation-quality pass — done, see 3a | Read only `what/where/why/how/success_criteria`, ignoring detection logic. Anything paste-able into an unrelated case study gets rewritten |
+| 6 | `README.md`, `docs/RUBRIC.md`, `samples/` — done, see 3a; zip last | RUBRIC maps the handout's six criteria to where the evidence lives. `samples/` holds 3 runs against local fixtures proving the degradation story: full capability, no browser, no egress |
 | 7 | Judge-simulation read-through | Human-only. See section 5 |
 
 **Three constraints on every rule**, all learned the hard way and all cheap now,

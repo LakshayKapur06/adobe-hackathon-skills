@@ -37,6 +37,7 @@ the evidence schema. The repository's build gate enforces both directions.
 - `pages[].status`
 - `pages[].page_type`
 - `pages[].page_type_confidence`
+- `pages[].lang`
 - `pages[].fetched_at`
 - `pages[].provenance.layer`
 - `pages[].provenance.method`
@@ -192,9 +193,10 @@ punctuation. A value that fails is dropped; if the name fails, there is no panel
   unambiguously which date belongs to this article. These articles already show
   a date, so the recommendation completes a signal the site is already giving.
 - **Signal:** 2xx pages classified `article` with `page_type_confidence` at least
-  0.8 show a visible date and carry neither `datePublished` nor `dateModified`.
+  0.8, in English or with no declared `lang`, show a visible date and carry
+  neither `datePublished` nor `dateModified`.
 - **Evidence read:** `pages[].url`, `pages[].status`, `pages[].page_type`,
-  `pages[].page_type_confidence`, `pages[].dates.visible_dates`,
+  `pages[].page_type_confidence`, `pages[].lang`, `pages[].dates.visible_dates`,
   `pages[].dates.schema_date_published`, `pages[].dates.schema_date_modified`,
   `pages[].fetched_at`, `pages[].provenance.layer`, `pages[].provenance.method`.
 - **Threshold:** at least 2 such pages, making up at least 50% of the qualifying

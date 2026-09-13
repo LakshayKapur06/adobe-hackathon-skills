@@ -210,13 +210,14 @@ class TestProactive(unittest.TestCase):
         bare["pages"][0]["jsonld"] = []
         self.assertEqual(self.outcome(bare, "PRO-003")[0], "not_assessed", "no organization markup is IDM-001's")
 
-    def articles(self, dated):
+    def articles(self, dated, lang="en"):
         e = self.evidence()
         template = e["pages"][1]
         e["pages"] = e["pages"][:1]
         for i, (visible, structured) in enumerate(dated):
             page = copy.deepcopy(template)
-            page.update(url="http://localhost:8000/news/%d" % i, page_type="article", page_type_confidence=0.9)
+            page.update(url="http://localhost:8000/news/%d" % i, page_type="article", page_type_confidence=0.9,
+                        lang=lang)
             page["dates"] = {"visible_dates": ["2026-03-0%d" % (i + 1)] if visible else [],
                              "schema_date_published": "2026-03-01" if structured else None,
                              "schema_date_modified": None, "http_last_modified": None}
@@ -229,6 +230,8 @@ class TestProactive(unittest.TestCase):
                          "passed", "one stray article is not a template")
         self.assertEqual(self.outcome(self.articles([(False, False)] * 3), "PRO-004")[0], "not_assessed",
                          "undated articles are FRC-001's defect, not this recommendation")
+        self.assertEqual(self.outcome(self.articles([(True, False)] * 3, lang="fr"), "PRO-004")[0], "not_assessed",
+                         "only dates in a language the audit reads are counted")
 
 
 class TestRunSurvivesADiagnosticFailure(unittest.TestCase):

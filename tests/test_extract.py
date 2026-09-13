@@ -155,6 +155,17 @@ class TestTextHelpers(unittest.TestCase):
         text = "Published 2024-12-31. Updated 1 August 2026 and again March 3, 2025. Not 2024-02-30."
         self.assertEqual(extract.visible_dates(text), ["2024-12-31", "2026-08-01", "2025-03-03"])
 
+    def test_numeric_dates_are_read_and_versions_are_not(self):
+        text = "Posted 31/12/2025, updated 12.09.2026, US style 09/13/2026, 2026/03/04. Version 1.2.2026.1, 45/13/2026."
+        self.assertEqual(extract.visible_dates(text), ["2025-12-31", "2026-09-12", "2026-09-13", "2026-03-04"])
+
+    def test_time_elements_supply_the_date_their_text_leaves_out(self):
+        doc = extract.parse_document('<html><body><article><time datetime="2026-09-12T08:00:00Z">Sep 12</time>'
+                                     '<time hidden datetime="2020-01-01">x</time></article></body></html>',
+                                     "http://localhost:8000/a")
+        self.assertEqual(doc["time_dates"], ["2026-09-12"])
+        self.assertEqual(extract.visible_dates(doc["text"], time_dates=doc["time_dates"]), ["2026-09-12"])
+
 
 class TestJsonLd(unittest.TestCase):
     def test_nodes_values_and_list_joining(self):
