@@ -112,3 +112,11 @@ so true-positive evidence for each rule comes from the step 3 fixtures.
 
 | rule_id | skill | note |
 |---|---|---|
+
+## Adjudication fixes (D30)
+
+| Rule | Verdict | Pattern | Change | Test |
+|---|---|---|---|---|
+| ACC-006 | FP-INT | Bot management refusing every unverifiable declared crawler, Googlebot included | `not_assessed` when Googlebot is refused on the same URLs | `test_access_rules.TestACC006.test_googlebot_refused_too_reads_as_verification_not_a_block`; archetype `storefront-defects / bot-verification-edge` |
+| IDM-001 | FP-EXC | Subdomain of an organization whose identity is on its main domain | `not_assessed` on a non-`www` subdomain, naming the main domain | `test_identity_rules.TestIDM001.test_a_subdomain_defers_to_its_main_domain` |
+| RND-001 | TP, label | One client-side application filed under several URL-inferred page types | Title, evidence and where name the shared path | `test_render_rules.TestRND001.test_a_shared_path_names_the_application_not_the_guessed_type` |

@@ -742,3 +742,39 @@ Two layers, because either alone leaves a gap:
 
 `pages[].lang` joins the allow-lists of `freshness-and-corroboration` and the
 orchestrator's proactive recommendations; the evidence schema is unchanged.
+
+### D30 — `contracts-v16`: adjudication's two false positives, fixed at their pattern
+
+The user adjudicated the six real sites against files saved from their own
+browser. Every observation checked was literally true. Two conclusions were not:
+
+- **ACC-006 on a large retailer (FP-INT).** GPTBot, ClaudeBot, PerplexityBot,
+  OAI-SearchBot and CCBot were refused where robots.txt admits them, but so was
+  the Googlebot string, in the audit's own probe and in an independent curl
+  check. No site means to shut out Google Search; the pattern is an edge
+  refusing every declared crawler it cannot verify by address, which admits the
+  real crawlers from their published ranges. The rule already excluded Googlebot
+  from firing for exactly that reason, and did not use the Googlebot result as
+  evidence about the others. Now, when Googlebot is refused on the same URLs,
+  ACC-006 reports `not_assessed` with that reason. A site that refuses AI
+  crawlers while admitting Googlebot still fires, which is the defect the rule
+  exists for. No field was added: the probe already records Googlebot.
+- **IDM-001 on a documentation subdomain (FP-EXC).** The subdomain has no
+  Organization markup; the organization's main domain has complete markup,
+  which is where Google places it. The audit never fetches the parent domain.
+  Now, when the audited host is a subdomain of its registrable domain other than
+  `www`, IDM-001 reports `not_assessed` and names the main domain to check. This
+  can only cost a miss, on a subdomain that is really a separate brand.
+  `identity-and-markup` may now read `site.resolved_origin`, which the schema
+  already held (`contracts-v16`).
+
+A third finding was a true positive with a misleading label: RND-001 said "doc
+pages" on the same subdomain, but every JavaScript-dependent page was one
+client-side application under `/cli/`, which the URL-based classifier had filed
+under three page types. Its severity was right. When a section's hits share a
+path, the finding now names it in the title, evidence and where.
+
+Each fix has a unit test, and the retailer's pattern is a permanent archetype
+variant (`storefront-defects / bot-verification-edge`). Before the fixes: 2 false
+positives in 11 findings. Both are removed at their pattern, not special-cased
+to the site.
