@@ -80,8 +80,13 @@ def pro_001(evidence, out):
 QUESTIONS = {
     "legal_name": "What is {name}, and what is its official website?",
     "founded_year": "When was {subject} founded?",
-    "address": "Where is {subject} based?",
+    # A buying question, because the answer an assistant gives it is often a
+    # marketplace's search URL rather than the seller's own product page, and
+    # which one it names is only visible where answers are produced.
+    "product_name": "Where can I buy {subject}'s {value}, and on which page?",
 }
+# Two product questions at most: the panel is meant to be re-run by hand.
+MAX_PRODUCT_QUESTIONS = 2
 
 
 def pro_002(evidence, out):
@@ -89,6 +94,7 @@ def pro_002(evidence, out):
     claims = [c for c in evidence["canonical_claims"]
               if c["first_party_confidence"] in ("high", "medium") and c["kind"] in QUESTIONS
               and SAFE_VALUE.match(c["value_normalized"] or "")]
+    claims.sort(key=lambda c: c["kind"] == "product_name")
     names = [c for c in claims if c["kind"] == "legal_name"]
     if not names:
         out["not_assessed"].append({"rule_id": "PRO-002", "reason":
@@ -107,17 +113,27 @@ def pro_002(evidence, out):
     # are about this organization; the name question stays bare, because whether
     # an assistant finds this organization from the name alone is what it tests.
     subject = "%s (%s)" % (name, domain) if ambiguous else name
-    panel = []
+    # One question per kind, and at most two products: a site that promotes three
+    # names must not ask the same question three times, and the panel is meant to
+    # be re-run by hand.
+    limits = {"legal_name": 1, "founded_year": 1, "product_name": MAX_PRODUCT_QUESTIONS}
+    panel, asked = [], {}
     for claim in claims:
-        question = QUESTIONS[claim["kind"]].format(name=name, subject=subject)
-        expected = domain if claim["kind"] == "legal_name" else claim["value_normalized"]
+        kind = claim["kind"]
+        if asked.get(kind, 0) >= limits[kind]:
+            continue
+        asked[kind] = asked.get(kind, 0) + 1
+        question = QUESTIONS[kind].format(name=name, subject=subject, value=claim["value_normalized"])
+        # The buying question expects the site's own domain: an assistant naming a
+        # marketplace's search page instead is the answer worth recording.
+        expected = domain if claim["kind"] in ("legal_name", "product_name") else claim["value_normalized"]
         panel.append("%s (expected: %s)" % (question, expected))
     out["findings"].append({
         "id": "F-001",
         "title": "Monitor how assistants describe %s with a fixed prompt panel" % name,
-        "evidence": "This audit observes the site, not assistants' answers, by design. %s promoted with at "
-                    "least medium first-party confidence, which gives a panel whose expected answers are known: %s.%s"
-                    % ("1 claim was" if len(claims) == 1 else "%d claims were" % len(claims), "; ".join(panel[:6]),
+        "evidence": "This audit observes the site, not assistants' answers, by design. %s, built from the claims "
+                    "promoted with at least medium first-party confidence, so its expected answers are known: %s.%s"
+                    % ("1 question" if len(panel) == 1 else "%d questions" % len(panel), "; ".join(panel[:6]),
                        " The name may be shared with other organizations, so the other questions name the domain, "
                        "and the first shows whether assistants find this organization from its name alone."
                        if ambiguous else ""),

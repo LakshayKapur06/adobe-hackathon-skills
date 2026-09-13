@@ -1059,3 +1059,33 @@ The bundle is schema-validated first, exactly as in a full run, and each
 diagnostic resolves the bundle's text sidecars from the bundle's own location.
 The README now states what a host must provide and what happens when it cannot
 provide each capability.
+
+### D44 — The prompt panel asks where a product can be bought, once per kind
+
+The read-through asked whether the audit can diagnose an assistant answering
+"where do I buy X" with a marketplace's search URL instead of the seller's own
+product page. The site-side causes are already covered (robots and indexing,
+JavaScript-only prices and text, identity markup), and what an assistant chooses
+is outside what a read-only audit can observe, which is why PRO-002 exists at
+all. So the panel gains the question rather than the rules gaining a check: for a
+site whose product names were promoted, it asks where a named product can be
+bought, and the expected answer is the site's own domain. An assistant naming a
+marketplace instead is the answer worth recording.
+
+Two defects found while previewing the panel on real bundles, both fixed:
+
+- **Repeated questions.** A retailer promoting three organization names produced
+  the same question three times. The panel now asks each kind once, and at most
+  two product questions.
+- **Addresses were not attributable.** The same retailer's promoted address was a
+  shop from its store locator, so the panel would have asked where the company is
+  based and expected a branch address. Address questions are dropped: a promoted
+  address can belong to any entity the markup carried, the same attribution
+  problem D31 fixed for founding years.
+
+A check considered and rejected on the evidence: reporting product pages that
+state a price but no `offers.availability`. Across every saved real-site bundle,
+each storefront that publishes a price also publishes availability (3 of 3, 5 of
+5, 7 of 7), and the only priced nodes without it are the free-app nodes IDM-004
+already excludes. A rule with no true positive anywhere in the evidence is
+padding.

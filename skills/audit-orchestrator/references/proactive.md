@@ -100,6 +100,9 @@ punctuation. A value that fails is dropped; if the name fails, there is no panel
   what assistants say cannot be seen from here. The only way to see it is to ask
   the same questions repeatedly and compare the answers with facts whose correct
   value is known, and the claims this audit promoted provide exactly those facts.
+  One of them is a buying question, because the answer an assistant gives it is
+  often a marketplace's search URL rather than the seller's own product page, and
+  which one it names is visible only where answers are produced.
 - **Signal:** a `legal_name` canonical claim with at least medium first-party
   confidence and a value that passes the safety filter above.
 - **Evidence read:** `canonical_claims[].kind`, `canonical_claims[].value_normalized`,
@@ -110,7 +113,11 @@ punctuation. A value that fails is dropped; if the name fails, there is no panel
 - **Minimum evidence:** the qualifying name. Without one, `not_assessed`: a panel
   built on a low-confidence or unsafe name would ask about the wrong thing.
 - **False-positive controls:** only claims of at least medium confidence; only
-  name, founding year and address kinds; the value filter above; the name
+  name, founding year and product-name kinds, and at most two product questions;
+  one question per kind, so a site promoting three names does not ask the same
+  question three times; addresses are not asked about, because a promoted address
+  can be any address the markup carried, such as a shop in a store locator, and
+  the panel's expected answers must be facts about the organization itself; the value filter above; the name
   question expects the site's own domain rather than the name repeated, since
   an assistant names the right website only if it resolved the right entity;
   when the name was scored of medium or high ambiguity, every other question
