@@ -167,7 +167,9 @@ class TestRealBrowser(unittest.TestCase):
         self.assertIsNone(error, error)
         self.assertIn("written-at-dcl", html)
         self.assertIn("written-after-800ms", html)
-        self.assertLess(elapsed, render.PAGE_TIMEOUT_S + 1.0)
+        # Bounded by the page timeout plus browser start-up, which varies with
+        # machine load: one second of slack failed on a busy machine at 22.3s.
+        self.assertLess(elapsed, render.PAGE_TIMEOUT_S + 5.0)
         # The regression this guards: with a virtual-time budget set, neither
         # the budget nor --timeout ever expires on this page, and the run had to
         # be killed from outside with nothing to show. The real-time cap dumps
