@@ -81,6 +81,14 @@ class TestIDM001(RuleCase):
         self.assertIn("WebSite", f["evidence"])
         self.assertEqual(sev_mod.derive(copy.deepcopy(f))["severity"], "medium")
 
+    def test_a_subdomain_defers_to_its_main_domain(self):
+        e = bundle([page("/", "home", [node("WebSite", {"url": ORIGIN})])])
+        e["site"].update(resolved_origin="https://docs.example.com", registrable_domain="example.com")
+        self.assertEqual(self.outcome(e, "IDM-001")[0], "not_assessed")
+        for origin, parent in (("https://www.example.com", "example.com"), ("https://example.co.uk", "example.co.uk")):
+            e["site"].update(resolved_origin=origin, registrable_domain=parent)
+            self.assertEqual(self.outcome(e, "IDM-001")[0], "fired", origin)
+
     def test_subtype_and_nested_publisher_count(self):
         self.assertEqual(self.outcome(bundle([page("/", "home", [node("NewsMediaOrganization", {"name": "N"})])]),
                                       "IDM-001")[0], "passed")

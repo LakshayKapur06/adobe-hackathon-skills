@@ -107,6 +107,18 @@ def idm_001(evidence, out):
         out["passed"].append({"rule_id": "IDM-001", "summary":
                               "The home page describes a Person, so organization markup does not apply"})
         return
+    host = (evidence["site"]["resolved_origin"] or "").split("://", 1)[-1].split("/", 1)[0].split(":", 1)[0].lower()
+    parent = (evidence["site"]["registrable_domain"] or "").lower()
+    if parent and host not in (parent, "www." + parent):
+        # A subdomain such as docs. or help. is part of an organization whose
+        # identity belongs on its main domain's home page, which this audit did
+        # not fetch. Absence here says nothing about the organization.
+        out["not_assessed"].append({"rule_id": "IDM-001", "reason":
+                                    "%s is a subdomain of %s; organization identity is normally stated on the main "
+                                    "domain's home page, which this audit did not fetch" % (host, parent),
+                                    "enable_hint": "check https://%s/ for Organization JSON-LD, or audit %s directly"
+                                                   % (parent, parent)})
+        return
     types = sorted({n["type"] for n in home["jsonld"] if n["type"]})
     out["findings"].append(finding(
         "IDM-001", "The home page carries no machine-readable organization identity",

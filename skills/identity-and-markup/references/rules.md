@@ -54,6 +54,7 @@ directions, which is what makes fabricated evidence impossible.
 - `canonical_claims`
 - `canonical_claims[].entity_ambiguity`
 - `canonical_claims[].first_party_confidence`
+- `site.resolved_origin`
 - `site.registrable_domain`
 - `site.detected_locales`
 - `schema_version`
@@ -116,21 +117,30 @@ in `scripts/diagnose.py`, one function per rule, in the order written here.
 - **Signal:** the 2xx home page's JSON-LD contains no organization node.
 - **Evidence read:** `pages[].url`, `pages[].status`, `pages[].page_type`,
   `pages[].jsonld[].type`, `pages[].jsonld[].fields_present`,
-  `pages[].jsonld[].values`, `pages[].microdata_or_rdfa`.
+  `pages[].jsonld[].values`, `pages[].microdata_or_rdfa`,
+  `site.resolved_origin`, `site.registrable_domain`.
 - **Threshold:** the home page alone. Justification: Google names the home page
   (or a single about page) as the place for this markup, so the question is
   asked of that one page rather than averaged over a sample; an about page
   carrying the markup satisfies it too, as the exception below records.
 - **Minimum evidence:** a 2xx page classified `home`. With none, `not_assessed`.
   When the home page carries microdata or RDFa, `not_assessed` as well, because
-  the identity may be expressed there and the collector does not parse it.
+  the identity may be expressed there and the collector does not parse it. When
+  the audited host is a subdomain of its registrable domain other than `www`,
+  `not_assessed`: the organization's home page is on the main domain, which the
+  audit did not fetch.
 - **False-positive controls:** only 2xx pages; organization subtypes and nested
   publisher organizations count; any node carrying `logo` or `sameAs` counts;
   microdata or RDFa on the home page stops the rule rather than firing it; a
   2xx `about` page carrying an organization node satisfies the rule.
 - **Legitimate exceptions:** identity stated on an about page instead of the
   home page, which Google accepts; detected by an organization node on any 2xx
-  `about` page. A personal site whose subject is a person rather than an
+  `about` page. A subdomain (`docs.`, `help.`, `blog.`) of an organization
+  whose identity is stated on its main domain's home page; detected by the
+  audited host differing from the registrable domain and its `www` form, and
+  reported as not assessed with the main domain to check (found in adjudication
+  on a documentation subdomain whose parent domain carries complete
+  Organization markup). A personal site whose subject is a person rather than an
   organization; detected by a `Person` node on the home page.
 - **Confidence:** high. The observation is the parsed markup itself.
 - **Impact inputs:** `blocking = false` (the site is still reachable and
