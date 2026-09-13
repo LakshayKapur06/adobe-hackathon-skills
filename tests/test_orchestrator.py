@@ -135,6 +135,9 @@ class TestReportSummaryAndRendering(unittest.TestCase):
             self.assertIn(heading, first)
         self.assertLess(first.index("RND-002"), first.index("ACC-005"), "problems appear in report order")
         self.assertIn("**2 problems found:**", first)
+        glossary = first[first.index("## Terms used in this report"):first.index("## How this audit was run")]
+        self.assertIn("**JSON-LD:**", glossary)
+        self.assertNotIn("**time to first byte:**", glossary, "only terms the report uses are defined")
 
     def test_observed_text_cannot_restructure_the_markdown(self):
         import render_report

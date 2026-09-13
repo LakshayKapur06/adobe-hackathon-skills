@@ -18,6 +18,7 @@ Standard library only.
 import argparse
 import json
 import os
+import re
 
 PRIORITY_MEANING = {
     "P0": "fix first: it blocks a stage of being found or used",
@@ -26,6 +27,30 @@ PRIORITY_MEANING = {
     "P3": "when convenient",
 }
 CATEGORY = {"discoverability": "Being found and cited by AI assistants", "engagement": "Keeping visitors who arrive"}
+
+# Plain definitions of the technical terms findings use, so a reader who is not a
+# web developer can act on the report. Only terms that appear in a report are
+# listed with it. The patterns match whole words, case-insensitively.
+TERMS = (
+    ("2xx", r"\b2xx\b", "a page that loaded successfully: the server answered with a status code from 200 to 299."),
+    ("robots.txt", r"robots\.txt", "a file at the root of a site telling automated crawlers which pages they may fetch."),
+    ("noindex", r"\bnoindex\b", "an instruction, in a page's robots meta tag or its X-Robots-Tag header, telling search "
+                               "engines to leave the page out of their index."),
+    ("nosnippet", r"\bnosnippet\b|max-snippet", "an instruction telling search engines not to quote the page's text."),
+    ("X-Robots-Tag", r"X-Robots-Tag", "an HTTP header that carries the same instructions as the robots meta tag."),
+    ("canonical", r"\bcanonical\b", "a tag naming the address search engines should treat as a page's main URL."),
+    ("JSON-LD", r"JSON-LD", "structured data in a page's code describing the organization, a product or an article in "
+                            "a form machines read directly."),
+    ("sameAs", r"\bsameAs\b", "a JSON-LD property listing the organization's profiles elsewhere, such as Wikipedia or "
+                              "LinkedIn, so a machine can tell which organization this is."),
+    ("server response", r"server response", "the HTML a site sends before any JavaScript runs. Many crawlers and AI "
+                                             "fetchers read only this."),
+    ("rendered", r"\brender(ed|ing)?\b", "what a page contains after a browser has run its JavaScript."),
+    ("user agent", r"user[- ]agent", "the name a client sends with each request; crawlers identify themselves with names "
+                                     "such as GPTBot or PerplexityBot."),
+    ("sitemap", r"\bsitemaps?\b", "a file listing a site's pages for crawlers."),
+    ("time to first byte", r"time to first byte", "how long the server takes to start sending a page."),
+)
 
 
 def _line(text):
@@ -102,6 +127,11 @@ def render(report):
     out += ["", "## What could not be checked, and how to make it checkable", ""]
     out += ["- **%s:** %s. *To enable:* %s" % (n["rule_id"], _line(n["reason"]), _line(n["enable_hint"]))
             for n in report["not_assessed"]] or ["Everything was checked."]
+    body = "\n".join(out)
+    used = [(term, meaning) for term, pattern, meaning in TERMS if re.search(pattern, body, re.I)]
+    if used:
+        out += ["", "## Terms used in this report", ""]
+        out += ["- **%s:** %s" % (term, meaning) for term, meaning in used]
     out += ["", "## How this audit was run", "",
             "- Read-only: every request was a GET, robots.txt was obeyed for this site and for every other site "
             "consulted, and nothing on the site was changed.",

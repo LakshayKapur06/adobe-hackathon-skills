@@ -3,6 +3,7 @@
 # so these files are always LF on every platform.
 tests/fixtures/evidence/pages/*.txt text eol=lf
 docs/HANDOFF.md export-ignore
+docs/KICKOFF_PROMPT.md export-ignore
 
 # Sample bundles carry hash-named sidecars too.
 samples/**/evidence/pages/*.txt text eol=lf

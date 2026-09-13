@@ -129,6 +129,11 @@ two snapshots for the single highest-value claim to diff extracted text.
 
 ### Optional env-key provider — containment rules (all nine are mandatory)
 
+> **Outcome: cut, never built.** Rule 9's hard cut was applied. No environment
+> key is read anywhere in the marketplace, no `OPTIONAL_ENHANCEMENTS.md` exists,
+> and corroboration is keyless only. The rules are kept as the record of how
+> such a provider would have to be contained.
+
 1. Absent from every graded surface: not in `marketplace.json`, not in any
    `SKILL.md` frontmatter, not in `allowed-tools`, not in any Procedure section.
    It lives in one script file.

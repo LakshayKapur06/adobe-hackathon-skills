@@ -60,7 +60,7 @@ exactly one entrypoint; deterministic; safe.*
 
 | What answers it | Where |
 |---|---|
-| Eight skill folders, each with SKILL.md frontmatter (name, description, license, allowed-tools) and When to use, Inputs, Procedure and Output sections; exactly one entrypoint | `marketplace.json`, `scripts/check.py` (manifest, skills, references) |
+| Eight skill folders, each with SKILL.md frontmatter (name, description, license, allowed-tools) and When to use, Inputs, Procedure and Output sections; exactly one entrypoint. All eight pass the official agentskills.io validator, `skills-ref validate` (0.1.1), which the build gate also runs whenever it is installed | `marketplace.json`, `scripts/check.py` (manifest, skills, references) |
 | Deterministic: the same fixture twice gives identical output but for clocks | `scripts/check.py` (determinism) |
 | Standard library only, no cross-skill imports, no unfinished-work markers | `scripts/check.py` (stdlib-only, isolation, no-placeholders) |
 | Read-only GET requests, robots.txt obeyed for the audited site and for every third-party host, including Wikipedia and Wikidata | `skills/site-evidence-collector/references/providers.md`, `tests/test_robots.py`, `tests/test_corroboration.py` |

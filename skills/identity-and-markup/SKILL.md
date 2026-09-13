@@ -43,7 +43,9 @@ Principally: `pages[].status`, `pages[].page_type`, `pages[].jsonld`,
 2. **Promote claim candidates to canonical claims first**, with
    `scripts/promote.py`. Group candidates by kind and normalised value, weigh
    them by observed count and extraction method, then assign
-   `first_party_confidence` and `entity_ambiguity`. Write the promoted set to
+   `first_party_confidence` and `entity_ambiguity`. A founding year found only in
+   prose ("founded in", "since") is never promoted above `low`, because prose does
+   not say whose year it is; only a `foundingDate` in organization markup is. Write the promoted set to
    `evidence/canonical_claims.json`; the collector merges it into the bundle in
    its second pass. This runs before the off-site probe, because an ambiguous
    brand name poisons external matching and corroboration confidence is gated

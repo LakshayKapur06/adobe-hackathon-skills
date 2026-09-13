@@ -1,6 +1,6 @@
 {
   "name": "agent-readiness-audit",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Audits any website for the mechanisms that make a brand invisible, misrepresented or bounced-from in AI assistants, and emits one prioritised, evidence-backed report. Recommend-only and read-only.",
   "license": "Apache-2.0",
   "skills": [

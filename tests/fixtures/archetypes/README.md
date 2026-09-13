@@ -42,7 +42,7 @@ it is skipped with the reason, and the no-browser variants still run.
 | ACC-003 noindex on a primary template | TN | | **TP** | TN | |
 | ACC-004 nosnippet on a primary template | TN | | TN | **TP** | |
 | ACC-005 canonicals collapsed to home | TN | **TP** R | TN | TN | |
-| ACC-006 named crawler refused by user agent | TN | | **TP** | TN | |
+| ACC-006 named crawler refused by user agent | TN | | **TP**; not assessed in bot-verification-edge, where Googlebot is refused too | TN | |
 | ACC-007 advertised URLs return errors | TN | TN R | **TP** | TN (one dead link) | |
 | ACC-008 retrieval crawler excluded by name | TN | TN | | | **TP** allowlist |
 | ACC-009 declared sitemap unreadable | TN | | TN | **TP** | |
@@ -50,7 +50,7 @@ it is skipped with the reason, and the no-browser variants still run.
 | RND-002 no server text, nothing rendered | TN | **TP** | TN | TN | |
 | RND-003 prices only after rendering | | | **TP** R | | |
 | IDM-001 no organization identity | TN | **TP**, conditional | TN | TN | |
-| IDM-002 empty sameAs | TN | | **TP** | TN | |
+| IDM-002 empty sameAs | TN | | **TP** | | |
 | IDM-003 JSON-LD that fails to parse | TN | | TN | **TP** | |
 | IDM-004 markup price contradicts page | | | **TP** | | |
 | ANS-001 long pages without sections | TN | | | **TP** | |

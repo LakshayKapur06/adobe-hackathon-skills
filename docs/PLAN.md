@@ -1,5 +1,13 @@
 # PLAN.md — six-day build plan
 
+> **Status: historical.** This is the plan the build started from, kept as it was
+> written. Scope changed where measurement or time required, and each change is
+> recorded in `docs/DECISIONS.md`: adjudication used 6 sites rather than 8-10
+> (`tests/adjudication.md`), 5 fixture archetypes stand for the 10 sites listed
+> below (D26), the optional search-provider integration was cut and never built,
+> and the Common Crawl provider was dropped because its index cannot be queried
+> within robots.txt.
+
 **Governing rule: a valid end-to-end report by end of Day 2, then depth.** Never
 leave the pipeline broken overnight. Every day ends with a green test suite and
 a commit.

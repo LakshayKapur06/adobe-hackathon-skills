@@ -183,7 +183,8 @@ def pro_003(evidence, out):
     declares = any("sameAs" in n["fields_present"] for p in pages for n in p["jsonld"])
     if declares:
         out["passed"].append({"rule_id": "PRO-003", "summary":
-                              "The site's markup declares sameAs identity links"})
+                              "Identity links (sameAs) are declared in the markup, so none is recommended; whether their "
+                              "values identify anything is checked by IDM-002"})
         return
     page = anchors[0]
     ambiguous = any(c["kind"] == "legal_name" and c["entity_ambiguity"] == "high"

@@ -1,5 +1,9 @@
 # HUMAN_PLAYBOOK.md — what only you can do
 
+> **Status:** every gate below was run. G2 is recorded in
+> `tests/g2-evidence-check.md`, G3 in `tests/rule-review.md`, and G4 in
+> `tests/adjudication.md`, which used 6 sites, one per archetype, rather than 8-10.
+
 The agent builds. You verify. This file is the verification procedure.
 
 ---

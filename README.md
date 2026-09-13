@@ -61,7 +61,8 @@ Every run writes, into the `--out` directory:
 - **`report.md`** — the audit for the person who fixes the site: the problems in
   the order to fix them, each with what was seen, why it matters, what to do,
   where, how, and how to tell it worked; improvements beyond the problems; the
-  checks that passed; what could not be checked and how to make it checkable.
+  checks that passed; what could not be checked and how to make it checkable;
+  and plain definitions of the technical terms the report uses.
 - **`report.json`** — the same report as structured data, conforming to
   `schemas/report.schema.json`: `site`, `audited_at`, a counts-by-severity
   `summary`, and `findings[]` each with `id`, `title`, `severity`, `evidence` and
