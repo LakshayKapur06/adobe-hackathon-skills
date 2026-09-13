@@ -465,7 +465,14 @@ cites the page timestamp for the same URL. The rules implement these blocks in
   outage can arrive mid-probe; `Googlebot` is excluded entirely, because
   Google publishes both its crawler address ranges and a reverse-DNS
   verification procedure for site owners worried about impersonators, so
-  refusing unverified Googlebot requests is a documented, widespread defence; an agent that robots.txt disallows is never probed, so it cannot
+  refusing unverified Googlebot requests is a documented, widespread defence;
+  when the `Googlebot` identity was refused on every URL where a named agent
+  was, the rule reports `not_assessed` instead of firing, because no site means
+  to shut out Google Search and the pattern is an edge refusing every declared
+  crawler it cannot verify by address, which admits the real crawlers from their
+  published ranges (found in adjudication on a large retailer, where the Googlebot
+  string and five AI crawler strings were all refused behind bot management); an
+  agent that robots.txt disallows is never probed, so it cannot
   appear as refused here; the finding states the comparison actually made, a
   client presenting two different user-agent strings, not a browser against a
   crawler.

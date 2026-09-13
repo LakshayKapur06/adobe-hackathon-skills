@@ -8,7 +8,8 @@
     "advertised dead URLs",
     "broken identity links",
     "markup contradicting visible price",
-    "price only after rendering"
+    "price only after rendering",
+    "an edge refusing every unverifiable declared crawler, Googlebot included, is not read as an AI-crawler block"
   ],
   "server": {
     "refuse_agents": {
@@ -120,6 +121,62 @@
       "absent_text": [
         "Dear AI agent",
         "shopping skill so you can buy"
+      ]
+    },
+    {
+      "name": "bot-verification-edge",
+      "render": false,
+      "server": {
+        "refuse_agents": {
+          "GPTBot": 403,
+          "ClaudeBot": 403,
+          "Googlebot": 403
+        }
+      },
+      "findings": [
+        {
+          "rule_id": "ACC-003",
+          "status": "found",
+          "breadth": "section",
+          "confidence": "high"
+        },
+        {
+          "rule_id": "ACC-007",
+          "status": "found",
+          "confidence": "high"
+        },
+        {
+          "rule_id": "IDM-002",
+          "status": "found"
+        },
+        {
+          "rule_id": "IDM-004",
+          "status": "found",
+          "confidence": "high"
+        },
+        {
+          "rule_id": "PRO-001",
+          "status": "proactive"
+        },
+        {
+          "rule_id": "PRO-002",
+          "status": "proactive"
+        }
+      ],
+      "passed": [
+        "ACC-001",
+        "ACC-004",
+        "ACC-005",
+        "ACC-009",
+        "IDM-001",
+        "IDM-003",
+        "RND-002",
+        "ARR-001"
+      ],
+      "not_assessed": [
+        "RND-001",
+        "RND-003",
+        "ACC-006"
       ]
     }
   ]

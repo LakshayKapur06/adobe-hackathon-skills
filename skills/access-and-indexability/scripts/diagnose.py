@@ -528,6 +528,21 @@ def acc_006(ctx, out):
         urls = [u for u in comparable if agent in by_url[u]]
         if urls and all(by_url[u][agent] in UA_REFUSALS for u in urls):
             refused[agent] = urls
+    refused_urls = sorted({u for us in refused.values() for u in us})
+    if refused and all(by_url[u].get("Googlebot") in UA_REFUSALS for u in refused_urls):
+        # The edge refused the Googlebot string on the same URLs. No site means to
+        # shut out Google Search, so this is an edge refusing declared crawlers it
+        # cannot verify by address, which admits the real ones from their
+        # published ranges. The AI-crawler refusals are that same defence.
+        out["not_assessed"].append({"rule_id": "ACC-006", "reason":
+                                    "the Googlebot identity was refused on the same URLs as %s (%s), the pattern of "
+                                    "an edge that refuses declared crawlers it cannot verify by address; how requests "
+                                    "from the crawlers' own addresses are answered cannot be observed from here"
+                                    % (", ".join(sorted(refused)),
+                                       ", ".join("%s on %s" % (by_url[u]["Googlebot"], u) for u in refused_urls)),
+                                    "enable_hint": "check the server or CDN logs for requests from the crawlers' "
+                                                   "published address ranges and the status they received"})
+        return
     if not refused:
         out["passed"].append({"rule_id": "ACC-006", "summary":
                               "No named AI crawler identity was refused where browser-ua received 2xx (%s compared)"
@@ -563,6 +578,7 @@ def acc_006(ctx, out):
             "%s %s" % (a, by_url[u][a]) for a in sorted(refused) if a in by_url[u])), ctx.fetched_at_for(u))
               for u in urls],
         controls=["429 and 5xx excluded", "Googlebot excluded: refusing unverified Googlebot is documented defence",
+                  "not fired when Googlebot was refused on the same URLs, the pattern of verification by address",
                   "refusal required on every URL where browser-ua received 2xx",
                   "agents robots.txt disallows are never probed"],
         exceptions=["edge verification of claimed identity by published address ranges: indistinguishable here, "

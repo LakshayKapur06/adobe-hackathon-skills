@@ -290,6 +290,14 @@ class TestACC006(RuleCase):
         statuses.update({("Googlebot", u): 403 for u in self.URLS})
         self.assertOutcome(bundle(ua_probe=self.probe(statuses)), "ACC-006", "passed")
 
+    def test_googlebot_refused_too_reads_as_verification_not_a_block(self):
+        statuses = {(a, u): 403 for u in self.URLS for a in ("GPTBot", "OAI-SearchBot", "Googlebot")}
+        e = bundle(pages=[home(), page("/a")], ua_probe=self.probe(statuses))
+        self.assertOutcome(e, "ACC-006", "not_assessed")
+        partial = dict(statuses)
+        partial[("Googlebot", self.URLS[1])] = 200
+        self.assertOutcome(bundle(pages=[home(), page("/a")], ua_probe=self.probe(partial)), "ACC-006", "fired")
+
     def test_browser_refused_too_is_not_assessed(self):
         statuses = {(a, u): 403 for u in self.URLS for a in ("browser-ua", "GPTBot", "OAI-SearchBot", "Googlebot")}
         self.assertOutcome(bundle(ua_probe=self.probe(statuses)), "ACC-006", "not_assessed")
