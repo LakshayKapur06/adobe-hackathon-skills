@@ -43,16 +43,28 @@ _CONSENT_TOKENS = frozenset({"gdpr", "consent", "cmp", "tcf", "didomi", "onetrus
                              "cmplz", "axeptio", "quantcast", "cookieyes", "termly", "borlabs", "klaro",
                              "cookielaw", "cookieconsent"})
 _COOKIE_COMPANIONS = frozenset({"banner", "notice", "bar", "wall", "popup", "modal", "dialog", "law", "overlay",
-                                "prompt", "message", "settings", "preferences"})
+                                "prompt", "message", "settings", "preferences", "confirmation", "info"})
+# Two more families with their own prefixes: the cookieconsent library
+# ("cc-window cc-banner") and privacy banners ("privacy-banner"). Each needs a
+# banner-like companion, so "cc-number" or "privacy-policy-content" keep their text.
+_PREFIX_COMPANIONS = {"cc": frozenset({"window", "banner", "revoke"}),
+                      "privacy": frozenset({"banner", "popup", "modal", "overlay", "wall"})}
+# Vendor containers whose names split into ordinary words.
+_CONSENT_NAMES = ("sp_message", "shopify-pc")
 _NEVER_CONSENT = frozenset({"html", "body", "main", "article", "head"})
 
 
 def _is_consent_ui(tag, attrs):
     if tag in _NEVER_CONSENT:
         return False
-    tokens = set(re.split(r"[^a-z0-9]+", ("%s %s" % (attrs.get("id") or "", attrs.get("class") or "")).lower()))
+    names = ("%s %s" % (attrs.get("id") or "", attrs.get("class") or "")).lower()
+    if any(name in names for name in _CONSENT_NAMES):
+        return True
+    tokens = set(re.split(r"[^a-z0-9]+", names))
     tokens.discard("")
-    if tokens & _CONSENT_TOKENS:
+    if tokens & _CONSENT_TOKENS or any("consent" in t or "gdpr" in t or re.match(r"^cmp\d*$", t) for t in tokens):
+        return True
+    if any(prefix in tokens and tokens & companions for prefix, companions in _PREFIX_COMPANIONS.items()):
         return True
     return any(t.startswith("cookie") for t in tokens) and bool(tokens & _COOKIE_COMPANIONS)
 

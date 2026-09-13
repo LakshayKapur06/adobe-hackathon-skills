@@ -177,6 +177,22 @@ class TestTextHelpers(unittest.TestCase):
                                       '</main></body></html>', "https://x.example/c")
         self.assertIn("Our GDPR guide", main["text"], "body and main are never treated as consent UI")
 
+    def test_consent_containers_of_common_managers_are_recognized(self):
+        consent = [("div", {"class": "cc-window cc-banner cc-type-info"}), ("div", {"id": "cookie-law-info-bar"}),
+                   ("div", {"id": "hs-eu-cookie-confirmation"}), ("div", {"id": "sp_message_container_123"}),
+                   ("section", {"class": "shopify-pc__banner"}), ("div", {"id": "qc-cmp2-container"}),
+                   ("div", {"class": "cky-consent-container"}), ("div", {"id": "euconsent-banner"}),
+                   ("div", {"class": "cookieconsentbanner"}), ("aside", {"id": "moove_gdpr_cookie_info_bar"}),
+                   ("div", {"class": "privacy-banner"}), ("div", {"id": "truste-consent-track"}),
+                   ("div", {"id": "usercentrics-root"}), ("div", {"class": "cookie-popup"})]
+        ordinary = [("section", {"class": "cookie-recipes"}), ("div", {"class": "privacy-policy-content"}),
+                    ("div", {"class": "cc-number"}), ("section", {"class": "terms-content"}),
+                    ("div", {"class": "company-history"}), ("main", {"class": "consent-guide"})]
+        for tag, attrs in consent:
+            self.assertTrue(extract._is_consent_ui(tag, attrs), attrs)
+        for tag, attrs in ordinary:
+            self.assertFalse(extract._is_consent_ui(tag, attrs), attrs)
+
     def test_a_price_written_in_another_locale_is_never_a_contradiction(self):
         same = [("Prijs €1.499,00", "1499.00"), ("Prezzo € 29,95", "29.95"), ("Price ₹1,499.00 MRP ₹1,999", "1499"),
                 ("Rs. 1,499", "1499.00"), ("$29.95", "29.95"), ("Preis 1.499,00 EUR", "1499,00")]
