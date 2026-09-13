@@ -49,6 +49,15 @@ _PREFIX_WORDS = {"about": "about", "contact": "contact", "privacy": "policy", "t
 # storefront with no JSON-LD had /warranty, /extended-warranty and /grievance
 # all classified as other.
 _POLICY_WORDS = frozenset({"warranty", "grievance", "grievances"})
+# Policy words that are also the names of things a shop sells or lists: cookies,
+# shipping boxes, return gifts, legal pads, warranty plans. Real policy pages sit
+# near the root (/cookies, /pages/shipping, /legal/terms), so these words mark a
+# policy page only within POLICY_DEPTH segments of it. A grocery category
+# /pc/snacks/biscuits-cookies/cookies/ read as a policy page before this, found
+# in the adjudication miss check.
+_AMBIGUOUS_POLICY = frozenset({"cookies", "cookie", "shipping", "returns", "refund", "refunds", "legal",
+                               "terms", "warranty", "grievance", "grievances"})
+POLICY_DEPTH = 2
 _HOME_PATHS = {"/", "/index.html", "/index.htm", "/index.php", "/home", "/default.aspx"}
 _LOCALE = re.compile(r"^[a-z]{2}(?:[-_][a-z]{2})?$")
 _DATED = re.compile(r"/(?:19|20)\d{2}/(?:0?[1-9]|1[0-2])(?:/|$)")
@@ -86,16 +95,22 @@ def classify_url(url):
     segments = [_EXTENSION.sub("", s) for s in path.split("/") if s]
     if path in _HOME_PATHS or (len(segments) == 1 and _LOCALE.match(segments[0])):
         return "home", 0.95
+    shallow = len(segments) <= POLICY_DEPTH
+
+    def policy_word(word):
+        return shallow or word not in _AMBIGUOUS_POLICY
+
     for page_type, names in _SEGMENTS:
-        if any(s in names for s in segments):
+        if any(s in names and (page_type != "policy" or policy_word(s)) for s in segments):
             return page_type, 0.6
     for s in segments:
         word = s.split("-", 1)[0]
-        if word in _PREFIX_WORDS:
+        if word in _PREFIX_WORDS and (_PREFIX_WORDS[word] != "policy" or policy_word(word)):
             return _PREFIX_WORDS[word], 0.6
-    for s in segments:
-        if _POLICY_WORDS.intersection(re.split(r"[-_]", s)):
-            return "policy", 0.6
+    if shallow:
+        for s in segments:
+            if _POLICY_WORDS.intersection(re.split(r"[-_]", s)):
+                return "policy", 0.6
     if _DATED.search(path):
         return "article", 0.6
     return "other", 0.3

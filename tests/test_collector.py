@@ -381,6 +381,16 @@ class TestPageTypeRefinement(unittest.TestCase):
             with self.subTest(path=path):
                 self.assertEqual(discover.classify_url("https://www.shop.example" + path)[0], expected)
 
+    def test_a_product_named_after_a_policy_word_deep_in_a_catalogue_is_not_a_policy(self):
+        for path, expected in (("/pc/snacks-branded-foods/biscuits-cookies/cookies/", "other"),
+                               ("/pc/home-kitchen/packaging/shipping/", "other"),
+                               ("/c/party/returns-gifts/return-gift-bags/", "category"),
+                               ("/cookies", "policy"), ("/pages/cookie-policy", "policy"),
+                               ("/legal/terms", "policy"), ("/help/legal/privacy-policy/eu", "policy"),
+                               ("/a/b/privacy-policy", "policy")):
+            with self.subTest(path=path):
+                self.assertEqual(discover.classify_url("https://shop.example" + path)[0], expected)
+
     def test_a_policy_word_never_outranks_an_explicit_product_segment(self):
         self.assertEqual(discover.classify_url("https://x.com/products/warranty-extension-pack")[0], "product")
         self.assertEqual(discover.classify_url("https://x.com/products/privacy-screen")[0], "product")

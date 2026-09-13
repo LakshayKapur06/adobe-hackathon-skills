@@ -53,6 +53,14 @@ override that classification:
 
 `other` is a real classification, not a failure.
 
+Policy words that are also things a shop sells or a newsroom covers ("cookies",
+"shipping", "returns", "legal", "terms", "warranty", "grievance") mark a policy
+page only within two path segments of the root, where policy pages live
+(`/cookies`, `/pages/shipping`, `/legal/terms`). Deeper, as in a grocery
+category `/pc/snacks/biscuits-cookies/cookies/` or a news video about a
+grievance hearing, they are ordinary words. Unambiguous names such as
+`privacy-policy` count at any depth.
+
 The home page is always fetched first. After that, each pick goes to the page
 type sampled least so far, so no single template can consume the budget. Within
 a type, URLs without a query string come first (sorted and faceted variants are
