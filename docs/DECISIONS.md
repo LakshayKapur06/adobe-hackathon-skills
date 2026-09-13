@@ -609,3 +609,28 @@ TCP and TLS, with no extra connection opened, and records it as
 `timing.connect_ms`. ARR-001 judges server response time, `ttfb_ms` minus
 `connect_ms`, against web.dev's poor boundary, which errs towards not firing.
 On two live sites connection setup was 108 of 125 ms and 239 of 407 ms of TTFB.
+
+### D25 — `contracts-v11`: the Step 3 pre-flight audit
+
+A pre-flight audit before the fixture archetypes checked the built system against
+its own decisions and contracts. It found no architectural defect, and four
+concrete inconsistencies, each fixed:
+
+- **The proactive recommendations were outside the evidence guard.** CI checked
+  every diagnostic rule for the fourteen fields and for declared evidence, but
+  not PRO-001 and PRO-002. `references/proactive.md` now carries its own
+  allow-list and rule budget, and the build gate checks it exactly as it checks a
+  diagnostic. The orchestrator's allow-list is new frozen surface, hence the tag.
+- **RND-001 could call one listing template "the site".** The sample is
+  stratified, so client-rendered listing pages alone could make up half the
+  rendered sample and fire site-wide at high severity. The site-wide trigger now
+  needs the home page among the dependent pages or at least two page types.
+- **The diagnosis reserve had drifted** from 25 s in CONTRACTS section 4 to 40 s in
+  `run.py`. It is 25 s again.
+- **PRO-001's documentation claimed** no recommendation appears in every report,
+  while PRO-001 appears on most. The text now says it is the deliberate exception
+  DECISIONS requires, always low and optional.
+
+One limit is documented rather than changed: a collector that hangs past the
+orchestrator's backstop leaves no evidence bundle, so no report is written.
+Every collector stage is budget-bounded, so this needs a hang, not a slow site.

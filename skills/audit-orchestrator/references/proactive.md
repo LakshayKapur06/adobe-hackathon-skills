@@ -7,8 +7,34 @@ can hold them to the same standard, and implemented in `scripts/proactive.py`.
 
 Both are `status: proactive`. Under `contracts-v3` that caps their severity at
 `medium` and holds their priority at P2 or P3, so neither can ever outrank a
-finding. Each fires only on evidence: a recommendation that would appear
-identically in every report is padding.
+finding. Each fires only on evidence. PRO-002 is specific to the site by
+construction, since its prompts are built from the site's own claims. PRO-001
+is the one exception to the rule that a recommendation appearing in most reports
+is padding, and it is kept deliberately: `docs/DECISIONS.md` requires the
+`llms.txt` position to be stated, calibrated as speculative and low, rather than
+left for a reader to assume the audit forgot it. It is always low severity, low
+confidence and worded as optional, and it disappears where the file exists.
+
+## Evidence this skill may read
+
+The same guard the diagnostics carry: every field a block below names under
+**Evidence read** must appear in this list, and every entry here must exist in
+the evidence schema. The repository's build gate enforces both directions.
+
+- `well_known[].path`
+- `well_known[].status`
+- `well_known[].present`
+- `canonical_claims[].kind`
+- `canonical_claims[].value_normalized`
+- `canonical_claims[].first_party_confidence`
+- `canonical_claims[].entity_ambiguity`
+- `site.resolved_origin`
+- `site.input`
+- `run_context.started_at`
+
+## Rule budget
+
+Rules defined: 2 of a maximum 12.
 
 **Observed content in a recommendation.** PRO-002 quotes claim values the site
 wrote about itself into prompts a person is told to run. `CLAUDE.md` forbids
@@ -26,7 +52,7 @@ punctuation. A value that fails is dropped; if the name fails, there is no panel
   for tools that adopt the convention, with that uncertainty stated in the text.
 - **Signal:** the `/llms.txt` probe answered and the file is not present.
 - **Evidence read:** `well_known[].path`, `well_known[].status`,
-  `well_known[].present`, `site.resolved_origin`, `run_context.started_at`.
+  `well_known[].present`, `site.resolved_origin`, `site.input`, `run_context.started_at`.
 - **Threshold:** the single probe result. Justification: presence of one file is
   a yes-or-no observation with nothing to aggregate.
 - **Minimum evidence:** a `well_known` entry for `/llms.txt` with a non-null
@@ -63,7 +89,7 @@ punctuation. A value that fails is dropped; if the name fails, there is no panel
   confidence and a value that passes the safety filter above.
 - **Evidence read:** `canonical_claims[].kind`, `canonical_claims[].value_normalized`,
   `canonical_claims[].first_party_confidence`, `canonical_claims[].entity_ambiguity`,
-  `site.resolved_origin`, `run_context.started_at`.
+  `site.resolved_origin`, `site.input`, `run_context.started_at`.
 - **Threshold:** one qualifying name. Justification: a panel needs an entity to
   ask about; further claims add questions but are not required.
 - **Minimum evidence:** the qualifying name. Without one, `not_assessed`: a panel

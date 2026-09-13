@@ -95,7 +95,9 @@ def rnd_001(evidence, workdir, out):
         return
     dependent = [p for p in pages if js_dependent(p)]
     groups = []
-    if len(dependent) >= 2 and len(dependent) * 2 >= len(pages):
+    spans_site = (any(p["page_type"] == "home" for p in dependent)
+                  or len({p["page_type"] for p in dependent}) >= 2)
+    if len(dependent) >= 2 and len(dependent) * 2 >= len(pages) and spans_site:
         groups.append(("site", dependent, pages))
     else:
         for page_type in PRIMARY_TYPES:

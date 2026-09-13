@@ -141,6 +141,14 @@ is reported and the remainder becomes `not_assessed` with reason
 `budget_exhausted`. The run never fails as a whole. Per-stage budgets are in
 `skills/site-evidence-collector/references/budgets.md`.
 
+One case is a stated exception. Every collector stage is bounded by its own
+budget and the collector writes its bundle when they are spent, so it finishes
+inside the deadline by construction. If it nevertheless hangs past the
+orchestrator's backstop, there is no evidence bundle at all, and the run exits
+with that reason rather than writing a report about observations that were never
+made. A failing diagnostic, a failing second pass or a withheld finding never
+costs the report; each is recorded and the rest of the audit stands.
+
 ## Sandboxing
 
 The orchestrator states that all skills run in one working directory. If a host

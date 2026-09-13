@@ -117,6 +117,15 @@ class TestRND001(RuleCase):
                          ("site", "high", "primary"))
         self.assertEqual(sev_mod.derive(copy.deepcopy(fired))["severity"], "critical")
 
+    def test_one_client_rendered_listing_template_is_not_the_whole_site(self):
+        # A stratified sample can draw half its rendered pages from one listing
+        # template. JavaScript-built listings alone must not read as site-wide.
+        pages = [page("/", "home")] + [page("/a%d" % i) for i in range(2)] + \
+                [page("/c%d" % i, "category", 200, 3000) for i in range(3)]
+        result = self.run_rules(bundle(pages))
+        self.assertFalse([f for f in result["findings"] if f["rule_id"] == "RND-001"
+                          and f["impact"]["breadth"] == "site"])
+
     def test_hydrated_widgets_do_not_fire(self):
         pages = [page("/", "home", 18516, 18522)] + [page("/p%d" % i, "product", 2400, 3200) for i in range(6)]
         self.assertOutcome(bundle(pages), "RND-001", "passed")

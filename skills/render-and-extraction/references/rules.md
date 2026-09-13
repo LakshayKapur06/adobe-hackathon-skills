@@ -149,7 +149,8 @@ in `scripts/diagnose.py`, one function per rule, in the order written here.
   `pages[].rendered.available`, `pages[].rendered.text_len`,
   `pages[].rendered.delta_ratio`, `run_context.capabilities.js_render`.
 - **Threshold:** site-wide when JavaScript-dependent pages are at least 50% of
-  comparable pages and number at least 2; otherwise per primary page type, when
+  comparable pages, number at least 2, and either include the home page or span
+  at least 2 page types; otherwise per primary page type, when
   at least 2 comparable pages of the type are JavaScript-dependent and they are
   at least 50% of that type's comparable pages; or when the home page is
   JavaScript-dependent. Justification: rendering strategy is a property of a
@@ -157,7 +158,11 @@ in `scripts/diagnose.py`, one function per rule, in the order written here.
   pages sharing it, while a single dependent page, such as one subscription page
   on a server-rendered publisher observed during G2, is a one-off widget page
   and does not describe how the site is built. The home page stands alone
-  because it is the one page every visit and every crawl starts from.
+  because it is the one page every visit and every crawl starts from. The
+  site-wide trigger needs the home page or two page types because the sample is
+  stratified: a storefront whose product listings alone are client-rendered can
+  contribute half of the rendered sample from that one template, and calling
+  that "the site" would overstate one template as the whole application.
 - **Minimum evidence:** `run_context.capabilities.js_render == true` and at least
   2 comparable pages. Without a browser the rule emits `not_assessed` with an
   enabling hint, never a pass: no render gap can be seen without rendering.

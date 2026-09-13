@@ -403,14 +403,22 @@ def check_schemas():
     return problems
 
 
+# Every file that specifies rules in the canonical block: one per diagnostic,
+# plus the orchestrator's proactive recommendations, which are held to the same
+# fields, budget and evidence guard as detection rules.
+def rule_spec_files():
+    specs = [(sid, os.path.join(SKILLS_DIR, sid, "references", "rules.md")) for sid in DIAGNOSTICS]
+    specs.append((ENTRYPOINT, os.path.join(SKILLS_DIR, ENTRYPOINT, "references", "proactive.md")))
+    return specs
+
+
 def check_rules():
     """Every rule block carries all fourteen fields, non-empty, within budget."""
     problems = []
     seen_ids = {}
-    for sid in DIAGNOSTICS:
-        path = os.path.join(SKILLS_DIR, sid, "references", "rules.md")
+    for sid, path in rule_spec_files():
         if not os.path.isfile(path):
-            problems.append("skills/%s has no references/rules.md" % sid)
+            problems.append("%s does not exist" % rel(path))
             continue
         text = read(path)
         blocks = parse_rule_blocks(text)
@@ -465,8 +473,7 @@ def check_evidence_fields():
     registry = schema_registry()
     evidence = registry["evidence.schema.json"]
 
-    for sid in DIAGNOSTICS:
-        path = os.path.join(SKILLS_DIR, sid, "references", "rules.md")
+    for sid, path in rule_spec_files():
         if not os.path.isfile(path):
             continue
         text = read(path)
@@ -493,7 +500,7 @@ def check_evidence_fields():
                     problems.append(
                         "%s allow-list: %s -> %s" % (rel(path), field_path, exc.args[0])
                     )
-            for field_path in REQUIRED_ALLOW_LIST:
+            for field_path in (REQUIRED_ALLOW_LIST if sid in DIAGNOSTICS else ()):
                 if field_path not in allow:
                     problems.append(
                         "%s allow-list omits %s, so this skill cannot build a valid "

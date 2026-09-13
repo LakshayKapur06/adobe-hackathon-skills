@@ -31,7 +31,7 @@ SCHEMAS = os.path.join(ROOT, "schemas")
 COLLECTOR = os.path.join(ROOT, "skills", "site-evidence-collector", "scripts", "collect.py")
 PROMOTER = os.path.join(ROOT, "skills", "identity-and-markup", "scripts", "promote.py")
 GLOBAL_DEADLINE_S = 300
-DIAGNOSIS_RESERVE_S = 40       # the diagnosis-and-synthesis stage budget
+DIAGNOSIS_RESERVE_S = 25       # the diagnosis-and-synthesis stage budget, CONTRACTS section 4
 
 
 def rule_ids(skill):

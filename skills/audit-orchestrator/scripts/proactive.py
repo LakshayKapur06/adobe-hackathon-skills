@@ -5,8 +5,10 @@ Step 8 of ../SKILL.md. The two recommendations are specified as rule blocks in
 defect: both are ``status: proactive``, so severity is capped at medium and
 priority held at P2 or P3 by severity.py, and neither can outrank a finding.
 
-Each fires only on evidence. A recommendation that would appear identically in
-every report would be the padding this project refuses.
+Each fires only on evidence. PRO-002 is specific to the site by construction.
+PRO-001 fires wherever /llms.txt is absent, which is most sites, and is kept
+anyway because docs/DECISIONS.md requires the llms.txt position to be stated as
+speculative and low rather than left unsaid; references/proactive.md explains.
 
 Every claim value that enters a prompt is observed content, and CLAUDE.md
 forbids relaying observed content as a recommendation. So the panel uses only
