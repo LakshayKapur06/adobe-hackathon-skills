@@ -11,15 +11,15 @@ or the word "should", it belongs in a diagnostic.
 | Origin | Input, resolved origin after redirects, registrable domain, detected locales |
 | robots.txt | Fetch status, every group verbatim, per-AI-crawler verdict, declared sitemaps |
 | Sitemaps | Status, URL count, `lastmod` presence ratio, parse success |
-| Crawl | Discovered, fetched, blocked by robots, errors, sampling strategy and strata |
+| Crawl | Discovered, fetched, blocked by robots, errors, sampling strategy and URL-pattern strata |
 | Per page | Status, redirect chain, content type, headers, meta robots, canonical, lang, hreflang, page type and its confidence |
-| Raw extraction | Byte size, text length and hash, the extracted-text sidecar path, headings, in-page anchor targets, links, images with alt, table/iframe/form counts |
+| Raw extraction | Byte size, visible text length and hash, the length of text hidden by markup, the extracted-text sidecar path, headings, in-page anchor targets, links, images with alt, table/iframe/form counts |
 | Rendered | Availability, text length and hash, its own sidecar path, headings, raw-vs-rendered delta ratio |
 | Structured data | JSON-LD blocks with type, validity, errors, fields present, a flat map of dotted path to asserted value, and whether they contradict visible text |
 | Text shape | Visible excerpt, word count, boilerplate ratio, longest block, heading density |
 | Dates | Visible dates, schema published/modified, HTTP `Last-Modified` |
 | Obstructions | Cookie walls, modals, paywalls, age gates |
-| Timing | TTFB, fetch time, render time |
+| Timing | Time to first byte, the connection setup inside it (DNS, TCP, TLS), fetch time, render time |
 | Claims | Candidate strings with kind, normalised value, source URL, locator, method, observed count |
 | Off-site | Frontier size, truncation, origins with independence metadata, per-claim hits |
 | User-agent probe | Status and extracted-text length returned to each named AI crawler, on the home page and one deep page only |

@@ -81,17 +81,18 @@ overrun behaviour are fixed in `references/budgets.md`.
    the path, rather than inlining page text into the bundle. A capped list that
    overflows is recorded in `errors[]`, never truncated silently.
 
-6. **Render, read-only, where a browser works.** Navigate, wait, dump the DOM:
-   at most three pages at once, 10s per page, 60s for the stage. Each page
-   first gets a short quiet period after it loads, so content a client-rendered
-   page assembles just after load is captured; a page whose requests never
-   settle is rendered again under a hard navigation cap rather than waited on.
-   The browser is given nothing but a URL, so it cannot click, type, submit or
-   inject. A page that still fails is fetch-only and counted in a degradation; a
-   render failure never fails the run.
+6. **Render, read-only, where a browser works.** Navigate and dump the DOM, at
+   most three pages at once within 60s for the stage, one page of every page
+   type first. Each page gets a capped attempt; only a page that yields under
+   500 characters of text gets a second attempt with a short quiet period, for
+   content a client-rendered page assembles after the load event. The browser is
+   given nothing but a URL, so it cannot click, type, submit or inject. A page
+   that still fails is fetch-only and counted in a degradation; a render failure
+   never fails the run. `references/budgets.md` gives the exact caps.
 
 7. **Probe user-agent-conditional serving, twice and no more.** Request the
-   home page and one deep page under each named AI crawler's user agent and
+   home page and one deep page under a browser's user-agent string and each
+   named AI crawler's, and
    record the status and extracted text each one receives. This is the only
    observation that varies the request identity, so it is bounded hard at two
    URLs. Never probe a URL robots.txt disallows us from, under any user agent.
@@ -119,9 +120,9 @@ overrun behaviour are fixed in `references/budgets.md`.
     bundle against `../../schemas/evidence.schema.json` before any diagnostic
     reads it, and a bundle that fails is never diagnosed.
 
-A stage that is not yet built leaves its array empty and records a degradation
-saying so, so that an empty array is never read as a measurement that found
-nothing.
+A stage that could not run, because robots.txt, a capability or a budget
+prevented it, leaves its array empty and records a degradation saying so, so
+that an empty array is never read as a measurement that found nothing.
 
 ## Output
 

@@ -225,11 +225,6 @@ def _wikipedia(run, probe, claims, name_claim, site_domain, deadline, now):
         response = run.fetcher.get(url, deadline=deadline)
         if not response.ok:
             continue
-        # Verified against the response itself, not against parsed links: an
-        # encyclopedic article carries hundreds of them and its official-website
-        # link sits near the end, past the 500-link cap the bundle imposes for
-        # its own size. A bound meant for storage silently defeated this check
-        # until the article was read by hand.
         # Identity is settled by Wikidata where it can be: an entity whose
         # official-website property *is* this domain is this brand, full stop.
         # Where that is unavailable, fall back to the article mentioning the

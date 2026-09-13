@@ -26,9 +26,10 @@ observed facts.
 |---|---|---|---|
 | `evidence/evidence.json` | `site-evidence-collector` | all six diagnostics | `schemas/evidence.schema.json` |
 | `evidence/pages/<sha256>.txt` | `site-evidence-collector` | diagnostics needing page text | plain text; length and hash are in the bundle |
-| `evidence/evidence.json` key `canonical_claims` | `identity-and-markup` | `freshness-and-corroboration`, collector pass 2 | same |
+| `evidence/canonical_claims.json` | `identity-and-markup` (`scripts/promote.py`) | the collector's pass 2, which merges it into `evidence.json` as `canonical_claims` | a list of canonical claims, as in `schemas/evidence.schema.json` |
 | `findings/<skill-id>.json` | each diagnostic | orchestrator | `schemas/finding.schema.json` per element |
 | `report.json` | orchestrator | the caller | `schemas/report.schema.json` |
+| `report.md` | orchestrator (`scripts/render_report.py`) | the person acting on the audit | a rendering of `report.json`, adding nothing |
 
 Nothing else crosses a skill boundary. No skill imports code from another skill.
 Every skill folder stays independently valid if lifted out on its own.

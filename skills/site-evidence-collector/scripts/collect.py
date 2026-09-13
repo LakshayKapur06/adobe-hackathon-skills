@@ -423,8 +423,9 @@ def collect(url, workdir, max_pages=DEFAULT_MAX_PAGES, no_render=False, no_egres
     if not egress:
         run.degrade("external", egress_note or "no third-party egress",
                     "corroboration rules are not assessed: nothing off-site could be reached")
-    # Stages not yet built leave their arrays empty. Say so, so that an empty
-    # array can never be read as a measurement that found nothing.
+    # A stage that cannot run leaves its array empty and says so in a
+    # degradation, so an empty array can never be read as a measurement that
+    # found nothing.
     frontier = discover.Frontier(urls.netloc(resolved_origin) if resolved_origin else input_netloc)
     kept, collapsed_shell, aliases, redirected, crawl_errors = [], 0, [], [], 0
     well_known, sitemap_records, render_results, ua_probe = [], [], {}, []
