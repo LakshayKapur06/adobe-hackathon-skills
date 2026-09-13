@@ -96,6 +96,42 @@ minimum evidence, false-positive controls, legitimate exceptions, confidence,
 impact inputs, status, remediation and success criteria. Where a planned check
 was measured against real sites and cut, the file says so and why.
 
+### Every rule at a glance
+
+24 in all: 20 rules in the six diagnostics, and 4 recommendations the entrypoint
+adds beyond the problems. **found** is a
+defect observed directly. **risk** is a signal the audit can observe but cannot
+confirm from outside the site, always reported at low or medium confidence with a
+first step that verifies it. **proactive** is a suggestion beyond the problems:
+never above medium severity and never counted as a problem.
+
+| Rule | Skill | What it reports | Status |
+|---|---|---|---|
+| ACC-001 | `access-and-indexability` | Answer-time retrieval crawler shut out by a wildcard robots.txt group | found |
+| ACC-002 | `access-and-indexability` | robots.txt answers with a server error or rate limit, so compliant crawlers fetch nothing | risk |
+| ACC-003 | `access-and-indexability` | Primary page templates refuse indexing | found |
+| ACC-004 | `access-and-indexability` | Primary page templates forbid snippets | found |
+| ACC-005 | `access-and-indexability` | Distinct pages declare the home page as their canonical URL | found |
+| ACC-006 | `access-and-indexability` | A named AI crawler identity is refused where robots.txt admits it | risk |
+| ACC-007 | `access-and-indexability` | URLs the site links to or lists return not-found or server errors | found |
+| ACC-008 | `access-and-indexability` | Answer-time retrieval crawler excluded by name in robots.txt | proactive |
+| ACC-009 | `access-and-indexability` | A sitemap declared in robots.txt cannot be read | found |
+| RND-001 | `render-and-extraction` | Page content exists only after JavaScript runs | found |
+| RND-002 | `render-and-extraction` | The server response carries no text on any sampled page, and nothing was rendered | found |
+| RND-003 | `render-and-extraction` | Product prices appear only after rendering | found |
+| IDM-001 | `identity-and-markup` | The home page carries no machine-readable organization identity | found |
+| IDM-002 | `identity-and-markup` | Organization sameAs links identify nothing, or identify the site's platform | found |
+| IDM-003 | `identity-and-markup` | JSON-LD blocks that no parser can read | found |
+| IDM-004 | `identity-and-markup` | Structured price contradicts the prices shown on the page | found |
+| ANS-001 | `answerability` | Long articles and documentation carry almost no section headings | proactive |
+| FRC-001 | `freshness-and-corroboration` | Articles state no date a machine can read | found |
+| FRC-002 | `freshness-and-corroboration` | The site's founding year disagrees with its Wikidata record | risk |
+| ARR-001 | `arrival-and-engagement` | The server is slow to send the first byte | risk |
+| PRO-001 | `audit-orchestrator` | Optional and speculative: publish /llms.txt | proactive |
+| PRO-002 | `audit-orchestrator` | Monitor how assistants describe the organization with a fixed prompt panel | proactive |
+| PRO-003 | `audit-orchestrator` | Anchor the organization's identity to its profiles elsewhere | proactive |
+| PRO-004 | `audit-orchestrator` | Give the dates articles show a machine-readable form | proactive |
+
 ## How the entrypoint composes them
 
 1. **Observe once.** The collector's first pass writes `evidence/evidence.json`,

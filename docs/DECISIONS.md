@@ -973,3 +973,25 @@ section. Neither change alters a schema field.
 - **PRO-001 no longer contradicts itself.** A site answering unknown addresses
   with a 200 page produced "answered HTTP 200 and is not present"; it now says
   the answer was an empty body or the site's page for unknown addresses.
+
+### D40 — RND-001 groups by the path an application is mounted under
+
+Re-running the documentation subdomain after D38's section-aware sampling, its
+adjudicated high-severity RND-001 no longer fired. The client-rendered CLI
+reference was still found JavaScript-dependent, on two sampled pages, but the
+URL-based classifier had filed one as an article and one as a category, and
+RND-001 grouped only by page type, so neither type reached two pages. The earlier
+runs had caught it only because the old sampler drew two CLI pages of one type:
+the true positive had always depended on sampling luck.
+
+RND-001 now groups dependent pages first by section: a first path segment,
+narrowed to the inner segments every dependent page in it shares, under the same
+threshold of 2 pages and 50% of matching comparable pages. Type grouping follows
+for pages no section reported. Re-run over every saved real-site bundle: the CLI
+reference fires in all four runs of that site ("pages under /cli/"); the
+client-rendered storefront still fires site-wide; the French publisher's
+post-D38 run stays clean. One finding is new: the Hindi publisher's local video
+pages, whose server response is 0 characters against about 1,000 rendered
+("pages under /local/…/video/"). Verified from the saved evidence rather than
+adjudicated by the user; the narrowing to `video` is what keeps it from being
+reported against the section's server-rendered articles.

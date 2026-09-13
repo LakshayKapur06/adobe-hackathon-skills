@@ -63,8 +63,18 @@ grievance hearing, they are ordinary words. Unambiguous names such as
 
 The home page is always fetched first. After that, each pick goes to the page
 type sampled least so far, so no single template can consume the budget. Within
-a type, URLs without a query string come first (sorted and faceted variants are
-the least representative pages a site has), then shallower and shorter paths.
+a type, each pick goes to the section sampled least so far, a section being a
+first path segment at one path depth, with larger sections breaking ties, so a
+small shallow section cannot stand in for the type: on one publisher, sampling by
+depth alone drew every article from a 20-page quiz section while thousands of
+news articles sat deeper. Within a section, URLs without a query string come
+first (sorted and faceted variants are the least representative pages a site
+has), then shallower and shorter paths.
+
+Consent interfaces (cookie banners and consent walls, recognized by consent
+tokens in their id or class) are excluded from extracted text on both the server
+response and the rendered page, so a partner list injected by script never reads
+as content that only JavaScript delivers.
 
 `crawl.sampling.strata` records how many URLs of each type were discovered and
 how many were sampled, so every finding can state its denominator.

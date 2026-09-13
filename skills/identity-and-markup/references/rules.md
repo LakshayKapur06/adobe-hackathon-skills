@@ -303,6 +303,9 @@ in `scripts/diagnose.py`, one function per rule, in the order written here.
   was never a claim about anything the page sells. Every amount shown, and the
   marked-up price, is read under both decimal conventions, so "€1.499,00" matches
   a markup price of `1499.00`; a contradiction must hold under every reading.
+  Only shown amounts whose currency sign can denote the markup's declared
+  `priceCurrency` are compared, so a store localizing its display to the
+  visitor's currency is not read as contradicting its USD markup (D39).
 - **Legitimate exceptions:** a site-wide promotion of a free app or service
   expressed as an `Offer` at price zero; excluded by the commerce-type and
   above-zero controls. A price converted into the visitor's currency on
