@@ -302,7 +302,10 @@ in `scripts/diagnose.py`, one function per rule, in the order written here.
   hydrated main price, and a price present in both texts never fires; a page
   whose server JSON-LD exposes `offers.price` or `offers.lowPrice` is excluded,
   because the fact is then machine-readable regardless of the visible text;
-  pages already JavaScript-dependent are left to RND-001.
+  pages already JavaScript-dependent are left to RND-001. A server price written with
+  the currency after the amount ("1.499,00 €") counts as present too, so a
+  European template with a client-rendered cart total showing "€0,00" is not read
+  as hiding its price.
 - **Legitimate exceptions:** quote-on-request or trade pricing, where no price
   is shown to anyone; detected because no price token occurs in the rendered
   text either, so those pages never match. Region-selected pricing that the

@@ -236,6 +236,12 @@ class TestRND003(RuleCase):
         e = bundle(self.products(work, 6, "Shoe. Rs. 1,499", "Shoe. Rs. 1,499"))
         self.assertOutcome(e, "RND-003", "passed", work.root)
 
+    def test_a_server_price_written_currency_last_counts_as_present(self):
+        work = self.work()
+        e = bundle(self.products(work, 6, "Laufschuh X9. 1.499,00 € In den Warenkorb.",
+                                 "Laufschuh X9. 1.499,00 € In den Warenkorb. Warenkorb: €0,00"))
+        self.assertOutcome(e, "RND-003", "passed", work.root)
+
     def test_quote_on_request_never_matches(self):
         work = self.work()
         e = bundle(self.products(work, 6, "Industrial pump. Request a quote.", "Industrial pump. Request a quote."))

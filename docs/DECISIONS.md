@@ -837,4 +837,8 @@ no reading of any shown amount to equal any reading of the price. The change can
 only remove contradictions, never add one. Prices written with the currency
 after the amount ("1.499,00 €") were never read as shown amounts, so a page
 using only that form still cannot produce the finding; that is a miss, not a
-false positive.
+false positive. RND-003 had the mirror-image gap: it looked for a price in the
+server response only in the currency-first form, so a European template writing
+"1.499,00 €" on the server and rendering a "€0,00" cart total in the browser
+would read as hiding its price. A currency-last amount in the server response
+now counts as a price being present, which again can only silence the rule.

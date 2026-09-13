@@ -29,6 +29,10 @@ PRICE_SHARE = 0.6
 PRICE_MIN_PAGES = 5
 PRICE_HIGH_PAGES = 8
 PRICE_TOKEN = re.compile(r"(?:₹|\$|€|£|¥|\bRs\.?|\bINR\b|\bUSD\b|\bEUR\b|\bGBP\b|\bJPY\b)\s?\d[\d,]*(?:\.\d+)?")
+# A price written with the currency after the amount, as much of Europe writes it
+# ("1.499,00 €", "29,95 EUR"). It counts only as evidence that the server
+# response already carries a price, so it can silence the rule, never fire it.
+PRICE_AFTER = re.compile(r"\d[\d.,]*\s?(?:€|£|₹|\$|\bEUR\b|\bUSD\b|\bGBP\b|\bINR\b|\bCHF\b|\bkr\b|zł)")
 PRICE_FIELDS = ("offers.price", "offers.lowPrice")
 
 
@@ -279,7 +283,8 @@ def rnd_003(evidence, workdir, out):
     hit = []
     for p in eligible:
         raw, rendered = texts[p["url"]]
-        if not PRICE_TOKEN.search(raw) and PRICE_TOKEN.search(rendered) and not structured_price(p):
+        in_server = PRICE_TOKEN.search(raw) or PRICE_AFTER.search(raw)
+        if not in_server and PRICE_TOKEN.search(rendered) and not structured_price(p):
             hit.append(p)
     if len(hit) < PRICE_SHARE * len(eligible):
         out["passed"].append({"rule_id": "RND-003", "summary":
