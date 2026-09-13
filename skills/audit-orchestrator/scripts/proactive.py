@@ -101,9 +101,9 @@ def pro_002(evidence, out):
     out["findings"].append({
         "id": "F-001",
         "title": "Monitor how assistants describe %s with a fixed prompt panel" % name,
-        "evidence": "This audit observes the site, not assistants' answers, by design. %d claims were promoted with at "
+        "evidence": "This audit observes the site, not assistants' answers, by design. %s promoted with at "
                     "least medium first-party confidence, which gives a panel whose expected answers are known: %s.%s"
-                    % (len(claims), "; ".join(panel[:6]),
+                    % ("1 claim was" if len(claims) == 1 else "%d claims were" % len(claims), "; ".join(panel[:6]),
                        " The name was scored ambiguous, so answers may describe a different entity; add the domain to "
                        "each prompt." if ambiguous else ""),
         "suggested_action": {
@@ -163,9 +163,9 @@ def pro_003(evidence, out):
                and any(n["type"] in ORG_TYPES for n in p["jsonld"])]
     if not anchors:
         out["not_assessed"].append({"rule_id": "PRO-003", "reason":
-                                    "no 2xx home or about page carries organization markup to anchor",
-                                    "enable_hint": "applies to sites whose home or about page describes the "
-                                                   "organization in JSON-LD"})
+                                    "no 2xx home or about page carries organization markup to add identity links to",
+                                    "enable_hint": "add Organization JSON-LD to the home page first; identity links "
+                                                   "are then checked on the next audit"})
         return
     # Any node declaring sameAs silences the recommendation: an empty declaration
     # is IDM-002's defect, and a site anchoring identity on another node type has
@@ -216,9 +216,10 @@ def pro_004(evidence, out):
                 and (p["page_type_confidence"] or 0) >= 0.8 and p["dates"]["visible_dates"]]
     if len(articles) < 2:
         out["not_assessed"].append({"rule_id": "PRO-004", "reason":
-                                    "articles showing a visible date, classified with confidence >= 0.8: %d; 2 are "
-                                    "needed" % len(articles),
-                                    "enable_hint": "applies to sites publishing dated articles"})
+                                    "%d sampled articles show a visible date; at least 2 are needed to judge the "
+                                    "article template" % len(articles),
+                                    "enable_hint": "only applies to sites that publish dated articles; audit the "
+                                                   "blog or news section's URL directly to sample more of them"})
         return
     bare = [p for p in articles
             if not p["dates"]["schema_date_published"] and not p["dates"]["schema_date_modified"]]

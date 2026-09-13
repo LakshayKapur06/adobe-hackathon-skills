@@ -53,8 +53,10 @@ def _finding(number, finding):
             "- **How you will know it worked:** %s" % _line(action["success_criteria"])]
     urls = sorted({ref["url"] for ref in finding["evidence_refs"]})
     shown = ", ".join(urls[:5]) + (" and %d more" % (len(urls) - 5) if len(urls) > 5 else "")
-    out += ["- **Pages behind this:** %s (%s of %s examined) · rule %s" % (
-        shown, finding["scope"]["pages_affected"], finding["scope"]["pages_examined"], finding["rule_id"]), ""]
+    scope = finding["scope"]
+    counted = (" (%s of %s examined)" % (scope["pages_affected"], scope["pages_examined"])
+               if scope["pages_examined"] else "")
+    out += ["- **Pages behind this:** %s%s · rule %s" % (shown, counted, finding["rule_id"]), ""]
     return out
 
 

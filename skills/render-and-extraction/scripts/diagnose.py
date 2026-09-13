@@ -126,8 +126,8 @@ def rnd_001(evidence, workdir, out):
             "%d of %s compared %s are JavaScript-dependent: at least 80%% of their rendered text is missing from the "
             "server response. Examples: %s. %s"
             % (len(hit), plural(len(members), "rendered page"), where,
-               "; ".join("%s (server %d chars, rendered %d, delta %.2f)"
-                         % (p["url"], p["raw"]["text_len"], p["rendered"]["text_len"], p["rendered"]["delta_ratio"])
+               "; ".join("%s (server response %d characters, rendered page %d)"
+                         % (p["url"], p["raw"]["text_len"], p["rendered"]["text_len"])
                          for p in hit[:5]),
                ("%s were not rendered within budget and are not counted." % plural(unrendered, "HTML page"))
                if unrendered else "Every sampled HTML page was rendered."),
@@ -140,8 +140,8 @@ def rnd_001(evidence, workdir, out):
                    "prerendering step in front of them serving the rendered HTML to every client alike; then "
                    "confirm with a plain fetch that headings and body text are present.",
                    "Extraction of the page's text from the fetched response.",
-                   "A plain fetch with no JavaScript of every cited URL gives a delta_ratio below 0.8, with the main "
-                   "headings and body text present in the server response.", "high"),
+                   "A plain fetch with no JavaScript of every cited URL returns the main headings and body text, so "
+                   "that at least a fifth of what the rendered page shows is already in the server response.", "high"),
             confidence="high" if empty_server else "medium",
             impact={"blocking": True, "breadth": breadth,
                     "content_importance": "primary" if primary else "secondary"},
@@ -186,10 +186,11 @@ def rnd_002(evidence, workdir, out):
     no_browser = not evidence["run_context"]["capabilities"]["js_render"]
     out["findings"].append(finding(
         "RND-002", "The server response carries no text on any sampled page",
-        "All %s returned fewer than %d characters of text in the server response (%s).%s%s No page was "
+        "%s returned fewer than %d characters of text in the server response (%s).%s%s No page was "
         "rendered%s, so what a browser would add is not measured here; what a fetcher that does not execute "
         "JavaScript receives is observed directly."
-        % (plural(len(html), "2xx HTML page"), EMPTY_TEXT,
+        % ("The only 2xx HTML page sampled" if len(html) == 1 else "All %d 2xx HTML pages sampled" % len(html),
+           EMPTY_TEXT,
            ", ".join("%s: %d" % (p["url"], p["raw"]["text_len"]) for p in html[:5]),
            " The site answered two paths that cannot exist with the identical response, so every URL serves one "
            "empty application shell." if shell else "",

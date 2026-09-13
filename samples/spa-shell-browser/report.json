@@ -1,5 +1,5 @@
 {
-  "audited_at": "2026-09-13T04:54:51Z",
+  "audited_at": "2026-09-13T05:17:26Z",
   "checks_passed": [
     {
       "rule_id": "ACC-001",
@@ -38,42 +38,42 @@
     {
       "category": "discoverability",
       "confidence": "high",
-      "evidence": "5 of 5 rendered pages compared across the site are JavaScript-dependent: at least 80% of their rendered text is missing from the server response. Examples: http://127.0.0.1:51057/ (server 0 chars, rendered 583, delta 1.00); http://127.0.0.1:51057/warranty (server 0 chars, rendered 1968, delta 1.00); http://127.0.0.1:51057/aboutus (server 0 chars, rendered 1712, delta 1.00); http://127.0.0.1:51057/grievance (server 0 chars, rendered 1558, delta 1.00); http://127.0.0.1:51057/extended-warranty (server 0 chars, rendered 2111, delta 1.00). Every sampled HTML page was rendered.",
+      "evidence": "5 of 5 rendered pages compared across the site are JavaScript-dependent: at least 80% of their rendered text is missing from the server response. Examples: http://127.0.0.1:64099/ (server response 0 characters, rendered page 583); http://127.0.0.1:64099/warranty (server response 0 characters, rendered page 1968); http://127.0.0.1:64099/aboutus (server response 0 characters, rendered page 1712); http://127.0.0.1:64099/grievance (server response 0 characters, rendered page 1558); http://127.0.0.1:64099/extended-warranty (server response 0 characters, rendered page 2111). Every sampled HTML page was rendered.",
       "evidence_refs": [
         {
           "layer": "first_party",
           "method": "render",
           "observation": "server text 0 chars, rendered 583 chars, delta_ratio 1.000",
-          "retrieved_at": "2026-09-13T04:54:51Z",
-          "url": "http://127.0.0.1:51057/"
+          "retrieved_at": "2026-09-13T05:17:26Z",
+          "url": "http://127.0.0.1:64099/"
         },
         {
           "layer": "first_party",
           "method": "render",
           "observation": "server text 0 chars, rendered 1968 chars, delta_ratio 1.000",
-          "retrieved_at": "2026-09-13T04:54:56Z",
-          "url": "http://127.0.0.1:51057/warranty"
+          "retrieved_at": "2026-09-13T05:17:31Z",
+          "url": "http://127.0.0.1:64099/warranty"
         },
         {
           "layer": "first_party",
           "method": "render",
           "observation": "server text 0 chars, rendered 1712 chars, delta_ratio 1.000",
-          "retrieved_at": "2026-09-13T04:54:56Z",
-          "url": "http://127.0.0.1:51057/aboutus"
+          "retrieved_at": "2026-09-13T05:17:31Z",
+          "url": "http://127.0.0.1:64099/aboutus"
         },
         {
           "layer": "first_party",
           "method": "render",
           "observation": "server text 0 chars, rendered 1558 chars, delta_ratio 1.000",
-          "retrieved_at": "2026-09-13T04:54:56Z",
-          "url": "http://127.0.0.1:51057/grievance"
+          "retrieved_at": "2026-09-13T05:17:31Z",
+          "url": "http://127.0.0.1:64099/grievance"
         },
         {
           "layer": "first_party",
           "method": "render",
           "observation": "server text 0 chars, rendered 2111 chars, delta_ratio 1.000",
-          "retrieved_at": "2026-09-13T04:54:56Z",
-          "url": "http://127.0.0.1:51057/extended-warranty"
+          "retrieved_at": "2026-09-13T05:17:31Z",
+          "url": "http://127.0.0.1:64099/extended-warranty"
         }
       ],
       "exceptions_checked": [
@@ -111,7 +111,7 @@
         "how": "Enable the framework's server rendering or static generation for these routes, or put a prerendering step in front of them serving the rendered HTML to every client alike; then confirm with a plain fetch that headings and body text are present.",
         "mechanism": "Extraction of the page's text from the fetched response.",
         "priority": "P0",
-        "success_criteria": "A plain fetch with no JavaScript of every cited URL gives a delta_ratio below 0.8, with the main headings and body text present in the server response.",
+        "success_criteria": "A plain fetch with no JavaScript of every cited URL returns the main headings and body text, so that at least a fifth of what the rendered page shows is already in the server response.",
         "summary": "Server-render, statically generate or prerender these routes so their text is in the server response.",
         "what": "Put the page's substance in the server response for the templates across the site.",
         "where": "The routes cited and the rendering configuration of their templates.",
@@ -126,35 +126,35 @@
     {
       "category": "discoverability",
       "confidence": "high",
-      "evidence": "4 of 4 non-root 2xx pages that declare a canonical name http://127.0.0.1:51057/, the site root, as their canonical URL. Each tells an indexer it is a duplicate of the home page.",
+      "evidence": "4 of 4 non-root 2xx pages that declare a canonical name http://127.0.0.1:64099/, the site root, as their canonical URL. Each tells an indexer it is a duplicate of the home page.",
       "evidence_refs": [
         {
           "layer": "first_party",
           "method": "render",
-          "observation": "canonical http://127.0.0.1:51057/ on http://127.0.0.1:51057/warranty",
-          "retrieved_at": "2026-09-13T04:54:56Z",
-          "url": "http://127.0.0.1:51057/warranty"
+          "observation": "canonical http://127.0.0.1:64099/ on http://127.0.0.1:64099/warranty",
+          "retrieved_at": "2026-09-13T05:17:31Z",
+          "url": "http://127.0.0.1:64099/warranty"
         },
         {
           "layer": "first_party",
           "method": "render",
-          "observation": "canonical http://127.0.0.1:51057/ on http://127.0.0.1:51057/aboutus",
-          "retrieved_at": "2026-09-13T04:54:56Z",
-          "url": "http://127.0.0.1:51057/aboutus"
+          "observation": "canonical http://127.0.0.1:64099/ on http://127.0.0.1:64099/aboutus",
+          "retrieved_at": "2026-09-13T05:17:31Z",
+          "url": "http://127.0.0.1:64099/aboutus"
         },
         {
           "layer": "first_party",
           "method": "render",
-          "observation": "canonical http://127.0.0.1:51057/ on http://127.0.0.1:51057/grievance",
-          "retrieved_at": "2026-09-13T04:54:56Z",
-          "url": "http://127.0.0.1:51057/grievance"
+          "observation": "canonical http://127.0.0.1:64099/ on http://127.0.0.1:64099/grievance",
+          "retrieved_at": "2026-09-13T05:17:31Z",
+          "url": "http://127.0.0.1:64099/grievance"
         },
         {
           "layer": "first_party",
           "method": "render",
-          "observation": "canonical http://127.0.0.1:51057/ on http://127.0.0.1:51057/extended-warranty",
-          "retrieved_at": "2026-09-13T04:54:56Z",
-          "url": "http://127.0.0.1:51057/extended-warranty"
+          "observation": "canonical http://127.0.0.1:64099/ on http://127.0.0.1:64099/extended-warranty",
+          "retrieved_at": "2026-09-13T05:17:31Z",
+          "url": "http://127.0.0.1:64099/extended-warranty"
         }
       ],
       "exceptions_checked": [
@@ -216,8 +216,8 @@
           "layer": "first_party",
           "method": "render",
           "observation": "JSON-LD types on the home page: none",
-          "retrieved_at": "2026-09-13T04:54:51Z",
-          "url": "http://127.0.0.1:51057/"
+          "retrieved_at": "2026-09-13T05:17:26Z",
+          "url": "http://127.0.0.1:64099/"
         }
       ],
       "exceptions_checked": [
@@ -255,7 +255,7 @@
         "success_criteria": "The home page's server response contains a JSON-LD node of an Organization type with at least name and url.",
         "summary": "Add Organization JSON-LD with name, url, logo and sameAs to the home page.",
         "what": "Add an Organization JSON-LD block, or the most specific subtype that applies, to the home page.",
-        "where": "The home page template's <head>, in the server response (http://127.0.0.1:51057/).",
+        "where": "The home page template's <head>, in the server response (http://127.0.0.1:64099/).",
         "why": "It states the entity behind the site explicitly instead of leaving it to be inferred from a name."
       },
       "symptom": [
@@ -266,14 +266,14 @@
     {
       "category": "discoverability",
       "confidence": "low",
-      "evidence": "/llms.txt at http://127.0.0.1:51057 answered HTTP 200 and is not present. No major assistant is documented to read this file, so this is listed only as a low-cost hedge, not as a gap.",
+      "evidence": "/llms.txt at http://127.0.0.1:64099 answered HTTP 200 and is not present. No major assistant is documented to read this file, so this is listed only as a low-cost hedge, not as a gap.",
       "evidence_refs": [
         {
           "layer": "first_party",
           "method": "fetch",
           "observation": "HTTP 200, not present",
-          "retrieved_at": "2026-09-13T04:54:51Z",
-          "url": "http://127.0.0.1:51057/llms.txt"
+          "retrieved_at": "2026-09-13T05:17:26Z",
+          "url": "http://127.0.0.1:64099/llms.txt"
         }
       ],
       "exceptions_checked": [],
@@ -301,7 +301,7 @@
         "success_criteria": "/llms.txt answers 200 with content that is not the site's soft-404 page.",
         "summary": "If it costs little, publish a short /llms.txt; do not expect it to change how assistants see the site.",
         "what": "Publish a plain-text /llms.txt summarising what the site is and linking its key pages.",
-        "where": "http://127.0.0.1:51057/llms.txt",
+        "where": "http://127.0.0.1:64099/llms.txt",
         "why": "It is a proposed convention some tools read; no major assistant documents consuming it, which is why this is proactive and never a finding."
       },
       "symptom": [
@@ -352,6 +352,16 @@
       "rule_id": "PRO-002"
     },
     {
+      "enable_hint": "add Organization JSON-LD to the home page first; identity links are then checked on the next audit",
+      "reason": "no 2xx home or about page carries organization markup to add identity links to",
+      "rule_id": "PRO-003"
+    },
+    {
+      "enable_hint": "only applies to sites that publish dated articles; audit the blog or news section's URL directly to sample more of them",
+      "reason": "0 sampled articles show a visible date; at least 2 are needed to judge the article template",
+      "rule_id": "PRO-004"
+    },
+    {
       "enable_hint": "none needed: this rule covers only runs with no rendered page",
       "reason": "rendered pages were available, so RND-001 made the stronger raw-versus-rendered comparison instead",
       "rule_id": "RND-002"
@@ -394,7 +404,7 @@
       }
     ],
     "elapsed_s": 9.0,
-    "finished_at": "2026-09-13T04:55:00Z",
+    "finished_at": "2026-09-13T05:17:35Z",
     "sampling": {
       "strata": [
         {
@@ -415,7 +425,7 @@
       ],
       "strategy": "stratified:nav"
     },
-    "started_at": "2026-09-13T04:54:51Z"
+    "started_at": "2026-09-13T05:17:26Z"
   },
   "site": "127.0.0.1",
   "summary": {
