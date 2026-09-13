@@ -1,16 +1,16 @@
 {
   "schema_version": "1.0.0",
   "site": {
-    "input": "http://127.0.0.1:63462",
-    "resolved_origin": "http://127.0.0.1:63462",
+    "input": "http://127.0.0.1:60142",
+    "resolved_origin": "http://127.0.0.1:60142",
     "registrable_domain": "127.0.0.1",
     "detected_locales": [
       "en"
     ]
   },
   "run_context": {
-    "started_at": "2026-09-13T08:51:46Z",
-    "finished_at": "2026-09-13T08:51:47Z",
+    "started_at": "2026-09-13T12:28:04Z",
+    "finished_at": "2026-09-13T12:28:05Z",
     "capabilities": {
       "js_render": false,
       "egress": false,
@@ -51,7 +51,7 @@
   },
   "robots": {
     "fetched": true,
-    "url": "http://127.0.0.1:63462/robots.txt",
+    "url": "http://127.0.0.1:60142/robots.txt",
     "status": 200,
     "parse_ok": false,
     "parse_reason": "not_plausibly_robots",
@@ -70,7 +70,7 @@
   },
   "sitemaps": [
     {
-      "url": "http://127.0.0.1:63462/sitemap.xml",
+      "url": "http://127.0.0.1:60142/sitemap.xml",
       "status": 200,
       "url_count": null,
       "lastmod_present_ratio": null,
@@ -107,19 +107,19 @@
   },
   "pages": [
     {
-      "url": "http://127.0.0.1:63462/",
-      "final_url": "http://127.0.0.1:63462/",
+      "url": "http://127.0.0.1:60142/",
+      "final_url": "http://127.0.0.1:60142/",
       "status": 200,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T08:51:46Z",
+      "fetched_at": "2026-09-13T12:28:04Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
         "cache_control": null
       },
       "meta_robots": [],
-      "canonical": "http://127.0.0.1:63462/",
+      "canonical": "http://127.0.0.1:60142/",
       "canonical_self": true,
       "lang": "en",
       "hreflang": [],
@@ -164,9 +164,9 @@
       },
       "obstructions": [],
       "timing": {
-        "ttfb_ms": 10.5,
-        "connect_ms": 9.8,
-        "fetch_ms": 10.7,
+        "ttfb_ms": 4.1,
+        "connect_ms": 3.3,
+        "fetch_ms": 4.3,
         "render_ms": null
       },
       "provenance": {
@@ -192,49 +192,49 @@
   },
   "ua_probe": [
     {
-      "url": "http://127.0.0.1:63462/",
+      "url": "http://127.0.0.1:60142/",
       "user_agent": "browser-ua",
       "status": 200,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:63462/",
+      "url": "http://127.0.0.1:60142/",
       "user_agent": "GPTBot",
       "status": 200,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:63462/",
+      "url": "http://127.0.0.1:60142/",
       "user_agent": "ClaudeBot",
       "status": 200,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:63462/",
+      "url": "http://127.0.0.1:60142/",
       "user_agent": "PerplexityBot",
       "status": 200,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:63462/",
+      "url": "http://127.0.0.1:60142/",
       "user_agent": "OAI-SearchBot",
       "status": 200,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:63462/",
+      "url": "http://127.0.0.1:60142/",
       "user_agent": "CCBot",
       "status": 200,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:63462/",
+      "url": "http://127.0.0.1:60142/",
       "user_agent": "Googlebot",
       "status": 200,
       "text_len": 0,
@@ -263,12 +263,12 @@
   ],
   "errors": [
     {
-      "url": "http://127.0.0.1:63462/robots.txt",
+      "url": "http://127.0.0.1:60142/robots.txt",
       "stage": "robots",
       "message": "not a robots.txt: the body is an HTML document (content-type text/html); treated as absent, no restrictions"
     },
     {
-      "url": "http://127.0.0.1:63462/",
+      "url": "http://127.0.0.1:60142/",
       "stage": "discovery",
       "message": "soft-404 baseline sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855: two paths that cannot exist both returned status 200 with this identical body"
     }

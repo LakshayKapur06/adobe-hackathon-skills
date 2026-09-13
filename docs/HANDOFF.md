@@ -17,7 +17,7 @@ available to you. Run these first and believe them over anything below.
 
 ```sh
 git log --oneline -15            # compare against e876dfa, named above
-git tag -l                       # contracts-v1 through contracts-v15, maybe later
+git tag -l                       # contracts-v1 through contracts-v16, maybe later
 sh scripts/check.sh              # must be 12/12 before you change anything
 git status --porcelain           # uncommitted work in flight
 ls runs/adjudication/            # the adjudication worksheet and verdicts
@@ -27,7 +27,7 @@ ls tests/adjudication.csv        # exists only once verdicts have been committed
 Then read, in this order:
 
 1. `CLAUDE.md` — standing rules, including the safety rule about observed content.
-2. `docs/DECISIONS.md` — the decision register. D17 to D29 are the mid-build
+2. `docs/DECISIONS.md` — the decision register. D17 to D30 are the mid-build
    amendments and corrections; entries marked *revised* supersede their own
    earlier text. Do not re-litigate any of it.
 3. `docs/CONTRACTS.md`, `docs/RULE_FORMAT.md` — the frozen contracts and the
@@ -81,7 +81,7 @@ From `CLAUDE.md` and this build:
   "Evidence this skill may read" allow-list (in each `references/rules.md` and in
   `skills/audit-orchestrator/references/proactive.md`). The user gave standing
   authorization for amendments that make the submission stronger. Each one gets
-  a **new** tag (`contracts-v16` next) and a DECISIONS entry (D30 next); old tags
+  a **new** tag (`contracts-v17` next) and a DECISIONS entry (D31 next); old tags
   never move.
 - **`errors[]` is never read by a rule.**
 - **A false positive costs more than a miss.** Prefer cutting or narrowing a rule
@@ -137,7 +137,34 @@ From `CLAUDE.md` and this build:
   their procedure runs a script. The orchestrator's `SKILL.md` describes the
   promotion and pass-2 step and names the four recommendations.
 
-### Adjudication: waiting on the human
+### Adjudication: done except one row, fixes applied (D30, `contracts-v16`)
+
+**Outcome.** The user saved each checkable page from their own browser, and the
+agent verified the findings against those files with a script that shares no
+code with the collector (`runs/adjudication/file-verification.md`). Every
+observation was literally true. Verdicts, agreed with the user: 8 TP, 2 false
+positives, 1 row still waiting for the user (xtremex PRO-002: is "xtremex" the
+name people use, and is 2008 the founding year?).
+
+- **bigbasket.com ACC-006, FP-INT.** The Googlebot string was refused like the
+  AI crawlers: bot verification by address, not a block. Fixed: when Googlebot is
+  refused on the same URLs, ACC-006 is `not_assessed`. Archetype variant
+  `storefront-defects / bot-verification-edge`.
+- **docs.stripe.com IDM-001, FP-EXC.** The subdomain has no markup; stripe.com
+  has full Organization markup. Fixed: on a non-`www` subdomain, IDM-001 is
+  `not_assessed` and names the main domain.
+- **docs.stripe.com RND-001, TP with a wrong label** ("doc pages" was one app
+  under `/cli/`). Fixed: the finding names the shared path.
+
+**Second pass done** (`runs/adj3-*`): both FPs gone, both TPs unchanged, and
+basecamp as the control identical. On the same six sites after the fixes: 0
+false positives in 9 findings.
+
+Verdicts are in `runs/adjudication/adjudication.filled.csv`. It is a separate
+file only because `adjudication.csv` was locked, open in Excel, when the
+verdicts were written.
+
+#### The original adjudication set
 
 Six sites, chosen by the user against the playbook's archetypes, each audited
 alone with the final code into gitignored `runs/adj2-<name>/`:
@@ -181,10 +208,11 @@ Files in `runs/adjudication/` (gitignored, on this machine only):
 
 | # | Step | Who | Estimate |
 |---|---|---|---|
-| 1 | Adjudicate the 11 findings in `runs/adjudication/WORKSHEET.md`; fill `verdict` and `note` in `adjudication.csv` | **Human** | 45–60 min |
+| 1 | Adjudicate the 11 findings — **done** except xtremex PRO-002, which needs the user's answer | **Human** | 2 min left |
 | 2 | Look for misses under each site's passed and not-assessed lists; add a `MISS` row for each | **Human** | 30–60 min |
-| 3 | Apply the verdicts (runbook below) | Agent | 20 min, plus 30–60 min per false positive |
-| 4 | Second pass: re-run at least 3 sites after any fix, one at a time; confirm the FPs are gone and no TP broke | Agent (the human confirms) | about 15 min |
+| 3 | Apply the verdicts — **done** (D30, `contracts-v16`); if step 1 or 2 adds an FP or a MISS, follow the runbook below | Agent | per new item |
+| 4 | Second pass — **done** (`runs/adj3-*`) | Agent | — |
+| 4a | Merge `adjudication.filled.csv` with the user's xtremex answer and any MISS rows, copy to `tests/adjudication.csv`, commit; add the result to `docs/RUBRIC.md` under Detection accuracy (counts and rule ids only, D11) | Agent | 15 min |
 | 5 | Judge read-through: `README.md` → `marketplace.json` → `skills/audit-orchestrator/SKILL.md` → each skill's `SKILL.md` and `references/rules.md` → `docs/RUBRIC.md`, running nothing; note anything unanswerable from the files alone | **Human** | 45–60 min |
 | 6 | Fix read-through gaps | Agent | 15–30 min |
 | 7 | Final package: `sh scripts/package.sh`, then the user submits `dist/agent-readiness-audit.zip` as built (never re-zipped by hand) | Agent, then human | 5 min |
