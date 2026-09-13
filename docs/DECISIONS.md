@@ -1020,3 +1020,24 @@ reported against the section's server-rendered articles.
   client (curl) and a separate parser found 0 characters of visible text in the
   server response of a cited local video page, which carries a title and JSON-LD
   only.
+
+### D42 — Assurance pass: what a report says when there is nothing to report
+
+A second pre-submission pass ran the audit on failure paths and on three more
+real site classes (an editorial publisher, a Japanese retailer, a SaaS marketing
+site). Nothing produced a false finding; four output and robustness defects were
+fixed:
+
+- **An unreachable site read as clean.** For a domain that does not resolve, a
+  certificate that has expired, or a site that drops connections from the
+  auditing network, the report opened with "0 problems found". It now opens with
+  a notice that the site could not be audited from here, with the cause, before
+  anything else. The collector keeps the network error in the robots.txt reason
+  ("no response: certificate has expired") instead of "no response".
+- **The report named the parent domain.** `site` was the registrable domain, so a
+  documentation subdomain's report was titled with its parent. It is now the
+  audited host, without a leading `www.`.
+- **Underscore language tags.** `lang="en_US"`, which some themes emit, read as
+  non-English and would have dropped English articles out of FRC-001 and PRO-004.
+- **FRC-002's not-assessed reason** printed internal values ("egress True,
+  attempted False"); it now says which of the two prevented the check.
