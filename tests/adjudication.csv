@@ -10,3 +10,4 @@ S4,documentation subdomain of a large company,IDM-001,found,medium,FP-EXC,"subdo
 S5,non-English (Hindi) news publisher,ACC-008,proactive,medium,TP,"robots.txt gives OAI-SearchBot, PerplexityBot and Claude-SearchBot their own groups with Disallow: /",unchanged,
 S5,non-English (Hindi) news publisher,PRO-001,proactive,low,TP,/llms.txt answers 404; wording reads as optional,unchanged,
 S6,university,PRO-001,proactive,low,TP,/llms.txt answers 404; wording reads as optional,unchanged,
+S2,small storefront the adjudicator knows well,IDM-002,found,medium,MISS,"sameAs listed the platform's own TikTok and YouTube accounts (theme defaults) beside real profiles; IDM-002 passed because one entry was usable",fires after D35,test_identity_rules.TestIDM002.test_platform_default_profiles_are_a_misidentification

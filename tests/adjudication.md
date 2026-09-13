@@ -23,7 +23,8 @@ picks sites that flatter its own tool:
 | S5 | non-English (Hindi) news publisher |
 | S6 | university |
 
-Each site was audited alone, in 73 to 178 seconds of wall time. For every finding, the adjudicator asked three questions in order:
+Each site was audited alone, in 73 to 178 seconds of wall time. For every
+finding, the adjudicator asked three questions in order:
 
 1. Is the recorded observation literally true?
 2. Does the conclusion follow from it?
@@ -74,6 +75,15 @@ reproduces the pattern on fictional data:
 | D31 | A founding year is promoted above low confidence only from organization markup, never from prose | `test_corroboration.TestPromotion.test_a_founding_year_from_prose_has_no_subject_to_assert` |
 | D31 | The prompt panel names the domain for medium-ambiguity names too | `test_orchestrator.TestProactive.test_ambiguous_name_is_flagged_in_the_panel` |
 
+## Misses
+
+After the verdicts, the adjudicator looked on each site for real problems the
+audit had not reported, concentrating on checks that had passed.
+
+| Site | What the adjudicator saw | What changed |
+|---|---|---|
+| S2 | The organization markup's `sameAs` listed the e-commerce platform's own TikTok and YouTube accounts, the theme's default social links, beside the brand's real profiles, a mistyped address and empty entries. `sameAs` asserts each is the same entity, so the markup said the brand is its platform. IDM-002 passed, because it fired only when no entry was usable | D35: IDM-002 also fires on exact platform handles on known social networks, the platform's own site excluded. Run again over every saved real-site bundle, it matched this site's two defaults and nothing else. The mistyped address stays undetected: telling a typing error from a real host would need a list of top-level domains that keeps growing |
+
 ## Second pass
 
 S3, S4 and S1 (unchanged, as a control) were audited again after the D30 fixes:
@@ -85,7 +95,8 @@ S3, S4 and S1 (unchanged, as a control) were audited again after the D30 fixes:
 | S1 | IDM-001, PRO-001 | identical |
 
 On the same six sites, the findings after the fixes contain no false positive:
-9 findings, 3 of them problems.
+10 findings, 4 of them problems, counting the IDM-002 finding the miss check
+added (D35).
 
 **What this does and does not show.** The second pass confirms the fixes remove
 the false positives and break no true positive. It is not an independent
