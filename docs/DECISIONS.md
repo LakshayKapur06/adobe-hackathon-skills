@@ -913,3 +913,63 @@ within two path segments of the root; unambiguous names such as
 `privacy-policy` still count anywhere. Re-classifying all 847 saved real-site
 pages changed 22, every one of them a listing or a news video that had been
 wrongly typed as policy, and no page that was really a policy.
+
+### D37 — `contracts-v17`: Bingbot is tracked as an answer-time retrieval crawler
+
+The final audit read the retrieval set as an answer-engine specialist would and
+found it missing the index that Microsoft Copilot grounds its answers in. Bing's
+crawler is `Bingbot`, and a robots.txt that admits only `Googlebot` under a
+closed `*` group, a pattern observed on real sites, shuts Copilot out without
+any rule saying so. Exactly as `Claude-SearchBot` was added in `contracts-v3`,
+`Bingbot` joins `robots.ai_agents` (the schema's required set and the collector's
+agent list) and the access rules' retrieval set, so ACC-001 and ACC-008 name it.
+It is not added to the user-agent probe: Microsoft, like Google, publishes a
+verification procedure for its crawler, so refusing an unverified `Bingbot`
+string is an expected defence and would tell ACC-006 nothing. The claim made is
+only that Bing's index serves Bing search and Copilot.
+
+### D38 — Consent interfaces are not page text, and a page type is sampled across its sections
+
+The final audit ran three sites of classes the adjudication had not covered. On
+a French national publisher it produced two high-severity RND-001 findings, and
+both were false positives with one cause. The publisher's consent wall, inserted
+by script, adds 31,188 identical characters (its purposes and partner list) to
+the rendered DOM of each page; a server-rendered article of 4,010 characters
+therefore read as 89% missing from the server response. A help page read the same
+way. Consent managers are on almost every European site, so this would have
+recurred wherever a page carries modest server text.
+
+The extractor now excludes consent interfaces from text on both sides of the
+comparison: elements whose id or class carries a consent-specific token
+(`gdpr`, `consent`, `cmp`, `tcf`, or a known consent-manager name), or `cookie`
+together with a banner-like token, never `html`, `body`, `main` or `article`.
+Applying it to the server response as well as the rendered DOM keeps the ratio
+symmetric, and requiring a companion token for `cookie` keeps a bakery's
+`cookie-recipes` section in the text.
+
+The same run exposed a sampling bias. Within a page type the sampler preferred
+the shallowest, shortest URLs, so all nine sampled articles came from a small quiz
+section at `/memorable/blog/x`, while more than three thousand news articles at
+`/international/article/2026/09/13/x` were never sampled. A type is now sampled
+across its sections (a first path segment at one depth), least-sampled section
+first, larger sections breaking ties, and the old preference applies within a
+section. Neither change alters a schema field.
+
+### D39 — Observed content in the agent's path, a currency check, and a wording contradiction
+
+- **The observed-content rule reaches the agent.** It was stated only in the
+  collector's `SKILL.md`, yet the entrypoint's host agent reads `report.json`
+  and the findings files, whose evidence quotes site-controlled strings, and each
+  diagnostic's documented fallback is an agent applying the rules by hand to the
+  bundle. The entrypoint and all six diagnostics now state it where they read
+  that data. IDM-001 also stopped quoting `@type` strings that are not
+  schema.org-shaped names: a site can put any sentence there.
+- **A price in another currency is not a contradiction.** The collector compared
+  every shown amount with the marked-up price whatever its currency, so a store
+  whose markup says USD and whose display is localized to rupees would have been
+  reported, at high confidence, as contradicting its own prices. Only amounts
+  whose sign can denote the declared `priceCurrency` are compared now; with none
+  declared, all are, as before.
+- **PRO-001 no longer contradicts itself.** A site answering unknown addresses
+  with a 200 page produced "answered HTTP 200 and is not present"; it now says
+  the answer was an empty body or the site's page for unknown addresses.
