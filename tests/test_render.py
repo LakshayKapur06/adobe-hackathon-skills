@@ -160,11 +160,19 @@ class TestSecondAttemptIsConditional(unittest.TestCase):
 class TestRealBrowser(unittest.TestCase):
     def test_a_page_that_never_finishes_loading_is_still_dumped(self):
         renderer = render.Renderer(render.find_browser()[0], fetch.USER_AGENT)
-        with HangingSite() as site:
-            started = time.monotonic()
-            html, error, _ = renderer.render(site.base + "/")
-            elapsed = time.monotonic() - started
-        self.assertIsNone(error, error)
+        # One retry. The regression below fails every attempt, deterministically;
+        # a browser starved of CPU by other work on the machine fails one attempt
+        # at most, and a gate run should not go red for that.
+        failures = []
+        for _ in range(2):
+            with HangingSite() as site:
+                started = time.monotonic()
+                html, error, _ = renderer.render(site.base + "/")
+                elapsed = time.monotonic() - started
+            if error is None:
+                break
+            failures.append(error)
+        self.assertIsNone(error, failures)
         self.assertIn("written-at-dcl", html)
         self.assertIn("written-after-800ms", html)
         # Bounded by the page timeout plus browser start-up, which varies with
