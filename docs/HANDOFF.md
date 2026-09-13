@@ -1,6 +1,6 @@
 # HANDOFF — picking this build up in the final stretch
 
-Brought up to date 2026-09-13 at commit `9920780`. The marketplace is
+Brought up to date 2026-09-13 at commit `126e469`, after the final submission-readiness audit (D37–D40). The marketplace is
 feature-complete, adjudicated (including the user's miss check), audited end to
 end and packaged. One human step remains: the user's judge read-through, in
 progress. What is left for an agent is to fix the gaps it reports, then build
@@ -16,8 +16,8 @@ need is in this repository plus the gitignored `runs/` folder on this machine.
 and believe them over anything below.
 
 ```sh
-git log --oneline -15            # compare against 9920780, named above
-git tag -l                       # contracts-v1 through contracts-v16, maybe later
+git log --oneline -15            # compare against 126e469, named above
+git tag -l                       # contracts-v1 through contracts-v17, maybe later
 python scripts/check.py; echo "gate exit=$?"   # must be 0 before you change anything
 git status --porcelain           # uncommitted work in flight
 ls runs/adjudication/            # the user's verification material (section 4)
@@ -31,7 +31,7 @@ once (`890fbc1`). Capture the status: `python scripts/check.py > /tmp/gate.log
 Then read, in this order:
 
 1. `CLAUDE.md` — standing rules, including the safety rule about observed content.
-2. `docs/DECISIONS.md` — the decision register. D17 to D36 are the mid-build
+2. `docs/DECISIONS.md` — the decision register. D17 to D40 are the mid-build
    amendments and corrections; entries marked *revised* supersede their own
    earlier text. Do not re-litigate any of it.
 3. `docs/CONTRACTS.md`, `docs/RULE_FORMAT.md` — the frozen contracts and the
@@ -87,7 +87,7 @@ From `CLAUDE.md` and this build:
   "Evidence this skill may read" allow-list (in each `references/rules.md` and in
   `skills/audit-orchestrator/references/proactive.md`). The user gave standing
   authorization for amendments that make the submission stronger. Each gets a
-  **new** tag (`contracts-v17` next) and a DECISIONS entry (D37 next); old tags
+  **new** tag (`contracts-v18` next) and a DECISIONS entry (D41 next); old tags
   never move. A change that adds no field and changes no allow-list needs only
   the DECISIONS entry.
 - **`errors[]` is never read by a rule.**
@@ -117,7 +117,7 @@ From `CLAUDE.md` and this build:
 
 ---
 
-## 3. Current state at `9920780`
+## 3. Current state at `126e469`
 
 | Area | State |
 |---|---|
@@ -128,7 +128,7 @@ From `CLAUDE.md` and this build:
 | Verification | G2 collector check (`tests/g2-evidence-check.md`); every rule reviewed and fact-checked (`tests/rule-review.md`); 5 fictional archetype sites with variants, asserted in both directions (`tests/fixtures/archetypes/`); real-site adjudication with a second pass and a miss check (`tests/adjudication.md`); final audit (section 4) |
 | Docs a judge reads | `README.md` (opens with "For judges: where to look, in order"), `docs/RUBRIC.md`, `samples/` (3 fixture runs) |
 | Format | All 8 skills pass the official `skills-ref validate` 0.1.1; all shipped Python parses as 3.8 |
-| Gate and package | `python scripts/check.py` 12/12 at `9920780`; `sh scripts/package.sh` builds `dist/agent-readiness-audit.zip` (about 1.03 MB) from `git archive` of HEAD and re-runs the gate in a clean extraction. `docs/HANDOFF.md` and `docs/KICKOFF_PROMPT.md` are `export-ignore` |
+| Gate and package | `python scripts/check.py` 12/12 at `126e469`; `sh scripts/package.sh` builds `dist/agent-readiness-audit.zip` (1.04 MB) from `git archive` of HEAD and re-runs the gate in a clean extraction. `docs/HANDOFF.md` and `docs/KICKOFF_PROMPT.md` are `export-ignore` |
 
 **Samples.** `python scripts/build_samples.py` regenerates `samples/`. Every
 regeneration changes ports and timestamps; commit a regeneration only when a
@@ -204,6 +204,35 @@ Fixed in that pass:
   states D31; D32 records the priority vocabulary.
 - All real site names anonymized across shipped files.
 
+### Final submission-readiness audit (commits `8867c01` to `126e469`)
+
+Three more real site classes were audited live (a large US Shopify storefront, a
+bot-protected French publisher, a server-rendered documentation site) in
+`runs/final-*`, then re-run after the fixes in `runs/final2-*` with the
+documentation subdomain and basecamp as controls. Fixed:
+
+- **D37 `contracts-v17`**: `Bingbot` tracked as a retrieval crawler (Bing and
+  Microsoft Copilot); not probed by user agent.
+- **D38**: consent interfaces (cookie banners, consent walls, partner lists)
+  excluded from extracted text on both sides; they had produced two high
+  RND-001 false positives on the French publisher. The sampler rotates across
+  sections within a page type; shallow outliers had filled the article stratum.
+- **D39**: the observed-content rule stated in the entrypoint and all six
+  diagnostic `SKILL.md` files; IDM-001 quotes only schema.org-shaped `@type`
+  names; price contradictions compare only amounts in the declared
+  `priceCurrency`; PRO-001's "answered 200 and is not present" wording.
+- **D40**: RND-001 groups by the path an application is mounted under, narrowed
+  to shared inner segments, before page types. It restored the documentation
+  subdomain's `/cli/` finding, lost when sampling spread across sections, and
+  added a verified finding on the Hindi publisher's local video pages.
+- README gained a rule index (24: 14 found, 4 risk, 6 proactive); spec wording
+  fixes (ACC-003 crawler count, RND-001 success criteria).
+
+Accepted, not changed: IDM-001 fires on most sites without Organization markup;
+kept as a problem because the handout names missing structured data as one, at
+medium severity. Bot-challenge pages served with 200 are recorded as thin pages;
+only RND-002 could misread them, and only if every page were challenged.
+
 ### Files in `runs/` (gitignored, this machine only)
 
 | Path | What it is |
@@ -232,7 +261,7 @@ with runbook A.
 |---|---|---|---|
 | 1 | Misses — **done** (section 4; D35, D36) | User, then agent | — |
 | 2 | Judge read-through | **User** (in progress) | 45–60 min |
-| 3 | Fix read-through gaps (runbook B) | Agent | 15–45 min |
+| 3 | Fix read-through gaps (runbook B); the final agent audit is done (section 4) | Agent | 15–45 min |
 | 4 | Final package, verified, handed over (runbook C) | Agent, then the user submits | 10 min |
 
 A safety zip can be built at any committed HEAD with runbook C, so a
