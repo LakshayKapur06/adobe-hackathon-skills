@@ -160,7 +160,7 @@ in `scripts/diagnose.py`, one function per rule, in the order written here.
   of an Organization type with at least `name` and `url`.
 - **Effort:** low
 
-### IDM-002 — Organization markup declares sameAs links that identify nothing
+### IDM-002 — Organization sameAs links identify nothing, or identify the site's platform
 
 - **Mechanism:** `sameAs` is how markup ties this site's entity to the same
   entity described elsewhere: its profiles, its encyclopedia entry, its
@@ -168,13 +168,17 @@ in `scripts/diagnose.py`, one function per rule, in the order written here.
   indicates the item's identity". When the property is present but every value
   is empty or not a URL, the site announces an identity link and supplies none,
   which is typically a theme emitting a field for social profiles that were
-  never filled in.
+  never filled in. The same settings produce a worse case: a theme whose default
+  social links are the platform's own accounts (`tiktok.com/@shopify`), left in
+  place, so the markup asserts that the organization is the platform.
 - **Signal:** an organization node on a 2xx page has `sameAs` in
-  `fields_present`, its `sameAs` value is recorded, and it contains no usable
-  entry.
+  `fields_present`, its `sameAs` value is recorded, and either it contains no
+  usable entry, or an entry is a profile on a known social network whose handle
+  is exactly a site platform's own (Shopify, Wix, Squarespace, WordPress,
+  BigCommerce, WooCommerce, Webflow, GoDaddy, Weebly, HubSpot).
 - **Evidence read:** `pages[].url`, `pages[].status`, `pages[].page_type`,
   `pages[].jsonld[].type`, `pages[].jsonld[].fields_present`,
-  `pages[].jsonld[].values`.
+  `pages[].jsonld[].values`, `site.registrable_domain`.
 - **Threshold:** one such node. Justification: a declared property with no
   usable value is a literal defect in the markup, not a statistical pattern, so
   one observation is sufficient; `breadth` records whether a shared template
@@ -185,12 +189,20 @@ in `scripts/diagnose.py`, one function per rule, in the order written here.
   but missing from `values` was truncated, not empty, and is never counted.
   With no assessable node, `not_assessed`.
 - **False-positive controls:** a truncated `sameAs` is excluded rather than read
-  as empty; any single `http` or `https` URL makes the node pass; only
-  organization nodes count, so an unrelated node's `sameAs` cannot fire it.
+  as empty; for the empty case, any single `http` or `https` URL makes the node
+  pass; only organization nodes count, so an unrelated node's `sameAs` cannot
+  fire it; a platform account counts only on a known social network and only
+  when the handle equals the platform's exactly, so `@shopifyfan` or a
+  merchant's own profile never counts; the platform's own site is never flagged
+  for listing its own accounts. Measured on every saved real-site run: 38
+  declared `sameAs` entries, of which the platform-account test matched only the
+  two theme defaults it exists for (found in adjudication, when the adjudicator
+  noticed a storefront's markup listing the platform's TikTok and YouTube).
 - **Legitimate exceptions:** an organization with no profile anywhere else,
   which would be correct to omit `sameAs`; that site does not declare the
   property at all, so the rule, which requires the property to be declared, does
-  not fire on it.
+  not fire on it. A site operated by the platform itself, detected by its
+  registrable domain.
 - **Confidence:** high.
 - **Impact inputs:** `blocking = false`. `breadth = "site"` when the home page is
   among the affected pages or at least 50% of 2xx pages are, otherwise
@@ -198,15 +210,18 @@ in `scripts/diagnose.py`, one function per rule, in the order written here.
 - **Status:** found
 - **Symptom tags:** misrepresented
 - **Remediation:** what: fill `sameAs` with the organization's real profile
-  URLs, or remove the property until there are some. Where: the theme or
+  URLs, or remove the property until there are some; where the platform's
+  default profiles are listed, replace them with the organization's own. Where: the theme or
   template setting that populates the organization markup's `sameAs`, usually
   the social-links configuration. Why: an empty identity link is noise a
   consumer has to discard, and it signals configuration nobody checked. How:
   enter the absolute URLs of the organization's official profiles in the
-  theme's social settings, or edit the template to omit empty entries. Mechanism
+  theme's social settings, replacing any default profile left there, or edit
+  the template to omit empty entries. Mechanism
   improved: identity anchoring to external descriptions of the same entity.
 - **Success criteria:** every organization node's `sameAs` in the server response
-  contains only absolute http or https URLs, or the property is absent.
+  contains only absolute http or https URLs of this organization's own profiles,
+  none of them a platform's account, or the property is absent.
 - **Effort:** low
 
 ### IDM-003 — JSON-LD blocks that no parser can read

@@ -16,6 +16,7 @@ import argparse
 import json
 import os
 import re
+import urllib.parse
 
 SKILL = "identity-and-markup"
 SUPPORTED_SCHEMA_MAJOR = "1"
@@ -151,8 +152,36 @@ def sameas_entries(node):
     return [part.strip() for part in raw.split(" | ")]
 
 
+# The social accounts of the platforms sites are built on. Themes ship with them
+# as default social links, and a merchant who never replaces them publishes, in
+# sameAs, that the organization *is* the platform. Exact handles only: a handle
+# merely containing a vendor's name is a different account.
+PLATFORM_HANDLES = frozenset(("shopify", "wix", "squarespace", "wordpress", "bigcommerce", "woocommerce",
+                              "webflow", "godaddy", "weebly", "hubspot"))
+PLATFORM_NAMES = {"wordpress": "WordPress", "bigcommerce": "BigCommerce", "woocommerce": "WooCommerce",
+                  "godaddy": "GoDaddy", "hubspot": "HubSpot"}
+SOCIAL_HOSTS = frozenset(("facebook.com", "instagram.com", "twitter.com", "x.com", "tiktok.com", "youtube.com",
+                          "pinterest.com", "linkedin.com", "vimeo.com", "snapchat.com", "threads.net"))
+
+
+def platform_account(entry):
+    """The platform an entry's social profile belongs to, or None."""
+    if not URL.match(entry):
+        return None
+    parts = urllib.parse.urlsplit(entry)
+    host = parts.netloc.lower().split(":")[0]
+    for prefix in ("www.", "m.", "mobile."):
+        if host.startswith(prefix):
+            host = host[len(prefix):]
+    if host not in SOCIAL_HOSTS:
+        return None
+    segments = [s.lstrip("@").lower() for s in parts.path.split("/") if s][:3]
+    return next((s for s in segments if s in PLATFORM_HANDLES), None)
+
+
 def idm_002(evidence, out):
-    assessable, broken = [], []
+    assessable, broken, borrowed = [], [], []
+    own_site = (evidence["site"]["registrable_domain"] or "").lower().split(".")[0]
     for page in ok_pages(evidence):
         for node in page["jsonld"]:
             # Strictly an organization type here: the broader self-description
@@ -166,15 +195,22 @@ def idm_002(evidence, out):
             assessable.append(page)
             if not any(URL.match(e) for e in entries):
                 broken.append((page, node, entries))
+                continue
+            accounts = [e for e in entries if platform_account(e) and platform_account(e) != own_site]
+            if accounts:
+                borrowed.append((page, node, entries, accounts))
     if not assessable:
         out["not_assessed"].append({"rule_id": "IDM-002", "reason":
                                     "no organization node on a 2xx page declares sameAs with its value recorded",
                                     "enable_hint": "applies only to organization markup that declares sameAs"})
         return
-    if not broken:
+    if not broken and not borrowed:
         out["passed"].append({"rule_id": "IDM-002", "summary":
-                              "Every declared organization sameAs holds at least one absolute URL (%s)"
-                              % plural(len(assessable), "declaration")})
+                              "Every declared organization sameAs holds at least one absolute URL, and none names a "
+                              "site platform's own account (%s)" % plural(len(assessable), "declaration")})
+        return
+    if not broken:
+        idm_002_borrowed(evidence, out, borrowed)
         return
     pages = []
     for page, _, _ in broken:
@@ -207,6 +243,51 @@ def idm_002(evidence, out):
         controls=["sameAs truncated from values excluded, never read as empty",
                   "one absolute http(s) URL makes a node pass", "only organization nodes counted"],
         exceptions=["organization with no external profiles: it would not declare sameAs at all"]))
+
+
+def idm_002_borrowed(evidence, out, borrowed):
+    """sameAs names the platform's own social accounts as this organization."""
+    pages = []
+    for page, _, _, _ in borrowed:
+        if page not in pages:
+            pages.append(page)
+    total = len(ok_pages(evidence))
+    home_hit = any(p["page_type"] == "home" for p in pages)
+    _, sample_node, sample_entries, accounts = borrowed[0]
+    handle = platform_account(accounts[0])
+    platform = PLATFORM_NAMES.get(handle, handle.capitalize())
+    empty = sum(1 for e in sample_entries if not e.strip())
+    out["findings"].append(finding(
+        "IDM-002", "Organization sameAs declares the site platform's own profiles as this organization",
+        "%s of %s carry an organization node (%s) whose sameAs lists %s: %s. sameAs states that each listed profile "
+        "is this same organization, so the markup identifies it with its platform's accounts.%s"
+        % (len(pages), plural(total, "2xx page"), sample_node["type"] or "untyped",
+           "a profile belonging to the %s platform" % platform if len(accounts) == 1
+           else "%d profiles belonging to the %s platform" % (len(accounts), platform),
+           ", ".join(accounts[:5]),
+           (" The same list also holds %s." % plural(empty, "empty entry", "empty entries")) if empty else ""),
+        action("Replace the platform's default social profiles in sameAs with the organization's own.",
+               "Remove the platform's profiles from sameAs and list only profiles of this organization.",
+               "The theme or template setting that populates the organization markup's sameAs, usually the "
+               "social-links configuration, where theme defaults were never replaced.",
+               "sameAs asserts identity, so a platform's account listed there tells a machine this organization is "
+               "the platform.",
+               "In the theme's social-links settings, replace every default profile URL with the organization's "
+               "own profile, and clear the fields for networks it does not use so no empty or default entry is "
+               "emitted.",
+               "Identity anchoring to external descriptions of the same entity.",
+               "No sameAs entry in the server response names a platform's own account, and every entry is an "
+               "absolute URL of a profile of this organization.", "low"),
+        confidence="high",
+        impact={"blocking": False, "breadth": "site" if home_hit or len(pages) * 2 >= total else "page",
+                "content_importance": "secondary"},
+        scope={"pages_affected": len(pages), "pages_examined": total,
+               "page_types": sorted({p["page_type"] for p in pages})},
+        refs=[ref(p, "sameAs names %s's own profiles" % platform) for p in pages[:10]],
+        controls=["only exact platform handles on known social networks count",
+                  "the platform's own site is never flagged for its own accounts",
+                  "only organization nodes counted", "sameAs truncated from values excluded"],
+        exceptions=["a site operated by the platform itself: detected by its registrable domain"]))
 
 
 def is_parse_failure(node):

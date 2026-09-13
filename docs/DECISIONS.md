@@ -859,3 +859,29 @@ readable when it opens as a sitemap with at least one. The truncation is recorde
 in `errors[]`. A whole file that does not parse is still unreadable. The cap
 itself is unchanged: it bounds memory and time, and the entries before the cut
 are enough both to prove the file is a sitemap and to seed the crawl.
+
+### D35 — sameAs that names the site platform's own profiles is misidentification
+
+The adjudicator's miss check on the storefront they know well found its
+organization markup listing `https://tiktok.com/@shopify` and
+`https://www.youtube.com/shopify` in `sameAs`, beside the brand's real profiles,
+an address with a typing error and four empty entries. They are the theme's
+default social links, never replaced. `sameAs` asserts that each profile is the
+same entity, so the markup states the brand is its e-commerce platform. IDM-002
+passed, because it fired only when no entry was a usable URL.
+
+IDM-002 is extended rather than joined by a new rule: both cases come from the
+same theme setting and have the same fix, which is the consolidation rule for
+merging. It now also fires when an entry is a profile on a known social network
+whose handle is exactly a site platform's own (Shopify, Wix, Squarespace,
+WordPress, BigCommerce, WooCommerce, Webflow, GoDaddy, Weebly, HubSpot), unless
+the site is that platform's. Measured before shipping on every saved real-site
+bundle: of 38 declared `sameAs` entries across four sites, the test matched the
+two theme defaults and nothing else, and the other outcomes of IDM-002 were
+unchanged. It reads `site.registrable_domain`, already on the skill's allow-list,
+so no contract changed.
+
+The mistyped address (`https://instagram.comcom`) is not detected. Telling a
+typing error from a real host would need a list of valid top-level domains, and
+a rule guessing at it would misfire on the new ones that keep appearing; this is
+recorded as a miss.

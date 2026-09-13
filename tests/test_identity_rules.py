@@ -130,6 +130,25 @@ class TestIDM002(RuleCase):
         handle = node("Organization", {"sameAs": "@velocity | velocity"}, fields=["sameAs"])
         self.assertEqual(self.outcome(bundle([page("/", "home", [handle])]), "IDM-002")[0], "fired")
 
+    def test_platform_default_profiles_are_a_misidentification(self):
+        theme = node("Organization", {"name": "KESTREL", "sameAs":
+                                      "https://www.facebook.com/kestrelwear |  | https://tiktok.com/@shopify | "
+                                      "https://www.youtube.com/shopify"}, fields=["name", "sameAs"])
+        got, f = self.outcome(bundle([page("/", "home", [theme])]), "IDM-002")
+        self.assertEqual(got, "fired")
+        self.assertIn("platform's own profiles", f["title"])
+        self.assertIn("https://tiktok.com/@shopify, https://www.youtube.com/shopify", f["evidence"])
+        self.assertIn("1 empty entry", f["evidence"])
+
+    def test_look_alike_handles_and_the_platform_itself_do_not_fire(self):
+        fan = node("Organization", {"sameAs": "https://www.instagram.com/shopifyfan | https://x.example/wix"},
+                   fields=["sameAs"])
+        self.assertEqual(self.outcome(bundle([page("/", "home", [fan])]), "IDM-002")[0], "passed")
+        own = node("Organization", {"sameAs": "https://www.youtube.com/shopify"}, fields=["sameAs"])
+        e = bundle([page("/", "home", [own])])
+        e["site"]["registrable_domain"] = "shopify.com"
+        self.assertEqual(self.outcome(e, "IDM-002")[0], "passed")
+
     def test_truncated_value_is_never_read_as_empty(self):
         truncated = node("Organization", {"name": "V"}, fields=["name", "sameAs"])
         self.assertEqual(self.outcome(bundle([page("/", "home", [truncated])]), "IDM-002")[0], "not_assessed")

@@ -3,8 +3,8 @@ name: identity-and-markup
 description: >-
   Diagnoses whether a brand presents as a well-formed, unambiguous entity to a
   machine: organization identity markup on the home page, sameAs identity links
-  that identify nothing, JSON-LD that fails to parse, and structured prices that
-  contradict the visible page. Also
+  that identify nothing or name the site platform's own profiles, JSON-LD that
+  fails to parse, and structured prices that contradict the visible page. Also
   promotes extracted claim candidates to canonical claims so corroboration has
   something stable to test. Use as part of a website AI-readiness audit when a
   brand may be confused with another entity or described inconsistently.

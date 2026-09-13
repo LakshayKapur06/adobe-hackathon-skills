@@ -50,7 +50,7 @@ it is skipped with the reason, and the no-browser variants still run.
 | RND-002 no server text, nothing rendered | TN | **TP** | TN | TN | |
 | RND-003 prices only after rendering | | | **TP** R | | |
 | IDM-001 no organization identity | TN | **TP**, conditional | TN | TN | |
-| IDM-002 empty sameAs | TN | | **TP** | | |
+| IDM-002 empty sameAs, or the platform's own profiles (the latter unit-tested) | TN | | **TP** | | |
 | IDM-003 JSON-LD that fails to parse | TN | | TN | **TP** | |
 | IDM-004 markup price contradicts page | | | **TP** | | |
 | ANS-001 long pages without sections | TN | | | **TP** | |
