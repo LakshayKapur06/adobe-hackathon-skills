@@ -611,9 +611,9 @@ class TestLargeSitemaps(unittest.TestCase):
     def test_a_truncated_compressed_response_keeps_what_inflates(self):
         import gzip
         import fetch
-        body = b"<html>" + b"x" * 200000 + b"</html>"
+        body = b"<html>" + b"a" * 200000 + b"</html>"
         packed = gzip.compress(body)
         self.assertEqual(fetch.inflate(packed, "gzip"), body)
         partial = fetch.inflate(packed[:len(packed) // 2], "gzip")
-        self.assertTrue(partial.startswith(b"<html>xxx") and len(partial) < len(body))
+        self.assertTrue(partial.startswith(b"<html>aaa") and len(partial) < len(body))
         self.assertEqual(fetch.inflate(b"plain", "gzip"), b"plain")
