@@ -105,7 +105,7 @@ pattern in miniature (a storefront's reviews in a hidden container) and measured
 hidden text at 0 to 376 characters on real pages.
 
 Why 0.8, from the pages measured during the G2 evidence check: server-rendered
-templates on a news publisher and on python.org sit at 0.000 to 0.015; Shopify
+templates on a news publisher and on an open-source foundation's site sit at 0.000 to 0.015; Shopify
 product pages, which server-render their content and hydrate a variant picker
 and review widget on top, sit at 0.04 to 0.24; client-rendered pages, whose
 server response carries no text at all, sit at 1.0. A threshold of 0.8 is far

@@ -11,17 +11,18 @@ which runs in real time, stops the navigation at the cap, fires
 DOMContentLoaded and load, and dumps the DOM as it stands. A wall-clock kill at
 PAGE_TIMEOUT_S sits outside the browser as the guard of last resort.
 
-Two flags were measured and rejected, against Chrome 153 on python.org, on an
+Two flags were measured and rejected, against Chrome 153 on an open-source
+foundation's home page, on an
 ad-supported publisher's article and topic pages, and on a local page whose
 iframe never responds:
 
 - ``--dump-dom`` alone dumps at the load event. Fast on an ordinary page
-  (python.org's home page: 1.1s), but a page with one resource that never
+  (that home page: 1.1s), but a page with one resource that never
   finishes never reaches load at all, so nothing is dumped until the outer kill.
 - ``--virtual-time-budget`` was meant to add a quiet period after load. Virtual
   time stops advancing while any network request is pending, so on a page with
   a request that never settles it never expires — and ``--timeout`` alongside
-  it, measured on the same paused clock, never fires either. python.org hung
+  it, measured on the same paused clock, never fires either. That home page hung
   this way until killed at 20s.
 
 That much was known. What a real publisher then showed is that the quiet-period

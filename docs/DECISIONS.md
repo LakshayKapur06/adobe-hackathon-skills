@@ -258,13 +258,13 @@ bundle.
 ### D13 — The render wait: a capped attempt, then a conditional settle (revised twice)
 
 Waiting for the `load` event hung on pages with one resource that never
-settles; the `www.python.org` home page is a live example. The obvious fix,
+settles; the home page of an open-source foundation's website is a live example. The obvious fix,
 Chromium's `--virtual-time-budget`, **made it worse**, and the reason is worth
 recording because it is counter-intuitive and would otherwise be rediscovered.
 Virtual time stops advancing while any network request is pending, so on a page
 with a request that never settles the budget never expires. `--timeout`, set
 alongside it as a safety net, is measured on that same paused clock and so
-never fires either. The two flags together wait forever; python.org hung until
+never fires either. The two flags together wait forever; that home page hung until
 killed at 20s.
 
 The first replacement was two attempts per page: a settling attempt using
@@ -324,7 +324,7 @@ stalls on pending requests: a 5s budget returned in 5.5s, a 15s budget took
 32.6s for identical text.
 
 Measured after the change: `/subscribe` 0 to 3152 characters, the topic archive
-unchanged at 11627 and paying nothing for a second attempt, python.org — the
+unchanged at 11627 and paying nothing for a second attempt, the foundation's home page — the
 original hang — 1.2s, render failures across the sampled site still zero. The
 flag pairing that caused that hang stays pinned by a test, so it cannot be
 revived by accident.
@@ -340,7 +340,7 @@ the coverage it buys is not worth reopening the contract for.
 **Still not closed:** the storefront returned 269 characters under every
 strategy, so rendering may not recover a fully client-rendered site's content
 at all. That is P7, the most important open validation in the build, and the
-POCO pair of runs settles it.
+client-rendered storefront's pair of runs settles it.
 
 ### D14 — Pages are keyed on their final URL after redirects
 
@@ -595,7 +595,7 @@ shortfall.
 
 ### D24 — `contracts-v10`: connection setup is timed apart from the server
 
-Verifying D23 on POCO live, ARR-001 fired at medium: every page's time to first
+Verifying D23 live on the client-rendered storefront, ARR-001 fired at medium: every page's time to first
 byte was about 10.2 seconds, where the previous run measured 58 to 160 ms and a
 diagnostic minutes later measured 37 to 108 ms for the full request. The same
 network stall had just made robots.txt unreachable on the attempt before. It was

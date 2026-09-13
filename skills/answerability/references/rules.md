@@ -69,7 +69,7 @@ this file can take from it:
 
 - `text.boilerplate_ratio` counts only text inside `nav`, `aside`, landmark
   roles and page-level `header`/`footer`. Across healthy sites it ranged from
-  0.0 to 0.93: python.org category listings sit at 0.8 to 0.93 and full
+  0.0 to 0.93: an open-source foundation's category listings sit at 0.8 to 0.93 and full
   700-word news articles at 0.69. A threshold on it would describe template
   markup habits, not whether a passage can be quoted.
 - `text.longest_block_words` measures the longest line of extracted text, and
@@ -77,7 +77,7 @@ this file can take from it:
   separated by line breaks read as one 3,036-word block. A "wall of text" rule
   on it would misread formatting as structure.
 - Several `h1` elements on one page are valid HTML and common (13 on one
-  python.org page), so a heading-count rule would test conformity, not defect.
+  page of the same site), so a heading-count rule would test conformity, not defect.
 - Query-intent coverage is the softest check in the design (W1) and the first
   rule in `docs/PLAN.md`'s cut list. The evidence gate it needs, a structured
   attribute with no page answering by it, has no observable counterpart in the

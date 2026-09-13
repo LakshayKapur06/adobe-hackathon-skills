@@ -39,12 +39,12 @@ class TestJsonLd(unittest.TestCase):
         # The trap this was written for: leaf-matching "name" turns every item
         # in a catalogue into a product called after the company.
         out = []
-        claims.from_jsonld(jsonld("Product", {"name": "Ratz Tee", "brand.name": "IFLEXBTW"}),
+        claims.from_jsonld(jsonld("Product", {"name": "Ratz Tee", "brand.name": "KESTRELWEAR"}),
                            "https://x.example/p", out)
         kinds = {(c["kind"], c["value_raw"]) for c in out}
         self.assertIn(("product_name", "Ratz Tee"), kinds)
-        self.assertIn(("legal_name", "IFLEXBTW"), kinds)
-        self.assertNotIn(("product_name", "IFLEXBTW"), kinds)
+        self.assertIn(("legal_name", "KESTRELWEAR"), kinds)
+        self.assertNotIn(("product_name", "KESTRELWEAR"), kinds)
 
     def test_a_nested_name_of_an_unknown_entity_is_not_claimed(self):
         out = []

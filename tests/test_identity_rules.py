@@ -116,7 +116,7 @@ class TestIDM001(RuleCase):
 
 class TestIDM002(RuleCase):
     def test_empty_theme_sameas_fires_site_wide(self):
-        broken = node("Organization", {"name": "IFLEX", "sameAs": " |  |  | "}, fields=["name", "sameAs"])
+        broken = node("Organization", {"name": "KESTREL", "sameAs": " |  |  | "}, fields=["name", "sameAs"])
         pages = [page("/", "home", [broken])] + [page("/p%d" % i, "product", [broken]) for i in range(3)]
         got, f = self.outcome(bundle(pages), "IDM-002")
         self.assertEqual((got, f["impact"]["breadth"], f["scope"]["pages_affected"]), ("fired", "site", 4))

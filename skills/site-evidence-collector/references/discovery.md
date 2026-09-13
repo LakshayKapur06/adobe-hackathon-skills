@@ -63,8 +63,8 @@ how many were sampled, so every finding can state its denominator.
 
 ## Redirects: pages are keyed on their final URL
 
-Two addresses often lead to one page: `/psf` and `/psf/` both redirect to
-`/psf-landing/` on python.org. Counting both inflates every denominator, so the
+Two addresses often lead to one page: on one verified site, `/about` and
+`/about/` both redirected to `/about-landing/`. Counting both inflates every denominator, so the
 crawl keys pages on their final URL after redirects and keeps the set of final
 URLs already held:
 
@@ -147,7 +147,7 @@ inside its 10s:
 The two cannot be combined into one attempt. Virtual time stops advancing while
 any network request is pending, and a navigation cap set alongside it runs on
 the same virtual clock, so a page with a request that never settles would wait
-forever. python.org's home page did exactly that on Chrome 153 until killed at
+forever. One verified site's home page did exactly that on Chrome 153 until killed at
 20s; plain navigation returned it in 1.1s. A page rendered the second way is
 listed in `errors[]`, so a reader knows it had no quiet period.
 

@@ -7,8 +7,8 @@ the shape of it.
 
 - **Wikipedia** — prose, and the source most assistants demonstrably read.
   Searched through ``api.wikimedia.org``. A name search alone will happily
-  return a village in Bavaria, or in one real case both "The Indian Express"
-  and "The New Indian Express", so an article is only evidence once identity is
+  return a village in Bavaria, or two different newspapers whose names differ
+  by one word, so an article is only evidence once identity is
   settled below.
 - **Wikidata** — the machine-readable record, reached by the one route its
   robots.txt permits (see below). Its official-website property settles
@@ -199,8 +199,8 @@ class Probe:
 def _wikipedia(run, probe, claims, name_claim, site_domain, deadline, now):
     """Search by name, then keep only an article that links to this brand's site.
 
-    Name search is a sieve, not an answer: one real query returned both "The
-    Indian Express" and "The New Indian Express", which are different companies.
+    Name search is a sieve, not an answer: one real query returned two different
+    newspapers whose names differ by a single word, which are different companies.
     The outbound-link check is what separates them, and it is why D8 puts
     identity before corroboration -- an ambiguous name poisons every match made
     from it.

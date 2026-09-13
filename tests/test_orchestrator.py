@@ -192,17 +192,17 @@ class TestProactive(unittest.TestCase):
         self.assertEqual(self.outcome(self.evidence(claims), "PRO-002")[0], "not_assessed")
 
     def test_ambiguous_name_is_flagged_in_the_panel(self):
-        claims = [self.claim("legal_name", "poco", ambiguity="high"), self.claim("founded_year", "2018", cid="C-002")]
+        claims = [self.claim("legal_name", "nova", ambiguity="high"), self.claim("founded_year", "2018", cid="C-002")]
         got, f = self.outcome(self.evidence(claims), "PRO-002")
         self.assertIn("may be shared with other organizations", f["evidence"])
-        self.assertIn("What is poco, and what is its official website? (expected: localhost)", f["suggested_action"]["how"])
-        self.assertIn("When was poco (localhost) founded? (expected: 2018)", f["suggested_action"]["how"])
+        self.assertIn("What is nova, and what is its official website? (expected: localhost)", f["suggested_action"]["how"])
+        self.assertIn("When was nova (localhost) founded? (expected: 2018)", f["suggested_action"]["how"])
 
     def test_identity_links_are_recommended_only_where_none_exist(self):
         e = self.evidence([self.claim("legal_name", "fixture instruments")])
         got, f = self.outcome(e, "PRO-003")
         self.assertEqual((got, f["confidence"]), ("fired", "medium"))
-        self.assertEqual(self.outcome(self.evidence([self.claim("legal_name", "poco", ambiguity="high")]),
+        self.assertEqual(self.outcome(self.evidence([self.claim("legal_name", "nova", ambiguity="high")]),
                                       "PRO-003")[1]["confidence"], "high", "an ambiguous name raises confidence")
         website = copy.deepcopy(e)
         website["pages"][1]["jsonld"].append({"type": "WebSite", "valid": True, "errors": [],

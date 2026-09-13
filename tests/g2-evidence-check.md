@@ -9,6 +9,10 @@ compares an artifact to another artifact and is automated. G2 compares the
 bundle to **reality**, and an agent verifying its own collector's output
 against its own beliefs about a site is a closed loop that proves nothing.
 
+The sites are real, but described by type rather than named (Publisher A,
+Storefront B, and so on), because this repository publishes no audit of a named
+third party (D11). Commands show `.example` hosts in their place.
+
 Method for each site: run the collector, then open the same pages in a browser
 with **JavaScript disabled** (DevTools -> Settings -> Debugger -> Disable
 JavaScript) and read view-source. Compare what the bundle says against what is
@@ -22,14 +26,14 @@ Run in this order. Site 1 is the calibration site: it is the one expected to be
 unremarkable, so a surprise there is a collector bug rather than a property of
 the site.
 
-    python scripts/run_audit.py --url https://indianexpress.com --out runs/indianexpress/ --summary
-    python scripts/run_audit.py --url https://iflexbtw.in       --out runs/iflexbtw/   --summary
-    python scripts/run_audit.py --url https://www.poco.in       --out runs/poco/       --summary
-    python scripts/run_audit.py --url https://www.poco.in       --out runs/poco-norender/ --no-render --summary
+    python scripts/run_audit.py --url https://publisher-a.example --out runs/publisher-a/ --summary
+    python scripts/run_audit.py --url https://storefront-b.example --out runs/storefront-b/   --summary
+    python scripts/run_audit.py --url https://storefront-c.example --out runs/storefront-c/       --summary
+    python scripts/run_audit.py --url https://storefront-c.example --out runs/storefront-c-norender/ --no-render --summary
 
-`www.gadgets360.com` was the original calibration site. It answers **403 to
+Publisher D, a technology publisher, was the original calibration site. It answers **403 to
 every request**, so it cannot calibrate anything; it is kept as the
-blocked-crawler specimen in site 4 below, and `indianexpress.com` replaced it.
+blocked-crawler specimen in site 4 below, and Publisher A replaced it.
 Selected by probing candidates with the collector's own fetcher and user agent,
 since the question is whether a site serves *this* client content: of ten
 candidates it was the only one combining rich server-rendered text, real
@@ -60,14 +64,14 @@ then deciding it was what we expected all along.
 
 | # | Prediction | If wrong, it means |
 |---|---|---|
-| P1 | indianexpress: `parse_ok: true`, a real `*` group, and `ClaudeBot`/`PerplexityBot` `disallowed` by name | We are misreading a normal robots.txt, or the named-group logic does not beat `*` |
-| P2 | indianexpress: article pages classify as `article`, not `other` | `page_type` is undertrained on the commonest page shape on the web |
-| P3 | indianexpress: `delta_ratio` low on articles (server-rendered text) | Either extraction is dropping raw body text, or ads/embeds inflate the rendered side |
+| P1 | Publisher A: `parse_ok: true`, a real `*` group, and `ClaudeBot`/`PerplexityBot` `disallowed` by name | We are misreading a normal robots.txt, or the named-group logic does not beat `*` |
+| P2 | Publisher A: article pages classify as `article`, not `other` | `page_type` is undertrained on the commonest page shape on the web |
+| P3 | Publisher A: `delta_ratio` low on articles (server-rendered text) | Either extraction is dropping raw body text, or ads/embeds inflate the rendered side |
 | P4 | **Settled, artifact-to-artifact.** The home page yields 29 anchors: 9 heading `id=` attributes plus their containers' ids, paired deliberately (`extract.py:118-127`). The extractor fires. One note for rule authoring: a page reusing an id produces duplicate entries, so a rule counting deep-link targets must count *distinct* ids, never `len(anchors)` | — |
 | P5 | **Settled before the run, artifact-to-artifact.** Across ten real pages the count of `<script type="application/ld+json">` blocks in the raw bytes matched `len(jsonld_scripts)` exactly, including a 4-block article and a 5-block home page. The Day-2 "reads only the first block" worry is dead | — |
-| P6 | iflexbtw: `parse_ok: true`; Shopify's default robots.txt, server-rendered product text, low `delta_ratio` | Shopify's default template is not what we think it is |
-| P7 | POCO **with** render: `soft_404.detected: true`, `baseline_text_hash` set, `delta_ratio` very high (raw text near zero) | The two-attempt render fix does not survive a hydration-only page — the single most important open validation in the build (D13) |
-| P8 | POCO **without** render: the shell copies collapse, `discovery.collapsed_duplicate_text` > 0, and a `page-content` degradation says no page-level content exists in the server response | The capability-dependent dedupe split (D15) does not work |
+| P6 | Storefront B: `parse_ok: true`; Shopify's default robots.txt, server-rendered product text, low `delta_ratio` | Shopify's default template is not what we think it is |
+| P7 | Storefront C **with** render: `soft_404.detected: true`, `baseline_text_hash` set, `delta_ratio` very high (raw text near zero) | The two-attempt render fix does not survive a hydration-only page — the single most important open validation in the build (D13) |
+| P8 | Storefront C **without** render: the shell copies collapse, `discovery.collapsed_duplicate_text` > 0, and a `page-content` degradation says no page-level content exists in the server response | The capability-dependent dedupe split (D15) does not work |
 
 **Two predictions in the old handoff notes are wrong against the shipped code.
 Do not copy them into this sheet:**
@@ -75,7 +79,7 @@ Do not copy them into this sheet:**
 - The handoff says "all **6** named AI crawlers". There were **7** when this was written, and **8** since `contracts-v3` added `Claude-SearchBot`:
   `GPTBot`, `ClaudeBot`, `PerplexityBot`, `Google-Extended`, `OAI-SearchBot`,
   `CCBot`, `Googlebot` (`schemas/evidence.schema.json`, `robots.AI_AGENTS`).
-- The handoff predicts POCO's crawlers will read `allowed` because robots.txt
+- The handoff predicts Storefront C's crawlers will read `allowed` because robots.txt
   is absent. The code records **`unspecified`**: when no group applies at all,
   that is the verdict, and `absent` mode sets it for every agent
   (`robots.evidence_block`). `unspecified` and `allowed` mean different things
@@ -83,8 +87,8 @@ Do not copy them into this sheet:**
   `parse_reason: not_plausibly_robots`, and all 7 agents `unspecified`.
 
 Publishers increasingly disallow AI crawlers by name, and the candidate probe
-confirmed it: TechCrunch disallows four of the seven tracked crawlers, The Verge
-four, GSMArena four, indianexpress two. A `disallowed` verdict is **not** a FAIL
+confirmed it: three large technology publishers each disallow four of the seven tracked
+crawlers, and Publisher A two. A `disallowed` verdict is **not** a FAIL
 — check 4 asks only whether the bundle matches the literal file.
 
 ---
@@ -93,8 +97,8 @@ four, GSMArena four, indianexpress two. A `disallowed` verdict is **not** a FAIL
 
 The verdicts below were filled in after the collector had changed since the
 original G2 runs, so, as this sheet requires, every site was re-run first
-(`runs/g2-ie`, `g2-iflex`, `g2-poco`, `g2-poco-norender`, `g2-g360`, plus the
-sequential re-runs `g2-ie-seq` and `g2-iflex-seq` explained under surprises).
+(`runs/g2-publisher-a`, `g2-storefront-b`, `g2-storefront-c`, `g2-storefront-c-norender`, `g2-publisher-d`, plus the
+sequential re-runs `g2-publisher-a-seq` and `g2-storefront-b-seq` explained under surprises).
 
 **Division of labour, so the loop is not closed.** The user saved, from their own
 browser, the robots.txt of each site and the server HTML of eight pages, and
@@ -106,8 +110,8 @@ theory are kept apart wherever that arose.
 
 The saved files were Chrome's view-source display pages. The original HTML was
 recovered row by row, and the recovery was checked against the collector's own
-`raw.bytes`: POCO 1,708 against 1,708, iflexbtw product 234,326 against 234,327,
-iflexbtw about 126,351 against 126,352. The larger gaps on indianexpress (a few
+`raw.bytes`: Storefront C 1,708 against 1,708, Storefront B product 234,326 against 234,327,
+Storefront B about 126,351 against 126,352. The larger gaps on Publisher A (a few
 hundred bytes on a 1.5 MB page) are live content, see site 1.
 
 How each mechanical check was made, independently of the collector's code:
@@ -127,9 +131,9 @@ How each mechanical check was made, independently of the collector's code:
 
 ---
 
-## Site 1: indianexpress.com — content-rich publisher, calibration site
+## Site 1: Publisher A — content-rich national news publisher, calibration site
 
-    run directory:  runs/g2-ie/ (parallel), runs/g2-ie-seq/ (sequential)
+    run directory:  runs/g2-publisher-a/ (parallel), runs/g2-publisher-a-seq/ (sequential)
     date:           2026-09-13
     pages fetched / discovered:   30 / 1295
     capabilities:  js_render=yes (system-chromium)  egress=yes
@@ -178,9 +182,9 @@ Strata observed: home, article, about, contact, policy, other.
 
 ---
 
-## Site 2: iflexbtw.in — small Shopify storefront
+## Site 2: Storefront B — small Shopify storefront
 
-    run directory:  runs/g2-iflex/ (parallel), runs/g2-iflex-seq/ (sequential)
+    run directory:  runs/g2-storefront-b/ (parallel), runs/g2-storefront-b-seq/ (sequential)
     date:           2026-09-13
     pages fetched / discovered:   30 / 144
     capabilities:  js_render=yes (system-chromium)  egress=yes
@@ -223,9 +227,9 @@ file, or in `report.json`.
 
 ---
 
-## Site 3: www.poco.in — JS-only storefront, WITH rendering
+## Site 3: Storefront C — JS-only electronics storefront, WITH rendering
 
-    run directory:  runs/g2-poco/
+    run directory:  runs/g2-storefront-c/
     date:           2026-09-13
     pages fetched / discovered:   5 / 5
     capabilities:  js_render=yes (system-chromium)  egress=yes
@@ -237,7 +241,7 @@ file, or in `report.json`.
 | 2 | `rendered.text_len` — is the **real** content there? value: 269 (home), 1,246 to 4,038 (inner pages) | PASS | against the user's rendered DOM, saved through Elements, Copy outerHTML (the first attempt went through view-source and only showed the server response): home 304 visible characters against 269, `/aboutus` 1,275 against 1,246, and every text node of 40 characters or more on both pages found verbatim in the rendered sidecar. The small gap is a "Phones Pad Accessories" menu and two extra slider dots in the user's copy |
 | 2b | `rendered.delta_ratio` — value: 1.0 on all 5 ; expect very high | PASS | follows from check 1's verified empty server text and a non-zero rendered length |
 | 2c | `render.fallbacks` — how many pages needed the capped second attempt? | N/A | not recorded as a typed field in the bundle |
-| 3 | `page_type` correctness — first pass 1 of 5 correct; after the fix 5 of 5 | FAIL, fixed and re-verified | the user judged `/aboutus` about, `/warranty` and `/extended-warranty` policy, `/grievance` policy (or doc); all four were `other`. Cause: the classifier reads only the URL and JSON-LD, POCO serves no JSON-LD, and `aboutus`, `warranty` and `grievance` were not in its vocabulary. Fixed in `discover.py` with whole-segment additions and a word-level policy match tried only after every other match fails, with tests that a product URL containing "warranty" or "privacy" stays a product. Re-run `runs/g2-poco-fix`: home, about, policy, policy, policy |
+| 3 | `page_type` correctness — first pass 1 of 5 correct; after the fix 5 of 5 | FAIL, fixed and re-verified | the user judged `/aboutus` about, `/warranty` and `/extended-warranty` policy, `/grievance` policy (or doc); all four were `other`. Cause: the classifier reads only the URL and JSON-LD, Storefront C serves no JSON-LD, and `aboutus`, `warranty` and `grievance` were not in its vocabulary. Fixed in `discover.py` with whole-segment additions and a word-level policy match tried only after every other match fails, with tests that a product URL containing "warranty" or "privacy" stays a product. Re-run `runs/g2-storefront-c-fix`: home, about, policy, policy, policy |
 | 4 | `robots.ai_agents` — expect all 8 `unspecified`, **not** `allowed` | PASS | all 8 unspecified; the user's saved `/robots.txt` is the application's HTML page, not a robots file |
 | 4b | `parse_ok: false` and `parse_reason: not_plausibly_robots` | PASS | as served |
 | 5 | `discovery.soft_404` — `detected`: true ; `baseline_text_hash`: the empty-text hash | PASS | the user's copy of a path that cannot exist is byte-identical to the home page's server response |
@@ -251,7 +255,7 @@ file, or in `report.json`.
   1,246 to 4,038. Theory: the home page is mostly imagery. Tested against the
   user's rendered DOM, which carries 304 characters: confirmed. Rendering does
   recover this client-rendered site; its home page simply has little text.
-- Observed: after the classifier fix, ACC-005 on POCO rises from medium to high.
+- Observed: after the classifier fix, ACC-005 on Storefront C rises from medium to high.
   Cause: `/aboutus` is now a primary page type, and it is one of the pages
   declaring the home page as its canonical URL. This is the more accurate
   severity, and it is the kind of downstream change a classifier fix must be
@@ -259,9 +263,9 @@ file, or in `report.json`.
 
 ---
 
-## Site 3b: www.poco.in — WITHOUT rendering (`--no-render`)
+## Site 3b: Storefront C — WITHOUT rendering (`--no-render`)
 
-    run directory:  runs/g2-poco-norender/ and runs/g2-poco-norender-2/
+    run directory:  runs/g2-storefront-c-norender/ and runs/g2-storefront-c-norender-2/
     date:           2026-09-13
     pages fetched / discovered:   1 / 1
     capabilities:  js_render=false  egress=yes  elapsed: 3.2 s
@@ -274,13 +278,13 @@ file, or in `report.json`.
 | 4 | A `page-content` degradation states no page-level content exists in the server response | PASS | present, naming 1 sampled URL |
 | 5 | `well_known[]` — `/llms.txt` reported `present: false` despite a 2xx (baseline match) | PASS | 200, present false; `/agents.md` likewise |
 | 6 | The bundle nowhere implies the site is simply empty or simply fine | PASS | the degradation and RND-002 both state that content is absent from the server response, not from the site |
-| 7 | Determinism: re-run this exact command; bundles identical but for timestamps | PASS | `g2-poco-norender` and `g2-poco-norender-2` identical after normalising clock fields |
+| 7 | Determinism: re-run this exact command; bundles identical but for timestamps | PASS | `g2-storefront-c-norender` and `g2-storefront-c-norender-2` identical after normalising clock fields |
 
 ---
 
-## Site 4: www.gadgets360.com — blocked-crawler specimen
+## Site 4: Publisher D — blocked-crawler specimen
 
-    run directory:  runs/g2-g360/
+    run directory:  runs/g2-publisher-d/
 
 Re-verified on 2026-09-13: home page 403 with empty text, robots.txt 403 read as
 `absent_4xx`, `crawl.errors` 1, `well_known` empty, and every one of the seven
@@ -298,7 +302,7 @@ probed identities, `browser-ua` included, refused with 403.
 
 **SURPRISES** (observation and theory kept separate):
 
-- Observed: `ndtv.com` returns 403 to the same client. Unverified theory: same
+- Observed: another national news publisher returns 403 to the same client. Unverified theory: same
   owner, same edge policy, so this is a corporate decision rather than one
   site's configuration.
 - Observed: the raw and rendered sidecars from the *pre-fix* run had different
@@ -317,11 +321,11 @@ probed identities, `browser-ua` included, refused with 403.
 
 | Site | FAILs | Surprises |
 |---|---|---|
-| indianexpress | 0 | strata vocabulary disagrees with page_type; render coverage collapses under CPU contention; entity tag pages are ambiguous as categories |
-| iflexbtw | 0 | login redirect sampled; hidden review text excluded by design |
-| poco (render) | 1, fixed and re-verified (page_type vocabulary) | home page renders only 269 characters, confirmed as genuine |
-| gadgets360 (blocked) | 0 | a real browser is served while every probed identity is refused |
-| poco (--no-render) | 0 | P8's collapse count falsified, behaviour correct |
+| Publisher A | 0 | strata vocabulary disagrees with page_type; render coverage collapses under CPU contention; entity tag pages are ambiguous as categories |
+| Storefront B | 0 | login redirect sampled; hidden review text excluded by design |
+| Storefront C (render) | 1, fixed and re-verified (page_type vocabulary) | home page renders only 269 characters, confirmed as genuine |
+| Publisher D (blocked) | 0 | a real browser is served while every probed identity is refused |
+| Storefront C (--no-render) | 0 | P8's collapse count falsified, behaviour correct |
 
 Predictions falsified (P1-P8), and what each one turned out to be:
 
@@ -339,7 +343,7 @@ and 5 of 5 after it. The classifier is weakest exactly where JSON-LD is absent.
 Fix list, in priority order:
 
 1. Done: the page-type vocabulary fix for URL-only classification, re-verified on
-   POCO.
+   Storefront C.
 2. Done, differently from proposed (D23): strata stay URL-pattern sampling strata,
    because sampling precedes content, and are now documented as such; no rule
    uses them as a denominator.

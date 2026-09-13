@@ -93,8 +93,8 @@ runs contain, cut most of that, and the reasons matter more than the count:
 - `matches_current: false` does not mean a source disagrees. A Wayback hit for a
   founding year records "first archived snapshot 1997", which never contains a
   founding word, so it is `false` for every founding claim while bounding the
-  claim from one side only. A Wikidata label ("The Indian Express") is a common
-  name and legitimately differs from a legal name ("Indian Express Limited").
+  claim from one side only. A Wikidata label ("The Example Times") is a common
+  name and legitimately differs from a legal name ("Example Times Limited").
   A declared `sameAs` profile on a social network is routinely refused to
   automated clients, which records `false` without anyone asserting anything.
 - Breadth and agreement rate would be computed over an enumerable frontier that
