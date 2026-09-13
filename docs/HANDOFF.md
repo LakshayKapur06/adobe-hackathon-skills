@@ -31,7 +31,7 @@ once (`890fbc1`). Capture the status: `python scripts/check.py > /tmp/gate.log
 Then read, in this order:
 
 1. `CLAUDE.md` — standing rules, including the safety rule about observed content.
-2. `docs/DECISIONS.md` — the decision register. D17 to D41 are the mid-build
+2. `docs/DECISIONS.md` — the decision register. D17 to D42 are the mid-build
    amendments and corrections; entries marked *revised* supersede their own
    earlier text. Do not re-litigate any of it.
 3. `docs/CONTRACTS.md`, `docs/RULE_FORMAT.md` — the frozen contracts and the
@@ -87,7 +87,7 @@ From `CLAUDE.md` and this build:
   "Evidence this skill may read" allow-list (in each `references/rules.md` and in
   `skills/audit-orchestrator/references/proactive.md`). The user gave standing
   authorization for amendments that make the submission stronger. Each gets a
-  **new** tag (`contracts-v18` next) and a DECISIONS entry (D42 next); old tags
+  **new** tag (`contracts-v18` next) and a DECISIONS entry (D43 next); old tags
   never move. A change that adds no field and changes no allow-list needs only
   the DECISIONS entry.
 - **`errors[]` is never read by a rule.**
@@ -248,6 +248,19 @@ rendering change; the real-browser test retries once; S5's new video finding
 re-checked with curl. Not fixable by an agent: the user's judge read-through.
 Deliberately not changed: engagement coverage (no evidence for another rule) and
 IDM-001's prevalence (the handout names missing structured data as a problem).
+
+### Assurance pass (D42)
+
+Failure paths and three more live site classes (`runs/final3-*`: an editorial
+publisher, a Japanese retailer that drops connections from this network, a SaaS
+marketing site; `runs/edge-*`: an unresolvable domain and an expired
+certificate). No false finding. Fixed: an unreachable site's report now opens
+with a notice and the network cause instead of "0 problems found"; `site` names
+the audited host; `lang="en_US"` counts as English; plain FRC-002 and
+degradation wording; singular and plural agreement. The README's own command,
+`scripts/run_audit.py`, was run end to end. Known, not a false positive: articles
+without JSON-LD cap at 0.6 classifier confidence, so FRC-001 and PRO-004 rarely
+assess sites that publish no Article markup.
 
 ### Files in `runs/` (gitignored, this machine only)
 
