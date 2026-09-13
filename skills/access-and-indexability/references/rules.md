@@ -651,7 +651,10 @@ cites the page timestamp for the same URL. The rules implement these blocks in
   budget and one failing child loses far less than a failing declaration; 401,
   403 and 429 are excluded as refusals addressed to this client; gzip-compressed
   sitemaps are decompressed by the collector before parsing, so a `.xml.gz`
-  file does not read as unparseable.
+  file does not read as unparseable; a sitemap larger than the collector's 5 MB
+  fetch cap, which the protocol allows up to 50 MB, is parsed as far as it goes
+  and counts as readable when it opens as a sitemap with at least one complete
+  entry, so a large catalogue's sitemap is never reported for its size.
 - **Legitimate exceptions:** none leaves the site fine: a declaration pointing
   at a retired or broken file is itself the defect, whatever the reason. A
   sitemap over the protocol's 50 MB uncompressed limit reads as unparseable,

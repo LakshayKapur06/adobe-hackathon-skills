@@ -842,3 +842,20 @@ server response only in the currency-first form, so a European template writing
 "1.499,00 €" on the server and rendering a "€0,00" cart total in the browser
 would read as hiding its price. A currency-last amount in the server response
 now counts as a price being present, which again can only silence the rule.
+
+### D34 — A sitemap larger than the fetch cap is large, not unreadable
+
+The collector reads at most 5 MB of any response. The sitemap protocol allows 50
+MB, and a large catalogue's sitemap of 50,000 URLs is commonly over 10 MB. A file
+cut at the cap ended mid-document, failed to parse, and was recorded
+`parse_ok: false`, so ACC-009 would have told a large retailer that the sitemap
+it declares cannot be read. A compressed response was worse: a one-shot
+decompressor refuses a cut stream, leaving compressed bytes.
+
+Found in the final audit by asking what each rule does on the largest sites. The
+fetcher now decompresses as a stream and keeps what a cut body inflates to; a
+cut sitemap is parsed incrementally, keeping only complete entries, and counts as
+readable when it opens as a sitemap with at least one. The truncation is recorded
+in `errors[]`. A whole file that does not parse is still unreadable. The cap
+itself is unchanged: it bounds memory and time, and the entries before the cut
+are enough both to prove the file is a sitemap and to seed the crawl.

@@ -570,3 +570,50 @@ class TestRedirectKey(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestLargeSitemaps(unittest.TestCase):
+    """A sitemap cut at the fetch cap is a large sitemap, not an unreadable one."""
+
+    ENTRY = "<url><loc>https://shop.example/p/%d</loc><lastmod>2026-09-01</lastmod></url>"
+
+    def document(self, n):
+        return ('<?xml version="1.0" encoding="UTF-8"?>'
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+                + "".join(self.ENTRY % i for i in range(n)) + "</urlset>").encode("utf-8")
+
+    def test_a_cut_sitemap_yields_its_complete_entries(self):
+        whole = self.document(50)
+        cut = whole[:len(whole) // 2]
+        kind, locations, ratio, ok = discover.parse_sitemap(cut, "application/xml", "https://shop.example/sitemap.xml",
+                                                            truncated=True)
+        self.assertTrue(ok)
+        self.assertEqual(kind, "urlset")
+        self.assertTrue(0 < len(locations) < 50)
+        self.assertTrue(all(re.fullmatch(r"https://shop\.example/p/\d+", u) for u in locations),
+                        "a half-written entry is never read as a whole one")
+
+    def test_a_cut_gzip_sitemap_is_read_as_far_as_it_goes(self):
+        import gzip
+        packed = gzip.compress(self.document(4000))
+        kind, locations, _, ok = discover.parse_sitemap(packed[:len(packed) // 2], "application/x-gzip",
+                                                        "https://shop.example/sitemap.xml.gz", truncated=True)
+        self.assertTrue(ok and locations)
+
+    def test_whole_files_are_still_judged_strictly(self):
+        whole = self.document(3)
+        self.assertTrue(discover.parse_sitemap(whole, "application/xml", "https://shop.example/s.xml")[3])
+        self.assertFalse(discover.parse_sitemap(whole[:-20], "application/xml", "https://shop.example/s.xml")[3],
+                         "an uncut file that does not parse is unreadable")
+        self.assertFalse(discover.parse_sitemap(b"<html><body>Not found</body></html>", "text/html",
+                                                "https://shop.example/s.xml", truncated=True)[3])
+
+    def test_a_truncated_compressed_response_keeps_what_inflates(self):
+        import gzip
+        import fetch
+        body = b"<html>" + b"x" * 200000 + b"</html>"
+        packed = gzip.compress(body)
+        self.assertEqual(fetch.inflate(packed, "gzip"), body)
+        partial = fetch.inflate(packed[:len(packed) // 2], "gzip")
+        self.assertTrue(partial.startswith(b"<html>xxx") and len(partial) < len(body))
+        self.assertEqual(fetch.inflate(b"plain", "gzip"), b"plain")

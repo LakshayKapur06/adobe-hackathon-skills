@@ -6,9 +6,9 @@ template and then reports a site-wide conclusion from it. Each page type gets an
 equal share of the page budget in turn, so no single template can consume it.
 """
 
-import gzip
 import re
 import urllib.parse
+import zlib
 import xml.etree.ElementTree as ET
 
 import urls
@@ -125,30 +125,50 @@ def refine(url_type, url_confidence, jsonld_types):
     return chosen, 0.8 if url_type == "other" else 0.7
 
 
-def parse_sitemap(body, content_type, url):
+def parse_sitemap(body, content_type, url, truncated=False):
     """Parse a sitemap or sitemap index.
 
     Returns ``(kind, locations, lastmod_ratio, parse_ok)`` where kind is
     ``urlset``, ``index`` or None. A body that is not XML, such as the HTML
     shell some sites serve at every path, is ``parse_ok = False``, not an empty
     sitemap.
+
+    ``truncated`` means the fetch stopped at its size cap. The protocol allows a
+    sitemap of 50 MB, and a large catalogue's often exceeds the cap, so a cut
+    file is not an unreadable one: it is parsed as far as it goes, and counts as
+    readable when it opens as a sitemap and yields at least one complete entry.
     """
     data = body
     if url.lower().endswith(".gz") or (content_type or "").lower().startswith("application/x-gzip"):
+        decompressor = zlib.decompressobj(16 + zlib.MAX_WBITS)
         try:
-            data = gzip.decompress(body)
-        except (OSError, EOFError):
+            data = decompressor.decompress(body)
+        except zlib.error:
             return None, [], None, False
+        if not truncated:
+            try:
+                data += decompressor.flush()
+            except zlib.error:
+                return None, [], None, False
+            if not decompressor.eof:
+                return None, [], None, False
     if len(data) > 50 * 1024 * 1024:
         return None, [], None, False
-    try:
-        root = ET.fromstring(data)
-    except ET.ParseError:
-        return None, [], None, False
+    if truncated:
+        root = _partial_root(data)
+        if root is None:
+            return None, [], None, False
+    else:
+        try:
+            root = ET.fromstring(data)
+        except ET.ParseError:
+            return None, [], None, False
     tag = root.tag.rsplit("}", 1)[-1].lower()
     if tag not in ("urlset", "sitemapindex"):
         return None, [], None, False
     child = "url" if tag == "urlset" else "sitemap"
+    if truncated and not any(node.tag.rsplit("}", 1)[-1].lower() == child for node in root):
+        return None, [], None, False
     locations, with_lastmod, total = [], 0, 0
     for node in root:
         if node.tag.rsplit("}", 1)[-1].lower() != child:
@@ -167,6 +187,35 @@ def parse_sitemap(body, content_type, url):
             with_lastmod += 1
     ratio = round(with_lastmod / total, 3) if total else None
     return ("urlset" if tag == "urlset" else "index"), locations, ratio, True
+
+
+def _partial_root(data):
+    """The root element of an XML document cut short, with its complete children.
+
+    Children still open where the data ends are dropped, so a half-written entry
+    is never read as a whole one.
+    """
+    parser = ET.XMLPullParser(events=("start", "end"))
+    root, depth = None, 0
+    complete = []
+    try:
+        parser.feed(data)
+        for event, element in parser.read_events():
+            if event == "start":
+                depth += 1
+                if root is None:
+                    root = element
+            else:
+                depth -= 1
+                if depth == 1:
+                    complete.append(element)
+    except ET.ParseError:
+        pass
+    if root is None:
+        return None
+    shell = ET.Element(root.tag)
+    shell.extend(complete)
+    return shell
 
 
 class Frontier:

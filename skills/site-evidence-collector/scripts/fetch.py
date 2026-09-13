@@ -13,7 +13,6 @@ can refuse a hop that leaves the site or that robots.txt disallows.
 """
 
 import datetime
-import gzip
 import http.client
 import re
 import socket
@@ -109,6 +108,29 @@ class _NoRedirect(urllib.request.HTTPRedirectHandler):
 
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         return None
+
+
+def inflate(raw, encoding):
+    """Decompress a gzip or deflate body, keeping what a truncated stream yields.
+
+    A body cut at MAX_BODY_BYTES ends mid-stream, and a one-shot decompressor
+    refuses it outright, leaving compressed bytes nothing downstream can read. A
+    streaming decompressor returns every byte it could inflate. A complete
+    stream decompresses exactly as before; a body that is not compressed at all
+    is returned unchanged.
+    """
+    for wbits in ((16 + zlib.MAX_WBITS,) if encoding == "gzip" else (zlib.MAX_WBITS, -zlib.MAX_WBITS)):
+        decompressor = zlib.decompressobj(wbits)
+        try:
+            data = decompressor.decompress(raw)
+        except zlib.error:
+            continue
+        try:
+            data += decompressor.flush()
+        except zlib.error:
+            pass
+        return data
+    return raw
 
 
 def _decode(body, content_type):
@@ -228,13 +250,8 @@ class Fetcher:
             if len(raw) > MAX_BODY_BYTES:
                 raw, response.truncated = raw[:MAX_BODY_BYTES], True
             encoding = response.headers.get("content-encoding", "").lower()
-            try:
-                if encoding == "gzip":
-                    raw = gzip.decompress(raw)
-                elif encoding == "deflate":
-                    raw = zlib.decompress(raw)
-            except (OSError, zlib.error, EOFError):
-                pass
+            if encoding in ("gzip", "deflate"):
+                raw = inflate(raw, encoding)
             response.body = raw
             response.content_type = response.headers.get("content-type")
             response.text = _decode(raw, response.content_type)

@@ -312,7 +312,13 @@ def _sitemaps(run, origin, governing, frontier, deadline):
         response = run.fetcher.get(url, deadline=deadline)
         kind, locations, ratio, ok = None, [], None, False
         if response.ok:
-            kind, locations, ratio, ok = discover.parse_sitemap(response.body, response.content_type, url)
+            kind, locations, ratio, ok = discover.parse_sitemap(response.body, response.content_type, url,
+                                                                response.truncated)
+            if response.truncated:
+                run.error(url, "discovery", "sitemap exceeded the %d MB fetch cap; %s"
+                          % (fetch.MAX_BODY_BYTES // (1024 * 1024),
+                             "read the %d entries before the cut" % len(locations) if ok
+                             else "no complete entry before the cut"))
         records.append({"url": url, "status": response.status,
                         "url_count": len(locations) if ok else None,
                         "lastmod_present_ratio": ratio, "parse_ok": ok})
