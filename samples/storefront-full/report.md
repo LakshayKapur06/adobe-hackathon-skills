@@ -1,6 +1,6 @@
 # AI-readiness audit: 127.0.0.1
 
-Audited 2026-09-13T16:11:45Z. 14 of 14 discovered pages sampled; a browser rendered pages; off-site sources were consulted; 36.0 seconds.
+Audited 2026-09-13T16:34:14Z. 14 of 14 discovered pages sampled; a browser rendered pages; off-site sources were consulted; 21.0 seconds.
 
 ## At a glance
 
@@ -21,20 +21,20 @@ Audited 2026-09-13T16:11:45Z. 14 of 14 discovered pages sampled; a browser rende
 - **Where:** The robots meta tag in the product template or the server/CDN rule setting X-Robots-Tag, on the URLs cited.
 - **How:** Find the template or SEO-plugin setting that applies the directive to the whole type, often a 'discourage indexing' toggle left on from staging, and scope it to the pages actually meant to be excluded.
 - **How you will know it worked:** A plain fetch of every cited URL returns no noindex or none in either the robots meta tag or X-Robots-Tag.
-- **Pages behind this:** http://127.0.0.1:58635/products/canyon-jacket, http://127.0.0.1:58635/products/delta-socks, http://127.0.0.1:58635/products/harbor-hoodie, http://127.0.0.1:58635/products/meadow-scarf, http://127.0.0.1:58635/products/ridge-gloves and 2 more (7 of 7 examined) · rule ACC-003
+- **Pages behind this:** http://127.0.0.1:64599/products/canyon-jacket, http://127.0.0.1:64599/products/delta-socks, http://127.0.0.1:64599/products/harbor-hoodie, http://127.0.0.1:64599/products/meadow-scarf, http://127.0.0.1:64599/products/ridge-gloves and 2 more (7 of 7 examined) · rule ACC-003
 
 ### 2. Product prices appear only after rendering
 
 **High** · priority **P1** (fix next) · Being found and cited by AI assistants · confidence medium · effort medium
 
-- **What we saw:** Rendered 7 eligible product pages; a price appears in the rendered text of 5 and in neither the server text nor server JSON-LD of those 5. Examples: http://127.0.0.1:58635/products/trail-tee (rendered shows ₹999.00); http://127.0.0.1:58635/products/summit-cap (rendered shows ₹999.00); http://127.0.0.1:58635/products/delta-socks (rendered shows ₹999.00); http://127.0.0.1:58635/products/canyon-jacket (rendered shows ₹999.00); http://127.0.0.1:58635/products/harbor-hoodie (rendered shows ₹999.00).
+- **What we saw:** Rendered 7 eligible product pages; a price appears in the rendered text of 5 and in neither the server text nor server JSON-LD of those 5. Examples: http://127.0.0.1:64599/products/trail-tee (rendered shows ₹999.00); http://127.0.0.1:64599/products/summit-cap (rendered shows ₹999.00); http://127.0.0.1:64599/products/delta-socks (rendered shows ₹999.00); http://127.0.0.1:64599/products/canyon-jacket (rendered shows ₹999.00); http://127.0.0.1:64599/products/harbor-hoodie (rendered shows ₹999.00).
 - **Why it matters:** The server response is what a fetcher extracts, and it holds a product without a price.
 - **What improves:** The price becomes extractable and quotable.
 - **What to do:** Include the price in the server response of the product template, as visible text or Offer JSON-LD.
 - **Where:** The product page template and its price component, on the URLs cited.
 - **How:** Render the price component on the server, or emit Product with offers.price and offers.priceCurrency in JSON-LD generated server-side.
 - **How you will know it worked:** The price appears in the server response, as text or as offers.price JSON-LD, on every cited product URL, verifiable with a plain fetch and no JavaScript.
-- **Pages behind this:** http://127.0.0.1:58635/products/canyon-jacket, http://127.0.0.1:58635/products/delta-socks, http://127.0.0.1:58635/products/harbor-hoodie, http://127.0.0.1:58635/products/summit-cap, http://127.0.0.1:58635/products/trail-tee (5 of 7 examined) · rule RND-003
+- **Pages behind this:** http://127.0.0.1:64599/products/canyon-jacket, http://127.0.0.1:64599/products/delta-socks, http://127.0.0.1:64599/products/harbor-hoodie, http://127.0.0.1:64599/products/summit-cap, http://127.0.0.1:64599/products/trail-tee (5 of 7 examined) · rule RND-003
 
 ### 3. Organization markup declares sameAs links that identify nothing
 
@@ -47,46 +47,46 @@ Audited 2026-09-13T16:11:45Z. 14 of 14 discovered pages sampled; a browser rende
 - **Where:** The theme or template setting that populates the organization markup's sameAs, usually the social-links configuration.
 - **How:** Enter the absolute URLs of the organization's official profiles in the theme's social settings, or edit the template to omit empty entries.
 - **How you will know it worked:** Every organization node's sameAs in the server response contains only absolute http or https URLs, or the property is absent.
-- **Pages behind this:** http://127.0.0.1:58635/ (1 of 12 examined) · rule IDM-002
+- **Pages behind this:** http://127.0.0.1:64599/ (1 of 12 examined) · rule IDM-002
 
 ### 4. A named AI crawler identity is refused where robots.txt admits it
 
 **Medium** · priority **P2** (plan it in) · Being found and cited by AI assistants · confidence low · effort low
 
-- **What we saw:** The same client sent the same request with different user-agent strings: browser-ua received 2xx, while GPTBot received a refusal (GPTBot: 403 on http://127.0.0.1:58635/, 403 on http://127.0.0.1:58635/pages/about-us). robots.txt admits these agents. This compares two header strings, not a browser against a crawler, and cannot show how requests from the operators' own addresses are treated.
+- **What we saw:** The same client sent the same request with different user-agent strings: browser-ua received 2xx, while GPTBot received a refusal (GPTBot: 403 on http://127.0.0.1:64599/, 403 on http://127.0.0.1:64599/pages/about-us). robots.txt admits these agents. This compares two header strings, not a browser against a crawler, and cannot show how requests from the operators' own addresses are treated.
 - **Why it matters:** robots.txt admits these crawlers, so a refusal at the server contradicts the site's own policy.
 - **What improves:** Admission of the crawler where the policy already grants it.
 - **What to do:** Establish whether requests from the named crawler's published address ranges receive 2xx, and if not, remove the user-agent match refusing them.
 - **Where:** Server access logs first, then web server, CDN bot-management or firewall rules matching on User-Agent.
 - **How:** Filter logs for the crawler's user-agent string, compare source addresses against the operator's published ranges, and check the status verified requests received; if refused, verify identity by address instead of refusing by string.
 - **How you will know it worked:** Server logs show 2xx responses to requests from the crawler's published address ranges on the cited URLs.
-- **Pages behind this:** http://127.0.0.1:58635/, http://127.0.0.1:58635/pages/about-us (2 of 2 examined) · rule ACC-006
+- **Pages behind this:** http://127.0.0.1:64599/, http://127.0.0.1:64599/pages/about-us (2 of 2 examined) · rule ACC-006
 
 ### 5. Structured price contradicts the prices shown on the page
 
 **Medium** · priority **P2** (plan it in) · Being found and cited by AI assistants · confidence high · effort medium
 
-- **What we saw:** On 2 of 2 2xx pages with price markup, the page shows currency amounts and none equals the marked-up price: http://127.0.0.1:58635/products/meadow-scarf (markup 1499.00); http://127.0.0.1:58635/products/ridge-gloves (markup 1499.00).
+- **What we saw:** On 2 of 2 2xx pages with price markup, the page shows currency amounts and none equals the marked-up price: http://127.0.0.1:64599/products/meadow-scarf (markup 1499.00); http://127.0.0.1:64599/products/ridge-gloves (markup 1499.00).
 - **Why it matters:** Markup is taken as the authoritative statement, so a stale or base price there is repeated as fact.
 - **What improves:** The structured statement of price matches what a buyer sees.
 - **What to do:** Make the marked-up price equal the price the page shows.
 - **Where:** The product template's Offer markup on the URLs cited, and the data source it reads the price from.
 - **How:** Generate offers.price from the same variable that renders the visible price, including sale and selected-variant logic, rather than from a separate field.
 - **How you will know it worked:** On every cited URL, the offers.price value in the server response equals a price shown in the page's visible text.
-- **Pages behind this:** http://127.0.0.1:58635/products/meadow-scarf, http://127.0.0.1:58635/products/ridge-gloves (2 of 2 examined) · rule IDM-004
+- **Pages behind this:** http://127.0.0.1:64599/products/meadow-scarf, http://127.0.0.1:64599/products/ridge-gloves (2 of 2 examined) · rule IDM-004
 
 ### 6. URLs the site links to or lists return not-found or server errors
 
 **Low** · priority **P3** (when convenient) · Being found and cited by AI assistants · confidence high · effort medium
 
-- **What we saw:** 2 of 14 sampled URLs (14%), all discovered from the site's own sitemap, navigation or links, returned an error: 404 http://127.0.0.1:58635/products/retired-logo-tee, 404 http://127.0.0.1:58635/products/retired-classic-tee.
+- **What we saw:** 2 of 14 sampled URLs (14%), all discovered from the site's own sitemap, navigation or links, returned an error: 404 http://127.0.0.1:64599/products/retired-logo-tee, 404 http://127.0.0.1:64599/products/retired-classic-tee.
 - **Why it matters:** Each reference sends crawlers to an error and spends crawl they would otherwise use on real pages.
 - **What improves:** Every advertised address yields content.
 - **What to do:** Restore, redirect, or stop linking the cited URLs.
 - **Where:** The sitemap generator and the navigation or link templates that produced the cited URLs.
 - **How:** For each cited URL restore the page, add a 301 to its current equivalent, or remove it from the sitemap and linking template; for 5xx, check application logs for the failing route.
 - **How you will know it worked:** A plain fetch of every cited URL returns 2xx, a redirect to a 2xx, or the URL no longer appears in the sitemap or on linking pages.
-- **Pages behind this:** http://127.0.0.1:58635/products/retired-classic-tee, http://127.0.0.1:58635/products/retired-logo-tee (2 of 14 examined) · rule ACC-007
+- **Pages behind this:** http://127.0.0.1:64599/products/retired-classic-tee, http://127.0.0.1:64599/products/retired-logo-tee (2 of 14 examined) · rule ACC-007
 
 ## Suggested improvements beyond the problems
 
@@ -101,20 +101,20 @@ Audited 2026-09-13T16:11:45Z. 14 of 14 discovered pages sampled; a browser rende
 - **Where:** Outside the site: a shared sheet or a scheduled script owned by whoever owns the brand's facts.
 - **How:** Use exactly these prompts each time, record date, assistant, answer and whether it matches: What is northwind threads, and what is its official website? (expected: 127.0.0.1). Re-run after each fix from this report to see whether it moved anything.
 - **How you will know it worked:** A dated record of answers per assistant exists, and each answer is marked as matching or not matching the site's stated value.
-- **Pages behind this:** http://127.0.0.1:58635/ · rule PRO-002
+- **Pages behind this:** http://127.0.0.1:64599/ · rule PRO-002
 
 ### 2. Optional and speculative: publish /llms.txt
 
 **Low** · priority **P2** (plan it in) · Being found and cited by AI assistants · confidence low · effort low
 
-- **What we saw:** /llms.txt at http://127.0.0.1:58635 answered HTTP 404, so no /llms.txt is published. No major assistant is documented to read this file, so this is listed only as a low-cost hedge, not as a gap.
+- **What we saw:** /llms.txt at http://127.0.0.1:64599 answered HTTP 404, so no /llms.txt is published. No major assistant is documented to read this file, so this is listed only as a low-cost hedge, not as a gap.
 - **Why it matters:** It is a proposed convention some tools read; no major assistant documents consuming it, which is why this is a suggestion and never reported as a problem.
 - **What improves:** A possible, undocumented discovery channel for tools that adopt the convention.
 - **What to do:** Publish a plain-text /llms.txt summarising what the site is and linking its key pages.
-- **Where:** http://127.0.0.1:58635/llms.txt
+- **Where:** http://127.0.0.1:64599/llms.txt
 - **How:** Write a short markdown file: one paragraph describing the organization, then links to the pages that answer the questions people ask about it. Keep it consistent with those pages.
 - **How you will know it worked:** /llms.txt answers 200 with content that is not the site's soft-404 page.
-- **Pages behind this:** http://127.0.0.1:58635/llms.txt · rule PRO-001
+- **Pages behind this:** http://127.0.0.1:64599/llms.txt · rule PRO-001
 
 ## Checks that passed
 
