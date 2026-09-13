@@ -31,7 +31,7 @@ once (`890fbc1`). Capture the status: `python scripts/check.py > /tmp/gate.log
 Then read, in this order:
 
 1. `CLAUDE.md` — standing rules, including the safety rule about observed content.
-2. `docs/DECISIONS.md` — the decision register. D17 to D40 are the mid-build
+2. `docs/DECISIONS.md` — the decision register. D17 to D41 are the mid-build
    amendments and corrections; entries marked *revised* supersede their own
    earlier text. Do not re-litigate any of it.
 3. `docs/CONTRACTS.md`, `docs/RULE_FORMAT.md` — the frozen contracts and the
@@ -87,7 +87,7 @@ From `CLAUDE.md` and this build:
   "Evidence this skill may read" allow-list (in each `references/rules.md` and in
   `skills/audit-orchestrator/references/proactive.md`). The user gave standing
   authorization for amendments that make the submission stronger. Each gets a
-  **new** tag (`contracts-v18` next) and a DECISIONS entry (D41 next); old tags
+  **new** tag (`contracts-v18` next) and a DECISIONS entry (D42 next); old tags
   never move. A change that adds no field and changes no allow-list needs only
   the DECISIONS entry.
 - **`errors[]` is never read by a rule.**
@@ -232,6 +232,22 @@ Accepted, not changed: IDM-001 fires on most sites without Organization markup;
 kept as a problem because the handout names missing structured data as one, at
 medium severity. Bot-challenge pages served with 200 are recorded as thin pages;
 only RND-002 could misread them, and only if every page were challenged.
+
+### Safe zip and residual-risk fixes (D41)
+
+**A safe, submission-ready zip is kept untouched** at
+`safe/agent-readiness-audit-SAFE-126e469.zip` (1,044,033 bytes, SHA-256
+`24ae24091cff820774dae6017f41ad60b7c208d697c6b3e8e4e1bd682d5fac2f`), built from
+commit `126e469`, which carries the git tag `submission-safe`. `safe/` is
+gitignored. If later work is incomplete when time runs out, submit that file.
+
+After it, D41 closed the fixable residual risks: more consent managers recognized
+(cookieconsent, Quantcast, Sourcepoint, Shopify, HubSpot, joined `euconsent`
+forms); RND-002's remedy first checks for a bot challenge before recommending a
+rendering change; the real-browser test retries once; S5's new video finding
+re-checked with curl. Not fixable by an agent: the user's judge read-through.
+Deliberately not changed: engagement coverage (no evidence for another rule) and
+IDM-001's prevalence (the handout names missing structured data as a problem).
 
 ### Files in `runs/` (gitignored, this machine only)
 
