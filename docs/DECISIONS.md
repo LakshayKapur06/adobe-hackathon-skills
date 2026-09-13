@@ -995,3 +995,28 @@ pages, whose server response is 0 characters against about 1,000 rendered
 ("pages under /local/…/video/"). Verified from the saved evidence rather than
 adjudicated by the user; the narrowing to `video` is what keeps it from being
 reported against the section's server-rendered articles.
+
+### D41 — Closing the audit's fixable residual risks
+
+- **More consent managers recognized.** D38's matcher missed several common
+  containers whose names split into ordinary words or joined tokens: the
+  cookieconsent library (`cc-window cc-banner`), Quantcast (`qc-cmp2`),
+  Sourcepoint (`sp_message_container`), Shopify's privacy banner
+  (`shopify-pc__banner`), HubSpot (`hs-eu-cookie-confirmation`), and joined forms
+  such as `euconsent` and `cookieconsentbanner`. Each new pattern needs a
+  banner-like companion or is a vendor's literal name, so `cc-number`,
+  `privacy-policy-content` and `cookie-recipes` keep their text; tests hold 14
+  real container names and 6 look-alikes.
+- **RND-002's remedy begins with the check that separates a shell from a bot
+  challenge.** A challenge served with 200 to every script-less client is
+  indistinguishable from an application shell without a browser, down to the
+  "enable JavaScript" text, so no rule can tell them apart. Telling the owner to
+  server-render would be the wrong fix for the challenge; the first step now is to
+  load a cited URL with JavaScript disabled and see which it is.
+- **The real-browser test retries once.** The regression it guards fails every
+  attempt; a CPU-starved browser fails one at most, and a judge running the gate on
+  a busy machine should not see it fail for that.
+- **S5's new RND-001 finding re-checked independently.** A fetch with a different
+  client (curl) and a separate parser found 0 characters of visible text in the
+  server response of a cited local video page, which carries a title and JSON-LD
+  only.

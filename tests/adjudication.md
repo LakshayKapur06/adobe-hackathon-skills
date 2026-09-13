@@ -126,5 +126,7 @@ sections, the documentation subdomain's adjudicated RND-001 stopped firing, beca
 its client-rendered CLI reference had been split across two URL-guessed page types.
 D40 made RND-001 group by the path an application is mounted under; the finding
 fires again in every run of that site, and one new finding appeared on S5, whose
-local video pages send 0 characters of server text ("pages under /local/…/video/").
+local video pages send 0 characters of server text ("pages under /local/…/video/"),
+re-checked with a different HTTP client and parser (0 visible characters; the page
+carries only a title and JSON-LD).
 Wall times on these runs: 85 to 186 seconds.
