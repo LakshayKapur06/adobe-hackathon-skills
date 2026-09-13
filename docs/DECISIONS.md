@@ -885,3 +885,31 @@ The mistyped address (`https://instagram.comcom`) is not detected. Telling a
 typing error from a real host would need a list of valid top-level domains, and
 a rule guessing at it would misfire on the new ones that keep appearing; this is
 recorded as a miss.
+
+### D36 — A policy word deep in a URL is an ordinary word
+
+The adjudicator's miss check reported product pages on the large retailer that
+said "page does not exist". A read-only fetch of three product links from a
+category page returned 200, the product name as the heading and its prices, so
+the pages work for a crawler; the browser sessions had been rate-limited (the
+adjudicator also met HTTP 429) and product availability there depends on the
+chosen location. It was not a miss. On the university, the home page looked
+blank with JavaScript off, but the server response carries 88% of the rendered
+text, including the spotlight story; the section is hidden by styling until a
+script reveals it, which a crawler reading the HTML never sees. Not a miss
+either.
+
+Checking the first of those in the saved evidence found a real defect: the
+retailer's cookies category (`/pc/snacks-branded-foods/biscuits-cookies/cookies/`)
+had been classified as a policy page, because "cookies" is a cookie-policy word
+and policy words were matched anywhere in the path, first. Page type decides
+sampling strata and which rules apply, so a category read as policy falls out of
+every primary-template check. The same matching had filed news videos about
+grievance hearings on the Hindi publisher as policy pages.
+
+Ambiguous policy words ("cookies", "cookie", "shipping", "returns", "refund",
+"refunds", "legal", "terms", "warranty", "grievance") now mark a policy page only
+within two path segments of the root; unambiguous names such as
+`privacy-policy` still count anywhere. Re-classifying all 847 saved real-site
+pages changed 22, every one of them a listing or a news video that had been
+wrongly typed as policy, and no page that was really a policy.

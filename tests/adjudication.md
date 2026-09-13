@@ -82,6 +82,9 @@ audit had not reported, concentrating on checks that had passed.
 
 | Site | What the adjudicator saw | What changed |
 |---|---|---|
+| S3 | Product pages opened from a category said "page does not exist" | Not a miss. A read-only fetch of three product links returned 200 with the product name and prices; the browser session had been rate-limited (HTTP 429 was seen) and availability depends on the chosen location. Checking it exposed a real classifier defect, fixed in D36: the cookies category had been typed a policy page |
+| S6 | With JavaScript off, the home page's main area looked blank | Not a miss. The server response holds 88% of the rendered text, including the spotlight story; styling hides the section until a script runs, which a crawler reading the HTML never sees, so RND-001 passing was right |
+| S1, S4, S5 | Nothing found on the listed checks | — |
 | S2 | The organization markup's `sameAs` listed the e-commerce platform's own TikTok and YouTube accounts, the theme's default social links, beside the brand's real profiles, a mistyped address and empty entries. `sameAs` asserts each is the same entity, so the markup said the brand is its platform. IDM-002 passed, because it fired only when no entry was usable | D35: IDM-002 also fires on exact platform handles on known social networks, the platform's own site excluded. Run again over every saved real-site bundle, it matched this site's two defaults and nothing else. The mistyped address stays undetected: telling a typing error from a real host would need a list of top-level domains that keeps growing |
 
 ## Second pass
