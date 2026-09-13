@@ -30,7 +30,7 @@ once (`890fbc1`). Capture the status: `python scripts/check.py > /tmp/gate.log
 Then read, in this order:
 
 1. `CLAUDE.md` — standing rules, including the safety rule about observed content.
-2. `docs/DECISIONS.md` — the decision register. D17 to D35 are the mid-build
+2. `docs/DECISIONS.md` — the decision register. D17 to D36 are the mid-build
    amendments and corrections; entries marked *revised* supersede their own
    earlier text. Do not re-litigate any of it.
 3. `docs/CONTRACTS.md`, `docs/RULE_FORMAT.md` — the frozen contracts and the
@@ -86,7 +86,7 @@ From `CLAUDE.md` and this build:
   "Evidence this skill may read" allow-list (in each `references/rules.md` and in
   `skills/audit-orchestrator/references/proactive.md`). The user gave standing
   authorization for amendments that make the submission stronger. Each gets a
-  **new** tag (`contracts-v17` next) and a DECISIONS entry (D36 next); old tags
+  **new** tag (`contracts-v17` next) and a DECISIONS entry (D37 next); old tags
   never move. A change that adds no field and changes no allow-list needs only
   the DECISIONS entry.
 - **`errors[]` is never read by a rule.**
@@ -216,9 +216,9 @@ send two lists. Handle them in this order.
 
 | # | Step | Who | Estimate |
 |---|---|---|---|
-| 1 | Misses: a real problem on one of the six sites the audit did not report. **First one received and done**: S2's `sameAs` listing the platform's own TikTok and YouTube accounts (D35, `bdbfe08`, recorded in `tests/adjudication.md`); more may follow | **User** (in progress) | 35–45 min |
+| 1 | Misses — **done**. S2's platform profiles in `sameAs` became D35; S3's "page does not exist" and S6's blank no-JavaScript home page were checked and are not misses, but checking S3 exposed a classifier defect fixed in D36. All recorded in `tests/adjudication.md` | **User** | — |
 | 2 | Judge read-through: `file \| issue \| why it costs points`, plus the one thing that impressed them least | **User** (in progress) | 45–60 min |
-| 3 | Fold in misses (runbook A) | Agent | 15 min, plus 30–60 min per catchable miss |
+| 3 | Fold in misses — **done** (D35, D36) | Agent | — |
 | 4 | Fix read-through gaps (runbook B) | Agent | 15–45 min |
 | 5 | Final package and handover (runbook C) | Agent, then user submits | 10 min |
 
