@@ -258,7 +258,11 @@ in `scripts/diagnose.py`, one function per rule, in the order written here.
 - **Legitimate exceptions:** a site that genuinely has no content yet;
   not distinguishable from a shell without rendering, and not excepted, since a
   fetcher still reads nothing. Confidence carries the uncertainty about what a
-  browser would show.
+  browser would show. A bot-protection challenge served with status 200 to every
+  client that does not run scripts produces the same empty, identical response,
+  and even the same "enable JavaScript" text an application shell carries; no
+  observation without a browser separates the two, so the remediation's first
+  step is the check that does, before any rendering change.
 - **Confidence:** high when `discovery.soft_404.detected` is true and every
   counted page's `raw.text_hash` equals `discovery.soft_404.baseline_text_hash`,
   meaning the site answers every path, real or not, with one identical empty

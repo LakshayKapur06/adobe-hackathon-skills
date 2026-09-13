@@ -258,9 +258,12 @@ def rnd_002(evidence, workdir, out):
                "Serve content in the server response instead of only through client-side scripts.",
                "The application shell served at the URLs cited.",
                "The server response is all a non-rendering fetcher ever reads.",
-               "Adopt server-side rendering or static generation for the site's routes, or place a prerendering "
-               "step in front of them serving the same rendered HTML to every client; re-run this audit with a "
-               "browser available to measure the gap per template.",
+               "First open a cited URL in a normal browser with JavaScript disabled: if it shows a bot check or an "
+               "'enable JavaScript to continue' page rather than the site's application, the empty response comes "
+               "from bot protection, and the fix is to admit verified crawlers there, not to change rendering. "
+               "Otherwise adopt server-side rendering or static generation for the site's routes, or place a "
+               "prerendering step in front of them serving the same rendered HTML to every client; re-run this "
+               "audit with a browser available to measure the gap per template.",
                "Any text at all reaching a fetcher that does not execute scripts.",
                "A plain fetch of the home page and each cited URL returns at least the page's main heading and body "
                "text in the server response.", "high"),
