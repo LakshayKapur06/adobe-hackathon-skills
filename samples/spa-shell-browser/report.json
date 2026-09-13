@@ -1,5 +1,5 @@
 {
-  "audited_at": "2026-09-13T16:58:49Z",
+  "audited_at": "2026-09-13T17:58:13Z",
   "checks_passed": [
     {
       "rule_id": "ACC-001",
@@ -31,49 +31,49 @@
     },
     {
       "rule_id": "ARR-001",
-      "summary": "Median server response time (time to first byte minus connection setup) is 1 ms across 5 pages, within web.dev's 1,800 ms poor boundary"
+      "summary": "Median server response time (time to first byte minus connection setup) is 2 ms across 5 pages, within web.dev's 1,800 ms poor boundary"
     }
   ],
   "findings": [
     {
       "category": "discoverability",
       "confidence": "high",
-      "evidence": "5 of 5 rendered pages compared across the site are JavaScript-dependent: at least 80% of their rendered text is missing from the server response. Examples: http://127.0.0.1:61776/ (server response 0 characters, rendered page 583); http://127.0.0.1:61776/warranty (server response 0 characters, rendered page 1968); http://127.0.0.1:61776/aboutus (server response 0 characters, rendered page 1712); http://127.0.0.1:61776/grievance (server response 0 characters, rendered page 1558); http://127.0.0.1:61776/extended-warranty (server response 0 characters, rendered page 2111). Every sampled HTML page was rendered.",
+      "evidence": "5 of 5 rendered pages compared across the site are JavaScript-dependent: at least 80% of their rendered text is missing from the server response. Examples: http://127.0.0.1:54523/ (server response 0 characters, rendered page 583); http://127.0.0.1:54523/warranty (server response 0 characters, rendered page 1968); http://127.0.0.1:54523/aboutus (server response 0 characters, rendered page 1712); http://127.0.0.1:54523/grievance (server response 0 characters, rendered page 1558); http://127.0.0.1:54523/extended-warranty (server response 0 characters, rendered page 2111). Every sampled HTML page was rendered.",
       "evidence_refs": [
         {
           "layer": "first_party",
           "method": "render",
           "observation": "server text 0 chars, rendered 583 chars, delta_ratio 1.000",
-          "retrieved_at": "2026-09-13T16:58:49Z",
-          "url": "http://127.0.0.1:61776/"
+          "retrieved_at": "2026-09-13T17:58:13Z",
+          "url": "http://127.0.0.1:54523/"
         },
         {
           "layer": "first_party",
           "method": "render",
           "observation": "server text 0 chars, rendered 1968 chars, delta_ratio 1.000",
-          "retrieved_at": "2026-09-13T16:58:51Z",
-          "url": "http://127.0.0.1:61776/warranty"
+          "retrieved_at": "2026-09-13T17:58:18Z",
+          "url": "http://127.0.0.1:54523/warranty"
         },
         {
           "layer": "first_party",
           "method": "render",
           "observation": "server text 0 chars, rendered 1712 chars, delta_ratio 1.000",
-          "retrieved_at": "2026-09-13T16:58:51Z",
-          "url": "http://127.0.0.1:61776/aboutus"
+          "retrieved_at": "2026-09-13T17:58:18Z",
+          "url": "http://127.0.0.1:54523/aboutus"
         },
         {
           "layer": "first_party",
           "method": "render",
           "observation": "server text 0 chars, rendered 1558 chars, delta_ratio 1.000",
-          "retrieved_at": "2026-09-13T16:58:51Z",
-          "url": "http://127.0.0.1:61776/grievance"
+          "retrieved_at": "2026-09-13T17:58:18Z",
+          "url": "http://127.0.0.1:54523/grievance"
         },
         {
           "layer": "first_party",
           "method": "render",
           "observation": "server text 0 chars, rendered 2111 chars, delta_ratio 1.000",
-          "retrieved_at": "2026-09-13T16:58:51Z",
-          "url": "http://127.0.0.1:61776/extended-warranty"
+          "retrieved_at": "2026-09-13T17:58:18Z",
+          "url": "http://127.0.0.1:54523/extended-warranty"
         }
       ],
       "exceptions_checked": [
@@ -126,35 +126,35 @@
     {
       "category": "discoverability",
       "confidence": "high",
-      "evidence": "4 of 4 non-root 2xx pages that declare a canonical name http://127.0.0.1:61776/, the site root, as their canonical URL. Each tells an indexer it is a duplicate of the home page.",
+      "evidence": "4 of 4 non-root 2xx pages that declare a canonical name http://127.0.0.1:54523/, the site root, as their canonical URL. Each tells an indexer it is a duplicate of the home page.",
       "evidence_refs": [
         {
           "layer": "first_party",
           "method": "render",
-          "observation": "canonical http://127.0.0.1:61776/ on http://127.0.0.1:61776/warranty",
-          "retrieved_at": "2026-09-13T16:58:51Z",
-          "url": "http://127.0.0.1:61776/warranty"
+          "observation": "canonical http://127.0.0.1:54523/ on http://127.0.0.1:54523/warranty",
+          "retrieved_at": "2026-09-13T17:58:18Z",
+          "url": "http://127.0.0.1:54523/warranty"
         },
         {
           "layer": "first_party",
           "method": "render",
-          "observation": "canonical http://127.0.0.1:61776/ on http://127.0.0.1:61776/aboutus",
-          "retrieved_at": "2026-09-13T16:58:51Z",
-          "url": "http://127.0.0.1:61776/aboutus"
+          "observation": "canonical http://127.0.0.1:54523/ on http://127.0.0.1:54523/aboutus",
+          "retrieved_at": "2026-09-13T17:58:18Z",
+          "url": "http://127.0.0.1:54523/aboutus"
         },
         {
           "layer": "first_party",
           "method": "render",
-          "observation": "canonical http://127.0.0.1:61776/ on http://127.0.0.1:61776/grievance",
-          "retrieved_at": "2026-09-13T16:58:51Z",
-          "url": "http://127.0.0.1:61776/grievance"
+          "observation": "canonical http://127.0.0.1:54523/ on http://127.0.0.1:54523/grievance",
+          "retrieved_at": "2026-09-13T17:58:18Z",
+          "url": "http://127.0.0.1:54523/grievance"
         },
         {
           "layer": "first_party",
           "method": "render",
-          "observation": "canonical http://127.0.0.1:61776/ on http://127.0.0.1:61776/extended-warranty",
-          "retrieved_at": "2026-09-13T16:58:51Z",
-          "url": "http://127.0.0.1:61776/extended-warranty"
+          "observation": "canonical http://127.0.0.1:54523/ on http://127.0.0.1:54523/extended-warranty",
+          "retrieved_at": "2026-09-13T17:58:18Z",
+          "url": "http://127.0.0.1:54523/extended-warranty"
         }
       ],
       "exceptions_checked": [
@@ -216,8 +216,8 @@
           "layer": "first_party",
           "method": "render",
           "observation": "JSON-LD types on the home page: none",
-          "retrieved_at": "2026-09-13T16:58:49Z",
-          "url": "http://127.0.0.1:61776/"
+          "retrieved_at": "2026-09-13T17:58:13Z",
+          "url": "http://127.0.0.1:54523/"
         }
       ],
       "exceptions_checked": [
@@ -255,7 +255,7 @@
         "success_criteria": "The home page's server response contains a JSON-LD node of an Organization type with at least name and url.",
         "summary": "Add Organization JSON-LD with name, url, logo and sameAs to the home page.",
         "what": "Add an Organization JSON-LD block, or the most specific subtype that applies, to the home page.",
-        "where": "The home page template's <head>, in the server response (http://127.0.0.1:61776/).",
+        "where": "The home page template's <head>, in the server response (http://127.0.0.1:54523/).",
         "why": "It states the entity behind the site explicitly instead of leaving it to be inferred from a name."
       },
       "symptom": [
@@ -266,14 +266,14 @@
     {
       "category": "discoverability",
       "confidence": "low",
-      "evidence": "/llms.txt at http://127.0.0.1:61776 answered HTTP 200 with no file: an empty body or the site's page for unknown addresses, so no /llms.txt is published. No major assistant is documented to read this file, so this is listed only as a low-cost hedge, not as a gap.",
+      "evidence": "/llms.txt at http://127.0.0.1:54523 answered HTTP 200 with no file: an empty body or the site's page for unknown addresses, so no /llms.txt is published. No major assistant is documented to read this file, so this is listed only as a low-cost hedge, not as a gap.",
       "evidence_refs": [
         {
           "layer": "first_party",
           "method": "fetch",
           "observation": "HTTP 200, no file published",
-          "retrieved_at": "2026-09-13T16:58:49Z",
-          "url": "http://127.0.0.1:61776/llms.txt"
+          "retrieved_at": "2026-09-13T17:58:13Z",
+          "url": "http://127.0.0.1:54523/llms.txt"
         }
       ],
       "exceptions_checked": [],
@@ -301,7 +301,7 @@
         "success_criteria": "/llms.txt answers 200 with content that is not the site's soft-404 page.",
         "summary": "If it costs little, publish a short /llms.txt; do not expect it to change how assistants see the site.",
         "what": "Publish a plain-text /llms.txt summarising what the site is and linking its key pages.",
-        "where": "http://127.0.0.1:61776/llms.txt",
+        "where": "http://127.0.0.1:54523/llms.txt",
         "why": "It is a proposed convention some tools read; no major assistant documents consuming it, which is why this is a suggestion and never reported as a problem."
       },
       "symptom": [
@@ -403,8 +403,8 @@
         "what": "claims"
       }
     ],
-    "elapsed_s": 5.0,
-    "finished_at": "2026-09-13T16:58:54Z",
+    "elapsed_s": 8.0,
+    "finished_at": "2026-09-13T17:58:21Z",
     "sampling": {
       "strata": [
         {
@@ -425,7 +425,7 @@
       ],
       "strategy": "stratified:nav"
     },
-    "started_at": "2026-09-13T16:58:49Z"
+    "started_at": "2026-09-13T17:58:13Z"
   },
   "site": "127.0.0.1",
   "summary": {

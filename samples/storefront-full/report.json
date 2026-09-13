@@ -1,5 +1,5 @@
 {
-  "audited_at": "2026-09-13T16:58:09Z",
+  "audited_at": "2026-09-13T17:57:33Z",
   "checks_passed": [
     {
       "rule_id": "ACC-001",
@@ -27,7 +27,7 @@
     },
     {
       "rule_id": "ARR-001",
-      "summary": "Median server response time (time to first byte minus connection setup) is 1 ms across 12 pages, within web.dev's 1,800 ms poor boundary"
+      "summary": "Median server response time (time to first byte minus connection setup) is 2 ms across 12 pages, within web.dev's 1,800 ms poor boundary"
     },
     {
       "rule_id": "IDM-001",
@@ -56,50 +56,50 @@
           "layer": "first_party",
           "method": "render",
           "observation": "robots directives in effect: noindex",
-          "retrieved_at": "2026-09-13T16:58:11Z",
-          "url": "http://127.0.0.1:58409/products/trail-tee"
+          "retrieved_at": "2026-09-13T17:57:36Z",
+          "url": "http://127.0.0.1:53604/products/trail-tee"
         },
         {
           "layer": "first_party",
           "method": "render",
           "observation": "robots directives in effect: noindex",
-          "retrieved_at": "2026-09-13T16:58:11Z",
-          "url": "http://127.0.0.1:58409/products/summit-cap"
+          "retrieved_at": "2026-09-13T17:57:37Z",
+          "url": "http://127.0.0.1:53604/products/summit-cap"
         },
         {
           "layer": "first_party",
           "method": "render",
           "observation": "robots directives in effect: noindex",
-          "retrieved_at": "2026-09-13T16:58:11Z",
-          "url": "http://127.0.0.1:58409/products/delta-socks"
+          "retrieved_at": "2026-09-13T17:57:37Z",
+          "url": "http://127.0.0.1:53604/products/delta-socks"
         },
         {
           "layer": "first_party",
           "method": "render",
           "observation": "robots directives in effect: noindex",
-          "retrieved_at": "2026-09-13T16:58:11Z",
-          "url": "http://127.0.0.1:58409/products/meadow-scarf"
+          "retrieved_at": "2026-09-13T17:57:37Z",
+          "url": "http://127.0.0.1:53604/products/meadow-scarf"
         },
         {
           "layer": "first_party",
           "method": "render",
           "observation": "robots directives in effect: noindex",
-          "retrieved_at": "2026-09-13T16:58:11Z",
-          "url": "http://127.0.0.1:58409/products/ridge-gloves"
+          "retrieved_at": "2026-09-13T17:57:37Z",
+          "url": "http://127.0.0.1:53604/products/ridge-gloves"
         },
         {
           "layer": "first_party",
           "method": "render",
           "observation": "robots directives in effect: noindex",
-          "retrieved_at": "2026-09-13T16:58:11Z",
-          "url": "http://127.0.0.1:58409/products/canyon-jacket"
+          "retrieved_at": "2026-09-13T17:57:37Z",
+          "url": "http://127.0.0.1:53604/products/canyon-jacket"
         },
         {
           "layer": "first_party",
           "method": "render",
           "observation": "robots directives in effect: noindex",
-          "retrieved_at": "2026-09-13T16:58:11Z",
-          "url": "http://127.0.0.1:58409/products/harbor-hoodie"
+          "retrieved_at": "2026-09-13T17:57:37Z",
+          "url": "http://127.0.0.1:53604/products/harbor-hoodie"
         }
       ],
       "exceptions_checked": [
@@ -149,42 +149,42 @@
     {
       "category": "discoverability",
       "confidence": "medium",
-      "evidence": "Rendered 7 eligible product pages; a price appears in the rendered text of 5 and in neither the server text nor server JSON-LD of those 5. Examples: http://127.0.0.1:58409/products/trail-tee (rendered shows ₹999.00); http://127.0.0.1:58409/products/summit-cap (rendered shows ₹999.00); http://127.0.0.1:58409/products/delta-socks (rendered shows ₹999.00); http://127.0.0.1:58409/products/canyon-jacket (rendered shows ₹999.00); http://127.0.0.1:58409/products/harbor-hoodie (rendered shows ₹999.00).",
+      "evidence": "Rendered 7 eligible product pages; a price appears in the rendered text of 5 and in neither the server text nor server JSON-LD of those 5. Examples: http://127.0.0.1:53604/products/trail-tee (rendered shows ₹999.00); http://127.0.0.1:53604/products/summit-cap (rendered shows ₹999.00); http://127.0.0.1:53604/products/delta-socks (rendered shows ₹999.00); http://127.0.0.1:53604/products/canyon-jacket (rendered shows ₹999.00); http://127.0.0.1:53604/products/harbor-hoodie (rendered shows ₹999.00).",
       "evidence_refs": [
         {
           "layer": "first_party",
           "method": "render",
           "observation": "no price token in server text or JSON-LD; rendered text contains ₹999.00",
-          "retrieved_at": "2026-09-13T16:58:11Z",
-          "url": "http://127.0.0.1:58409/products/trail-tee"
+          "retrieved_at": "2026-09-13T17:57:36Z",
+          "url": "http://127.0.0.1:53604/products/trail-tee"
         },
         {
           "layer": "first_party",
           "method": "render",
           "observation": "no price token in server text or JSON-LD; rendered text contains ₹999.00",
-          "retrieved_at": "2026-09-13T16:58:11Z",
-          "url": "http://127.0.0.1:58409/products/summit-cap"
+          "retrieved_at": "2026-09-13T17:57:37Z",
+          "url": "http://127.0.0.1:53604/products/summit-cap"
         },
         {
           "layer": "first_party",
           "method": "render",
           "observation": "no price token in server text or JSON-LD; rendered text contains ₹999.00",
-          "retrieved_at": "2026-09-13T16:58:11Z",
-          "url": "http://127.0.0.1:58409/products/delta-socks"
+          "retrieved_at": "2026-09-13T17:57:37Z",
+          "url": "http://127.0.0.1:53604/products/delta-socks"
         },
         {
           "layer": "first_party",
           "method": "render",
           "observation": "no price token in server text or JSON-LD; rendered text contains ₹999.00",
-          "retrieved_at": "2026-09-13T16:58:11Z",
-          "url": "http://127.0.0.1:58409/products/canyon-jacket"
+          "retrieved_at": "2026-09-13T17:57:37Z",
+          "url": "http://127.0.0.1:53604/products/canyon-jacket"
         },
         {
           "layer": "first_party",
           "method": "render",
           "observation": "no price token in server text or JSON-LD; rendered text contains ₹999.00",
-          "retrieved_at": "2026-09-13T16:58:11Z",
-          "url": "http://127.0.0.1:58409/products/harbor-hoodie"
+          "retrieved_at": "2026-09-13T17:57:37Z",
+          "url": "http://127.0.0.1:53604/products/harbor-hoodie"
         }
       ],
       "exceptions_checked": [
@@ -241,8 +241,8 @@
           "layer": "first_party",
           "method": "render",
           "observation": "sameAs declared with no absolute URL",
-          "retrieved_at": "2026-09-13T16:58:09Z",
-          "url": "http://127.0.0.1:58409/"
+          "retrieved_at": "2026-09-13T17:57:33Z",
+          "url": "http://127.0.0.1:53604/"
         }
       ],
       "exceptions_checked": [
@@ -289,21 +289,21 @@
     {
       "category": "discoverability",
       "confidence": "low",
-      "evidence": "The same client sent the same request with different user-agent strings: browser-ua received 2xx, while GPTBot received a refusal (GPTBot: 403 on http://127.0.0.1:58409/, 403 on http://127.0.0.1:58409/pages/about-us). robots.txt admits these agents. This compares two header strings, not a browser against a crawler, and cannot show how requests from the operators' own addresses are treated.",
+      "evidence": "The same client sent the same request with different user-agent strings: browser-ua received 2xx, while GPTBot received a refusal (GPTBot: 403 on http://127.0.0.1:53604/, 403 on http://127.0.0.1:53604/pages/about-us). robots.txt admits these agents. This compares two header strings, not a browser against a crawler, and cannot show how requests from the operators' own addresses are treated.",
       "evidence_refs": [
         {
           "layer": "first_party",
           "method": "fetch",
           "observation": "browser-ua 200; GPTBot 403",
-          "retrieved_at": "2026-09-13T16:58:09Z",
-          "url": "http://127.0.0.1:58409/"
+          "retrieved_at": "2026-09-13T17:57:33Z",
+          "url": "http://127.0.0.1:53604/"
         },
         {
           "layer": "first_party",
           "method": "fetch",
           "observation": "browser-ua 200; GPTBot 403",
-          "retrieved_at": "2026-09-13T16:58:11Z",
-          "url": "http://127.0.0.1:58409/pages/about-us"
+          "retrieved_at": "2026-09-13T17:57:37Z",
+          "url": "http://127.0.0.1:53604/pages/about-us"
         }
       ],
       "exceptions_checked": [
@@ -353,21 +353,21 @@
     {
       "category": "discoverability",
       "confidence": "high",
-      "evidence": "On 2 of 2 2xx pages with price markup, the page shows currency amounts and none equals the marked-up price: http://127.0.0.1:58409/products/meadow-scarf (markup 1499.00); http://127.0.0.1:58409/products/ridge-gloves (markup 1499.00).",
+      "evidence": "On 2 of 2 2xx pages with price markup, the page shows currency amounts and none equals the marked-up price: http://127.0.0.1:53604/products/meadow-scarf (markup 1499.00); http://127.0.0.1:53604/products/ridge-gloves (markup 1499.00).",
       "evidence_refs": [
         {
           "layer": "first_party",
           "method": "render",
           "observation": "markup price 1499.00 is not among the prices shown",
-          "retrieved_at": "2026-09-13T16:58:11Z",
-          "url": "http://127.0.0.1:58409/products/meadow-scarf"
+          "retrieved_at": "2026-09-13T17:57:37Z",
+          "url": "http://127.0.0.1:53604/products/meadow-scarf"
         },
         {
           "layer": "first_party",
           "method": "render",
           "observation": "markup price 1499.00 is not among the prices shown",
-          "retrieved_at": "2026-09-13T16:58:11Z",
-          "url": "http://127.0.0.1:58409/products/ridge-gloves"
+          "retrieved_at": "2026-09-13T17:57:37Z",
+          "url": "http://127.0.0.1:53604/products/ridge-gloves"
         }
       ],
       "exceptions_checked": [
@@ -415,14 +415,14 @@
     {
       "category": "discoverability",
       "confidence": "medium",
-      "evidence": "This audit observes the site, not assistants' answers, by design. 1 claim was promoted with at least medium first-party confidence, which gives a panel whose expected answers are known: What is northwind threads, and what is its official website? (expected: 127.0.0.1).",
+      "evidence": "This audit observes the site, not assistants' answers, by design. 3 questions, built from the claims promoted with at least medium first-party confidence, so its expected answers are known: What is northwind threads, and what is its official website? (expected: 127.0.0.1); Where can I buy northwind threads's canyon jacket, and on which page? (expected: 127.0.0.1); Where can I buy northwind threads's delta socks, and on which page? (expected: 127.0.0.1).",
       "evidence_refs": [
         {
           "layer": "first_party",
           "method": "fetch",
-          "observation": "claims promoted from first-party evidence: 1",
-          "retrieved_at": "2026-09-13T16:58:09Z",
-          "url": "http://127.0.0.1:58409/"
+          "observation": "claims promoted from first-party evidence: 8",
+          "retrieved_at": "2026-09-13T17:57:33Z",
+          "url": "http://127.0.0.1:53604/"
         }
       ],
       "exceptions_checked": [],
@@ -444,7 +444,7 @@
       "status": "proactive",
       "suggested_action": {
         "effort": "low",
-        "how": "Use exactly these prompts each time, record date, assistant, answer and whether it matches: What is northwind threads, and what is its official website? (expected: 127.0.0.1). Re-run after each fix from this report to see whether it moved anything.",
+        "how": "Use exactly these prompts each time, record date, assistant, answer and whether it matches: What is northwind threads, and what is its official website? (expected: 127.0.0.1) | Where can I buy northwind threads's canyon jacket, and on which page? (expected: 127.0.0.1) | Where can I buy northwind threads's delta socks, and on which page? (expected: 127.0.0.1). Re-run after each fix from this report to see whether it moved anything.",
         "mechanism": "Turns the audit's fixes into something whose effect can be seen.",
         "priority": "P2",
         "success_criteria": "A dated record of answers per assistant exists, and each answer is marked as matching or not matching the site's stated value.",
@@ -461,14 +461,14 @@
     {
       "category": "discoverability",
       "confidence": "low",
-      "evidence": "/llms.txt at http://127.0.0.1:58409 answered HTTP 404, so no /llms.txt is published. No major assistant is documented to read this file, so this is listed only as a low-cost hedge, not as a gap.",
+      "evidence": "/llms.txt at http://127.0.0.1:53604 answered HTTP 404, so no /llms.txt is published. No major assistant is documented to read this file, so this is listed only as a low-cost hedge, not as a gap.",
       "evidence_refs": [
         {
           "layer": "first_party",
           "method": "fetch",
           "observation": "HTTP 404, no file published",
-          "retrieved_at": "2026-09-13T16:58:09Z",
-          "url": "http://127.0.0.1:58409/llms.txt"
+          "retrieved_at": "2026-09-13T17:57:33Z",
+          "url": "http://127.0.0.1:53604/llms.txt"
         }
       ],
       "exceptions_checked": [],
@@ -496,7 +496,7 @@
         "success_criteria": "/llms.txt answers 200 with content that is not the site's soft-404 page.",
         "summary": "If it costs little, publish a short /llms.txt; do not expect it to change how assistants see the site.",
         "what": "Publish a plain-text /llms.txt summarising what the site is and linking its key pages.",
-        "where": "http://127.0.0.1:58409/llms.txt",
+        "where": "http://127.0.0.1:53604/llms.txt",
         "why": "It is a proposed convention some tools read; no major assistant documents consuming it, which is why this is a suggestion and never reported as a problem."
       },
       "symptom": [
@@ -507,21 +507,21 @@
     {
       "category": "discoverability",
       "confidence": "high",
-      "evidence": "2 of 14 sampled URLs (14%), all discovered from the site's own sitemap, navigation or links, returned an error: 404 http://127.0.0.1:58409/products/retired-logo-tee, 404 http://127.0.0.1:58409/products/retired-classic-tee.",
+      "evidence": "2 of 14 sampled URLs (14%), all discovered from the site's own sitemap, navigation or links, returned an error: 404 http://127.0.0.1:53604/products/retired-logo-tee, 404 http://127.0.0.1:53604/products/retired-classic-tee.",
       "evidence_refs": [
         {
           "layer": "first_party",
           "method": "fetch",
-          "observation": "HTTP 404 at http://127.0.0.1:58409/products/retired-logo-tee",
-          "retrieved_at": "2026-09-13T16:58:11Z",
-          "url": "http://127.0.0.1:58409/products/retired-logo-tee"
+          "observation": "HTTP 404 at http://127.0.0.1:53604/products/retired-logo-tee",
+          "retrieved_at": "2026-09-13T17:57:37Z",
+          "url": "http://127.0.0.1:53604/products/retired-logo-tee"
         },
         {
           "layer": "first_party",
           "method": "fetch",
-          "observation": "HTTP 404 at http://127.0.0.1:58409/products/retired-classic-tee",
-          "retrieved_at": "2026-09-13T16:58:11Z",
-          "url": "http://127.0.0.1:58409/products/retired-classic-tee"
+          "observation": "HTTP 404 at http://127.0.0.1:53604/products/retired-classic-tee",
+          "retrieved_at": "2026-09-13T17:57:37Z",
+          "url": "http://127.0.0.1:53604/products/retired-classic-tee"
         }
       ],
       "exceptions_checked": [
@@ -612,8 +612,8 @@
       "fetched": 14
     },
     "degradations": [],
-    "elapsed_s": 39.0,
-    "finished_at": "2026-09-13T16:58:48Z",
+    "elapsed_s": 29.0,
+    "finished_at": "2026-09-13T17:58:02Z",
     "sampling": {
       "strata": [
         {
@@ -644,7 +644,7 @@
       ],
       "strategy": "stratified:sitemap+nav"
     },
-    "started_at": "2026-09-13T16:58:09Z"
+    "started_at": "2026-09-13T17:57:33Z"
   },
   "site": "127.0.0.1",
   "summary": {
