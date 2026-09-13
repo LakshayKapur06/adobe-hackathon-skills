@@ -46,6 +46,7 @@ directions, which is what makes fabricated evidence impossible.
 - `pages[].text.visible_excerpt`
 - `pages[].text.word_count`
 - `pages[].timing.ttfb_ms`
+- `pages[].timing.connect_ms`
 - `pages[].timing.fetch_ms`
 - `pages[].jsonld[].fields_present`
 - `pages[].jsonld[].type`

@@ -178,6 +178,15 @@ class TestFixtureSite(unittest.TestCase):
         evidence, *_ = run(fixture_site, no_render=True, renderer=RefusingRenderer())
         self.assertFalse(evidence["run_context"]["capabilities"]["js_render"])
 
+    def test_connection_setup_is_recorded_inside_time_to_first_byte(self):
+        # contracts-v10: connect_ms is measured inside the request's own
+        # connection, so it exists for every fetched page and never exceeds TTFB.
+        for page in self.evidence["pages"]:
+            with self.subTest(url=page["url"]):
+                timing = page["timing"]
+                self.assertIsNotNone(timing["connect_ms"])
+                self.assertLessEqual(timing["connect_ms"], timing["ttfb_ms"])
+
     def test_same_fixture_twice_is_identical_except_timings(self):
         again, *_ = run(fixture_site, no_render=True)
         self.assertEqual(normalise(self.evidence), normalise(again))
@@ -186,7 +195,7 @@ class TestFixtureSite(unittest.TestCase):
 def normalise(evidence):
     text = json.dumps(evidence, sort_keys=True)
     text = re.sub(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", "<ts>", text)
-    text = re.sub(r'"(ttfb_ms|fetch_ms|render_ms)": [0-9.]+', r'"\1": <ms>', text)
+    text = re.sub(r'"(ttfb_ms|connect_ms|fetch_ms|render_ms)": [0-9.]+', r'"\1": <ms>', text)
     return re.sub(r"http://127\.0\.0\.1:\d+", "<origin>", text)
 
 

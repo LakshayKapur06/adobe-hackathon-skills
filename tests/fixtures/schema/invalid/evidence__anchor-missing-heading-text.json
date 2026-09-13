@@ -219,7 +219,8 @@
       "timing": {
         "fetch_ms": 5,
         "render_ms": null,
-        "ttfb_ms": 3
+        "ttfb_ms": 3,
+        "connect_ms": null
       },
       "url": "http://localhost:8000/index.html"
     },
@@ -343,7 +344,8 @@
       "timing": {
         "fetch_ms": 4,
         "render_ms": null,
-        "ttfb_ms": 2
+        "ttfb_ms": 2,
+        "connect_ms": null
       },
       "url": "http://localhost:8000/about.html"
     }

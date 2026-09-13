@@ -560,9 +560,10 @@
         "timing": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["ttfb_ms", "fetch_ms", "render_ms"],
+          "required": ["ttfb_ms", "connect_ms", "fetch_ms", "render_ms"],
           "properties": {
             "ttfb_ms": { "type": ["number", "null"], "minimum": 0 },
+            "connect_ms": { "type": ["number", "null"], "minimum": 0, "description": "Connection setup inside the same request: DNS, TCP and, for HTTPS, TLS. Part of ttfb_ms. Null when no connection was completed (contracts-v10)." },
             "fetch_ms": { "type": ["number", "null"], "minimum": 0 },
             "render_ms": { "type": ["number", "null"], "minimum": 0 }
           }

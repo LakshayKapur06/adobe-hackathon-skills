@@ -241,6 +241,7 @@
       "obstructions": [],
       "timing": {
         "ttfb_ms": 3,
+        "connect_ms": null,
         "fetch_ms": 5,
         "render_ms": null
       },
@@ -365,6 +366,7 @@
       "obstructions": [],
       "timing": {
         "ttfb_ms": 2,
+        "connect_ms": null,
         "fetch_ms": 4,
         "render_ms": null
       },

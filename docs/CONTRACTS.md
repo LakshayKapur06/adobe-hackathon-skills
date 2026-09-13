@@ -176,7 +176,7 @@ the bundle, as `discovery` is.
   "dates": { "visible_dates": [], "schema_date_modified": null,
              "schema_date_published": null, "http_last_modified": null },
   "obstructions": [ { "kind": "cookie_wall|modal|paywall|age_gate", "evidence": "..." } ],
-  "timing": { "ttfb_ms": 210, "fetch_ms": 340, "render_ms": 1420 },
+  "timing": { "ttfb_ms": 210, "connect_ms": 95, "fetch_ms": 340, "render_ms": 1420 },
   "provenance": { "layer": "first_party", "method": "fetch|render" }
 }
 ```
@@ -196,6 +196,13 @@ because a fetcher that ignores CSS extracts that text anyway, so a rule that
 concludes text is absent from the server response must be able to tell "absent"
 from "present but hidden". Found in G2, where a storefront's reviews sat in a
 `display:none` container in the server HTML.
+
+**`timing.connect_ms`** (contracts-v10). The part of `ttfb_ms` spent setting up the
+request's own connection: DNS resolution, the TCP handshake and the TLS
+handshake, measured inside the same connection so that no extra connection is
+opened. It separates the auditing client's network from the server: one live run
+met a uniform ten-second stall on every page that vanished minutes later, and
+without this field it read as a slow server.
 
 **`crawl.sampling.strata[].page_type`** (contracts-v9) is a sampling stratum
 derived from the URL pattern before fetching, because sampling has to choose

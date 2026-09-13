@@ -43,7 +43,7 @@ def utc_now():
 
 class Response:
     __slots__ = ("url", "final_url", "status", "headers", "body", "text", "content_type",
-                 "redirect_chain", "error", "ttfb_ms", "fetch_ms", "truncated", "fetched_at")
+                 "redirect_chain", "error", "ttfb_ms", "connect_ms", "fetch_ms", "truncated", "fetched_at")
 
     def __init__(self, url):
         self.url = url
@@ -56,6 +56,7 @@ class Response:
         self.redirect_chain = []
         self.error = None
         self.ttfb_ms = None
+        self.connect_ms = None
         self.fetch_ms = None
         self.truncated = False
         self.fetched_at = utc_now()
@@ -63,6 +64,44 @@ class Response:
     @property
     def ok(self):
         return self.status is not None and 200 <= self.status <= 299
+
+
+# Connection setup time, measured inside the request's own connection so that no
+# extra connection is ever opened. connect() covers DNS resolution, the TCP
+# handshake and, for HTTPS, the TLS handshake. It is kept apart from the server's
+# response time because a stall on the auditing client's network (one live run
+# met a uniform ten-second stall on every page, which vanished minutes later)
+# otherwise reads as a slow server. Thread-local, because different hosts are
+# fetched concurrently.
+_TIMING = threading.local()
+
+
+class _TimedHTTPConnection(http.client.HTTPConnection):
+    def connect(self):
+        started = time.monotonic()
+        try:
+            super().connect()
+        finally:
+            _TIMING.connect_ms = round((time.monotonic() - started) * 1000, 1)
+
+
+class _TimedHTTPSConnection(http.client.HTTPSConnection):
+    def connect(self):
+        started = time.monotonic()
+        try:
+            super().connect()
+        finally:
+            _TIMING.connect_ms = round((time.monotonic() - started) * 1000, 1)
+
+
+class _TimedHTTPHandler(urllib.request.HTTPHandler):
+    def http_open(self, req):
+        return self.do_open(_TimedHTTPConnection, req)
+
+
+class _TimedHTTPSHandler(urllib.request.HTTPSHandler):
+    def https_open(self, req):
+        return self.do_open(_TimedHTTPSConnection, req, context=self._context)
 
 
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -94,7 +133,7 @@ class Fetcher:
     def __init__(self, user_agent=USER_AGENT, timeout=10.0):
         self.user_agent = user_agent
         self.timeout = timeout
-        self._opener = urllib.request.build_opener(_NoRedirect)
+        self._opener = urllib.request.build_opener(_NoRedirect, _TimedHTTPHandler, _TimedHTTPSHandler)
         self._guard = threading.Lock()
         self._host_locks = {}
         self._last_request = {}
@@ -165,6 +204,7 @@ class Fetcher:
                 "Accept-Encoding": "gzip",
             })
             response.fetched_at = utc_now()
+            _TIMING.connect_ms = None
             started = time.monotonic()
             raw = None
             try:
@@ -173,6 +213,7 @@ class Fetcher:
                 except urllib.error.HTTPError as exc:
                     handle = exc
                 response.ttfb_ms = round((time.monotonic() - started) * 1000, 1)
+                response.connect_ms = _TIMING.connect_ms
                 response.status = handle.getcode() if hasattr(handle, "getcode") else handle.code
                 response.headers = {k.lower(): v for k, v in (handle.headers or {}).items()}
                 raw = handle.read(MAX_BODY_BYTES + 1) if hasattr(handle, "read") else b""

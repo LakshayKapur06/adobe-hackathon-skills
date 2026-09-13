@@ -607,7 +607,7 @@ def assemble_fixture_report(out_path=None):
     return read_json(handle)
 
 
-TIMING_RE = re.compile(r'"(ttfb_ms|fetch_ms|render_ms|elapsed_s)": [0-9.]+')
+TIMING_RE = re.compile(r'"(ttfb_ms|connect_ms|fetch_ms|render_ms|elapsed_s)": [0-9.]+')
 LOCAL_ORIGIN_RE = re.compile(r"http://127\.0\.0\.1:\d+")
 
 

@@ -592,3 +592,20 @@ five minutes for a typical site on a standard machine, which one audit at a time
 meets with room to spare (14 to 94 s on the G2 sites), so the orchestrator's
 `SKILL.md` now says to run one at a time, and the degradation already reports any
 shortfall.
+
+### D24 — `contracts-v10`: connection setup is timed apart from the server
+
+Verifying D23 on POCO live, ARR-001 fired at medium: every page's time to first
+byte was about 10.2 seconds, where the previous run measured 58 to 160 ms and a
+diagnostic minutes later measured 37 to 108 ms for the full request. The same
+network stall had just made robots.txt unreachable on the attempt before. It was
+the auditing client's network, not the server, and a finding built on it is
+exactly the false positive adjudication exists to catch.
+
+Measuring connection setup separately was the fix proposed after G2 as a
+collector improvement, and this is the evidence that made it necessary. The
+fetcher now times `connect()` inside each request's own connection, covering DNS,
+TCP and TLS, with no extra connection opened, and records it as
+`timing.connect_ms`. ARR-001 judges server response time, `ttfb_ms` minus
+`connect_ms`, against web.dev's poor boundary, which errs towards not firing.
+On two live sites connection setup was 108 of 125 ms and 239 of 407 ms of TTFB.

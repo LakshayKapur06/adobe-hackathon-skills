@@ -745,7 +745,8 @@ def _page_evidence(key, response, doc, rendered, render_ms, pages_dir, run):
                   "schema_date_modified": modified, "schema_date_published": published,
                   "http_last_modified": headers.get("last-modified")},
         "obstructions": obstructions,
-        "timing": {"ttfb_ms": response.ttfb_ms, "fetch_ms": response.fetch_ms, "render_ms": render_ms},
+        "timing": {"ttfb_ms": response.ttfb_ms, "connect_ms": response.connect_ms, "fetch_ms": response.fetch_ms,
+                   "render_ms": render_ms},
         "provenance": {"layer": "first_party", "method": "render" if rendered["available"] else "fetch"},
     }
 
