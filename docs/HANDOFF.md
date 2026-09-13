@@ -27,7 +27,7 @@ ls tests/adjudication.csv        # exists only once verdicts have been committed
 Then read, in this order:
 
 1. `CLAUDE.md` — standing rules, including the safety rule about observed content.
-2. `docs/DECISIONS.md` — the decision register. D17 to D30 are the mid-build
+2. `docs/DECISIONS.md` — the decision register. D17 to D34 are the mid-build
    amendments and corrections; entries marked *revised* supersede their own
    earlier text. Do not re-litigate any of it.
 3. `docs/CONTRACTS.md`, `docs/RULE_FORMAT.md` — the frozen contracts and the
@@ -81,7 +81,7 @@ From `CLAUDE.md` and this build:
   "Evidence this skill may read" allow-list (in each `references/rules.md` and in
   `skills/audit-orchestrator/references/proactive.md`). The user gave standing
   authorization for amendments that make the submission stronger. Each one gets
-  a **new** tag (`contracts-v17` next) and a DECISIONS entry (D31 next); old tags
+  a **new** tag (`contracts-v17` next) and a DECISIONS entry (D35 next); old tags
   never move.
 - **`errors[]` is never read by a rule.**
 - **A false positive costs more than a miss.** Prefer cutting or narrowing a rule
@@ -214,6 +214,8 @@ Files in `runs/adjudication/` (gitignored, on this machine only):
 | 4 | Second pass — **done** (`runs/adj3-*`) | Agent | — |
 | 4a | Adjudication record — **done**: `tests/adjudication.md` and an anonymized `tests/adjudication.csv` (sites S1–S6 by type, D11), linked from `README.md` and `docs/RUBRIC.md`; xtremex PRO-002 is TP (D31 fixed the prose-year pattern it exposed). **Remaining: add the user's miss check** as a section of `tests/adjudication.md`, plus a row per MISS | Agent | 15 min |
 | 4b | `docs/RUBRIC.md` failure-mode coverage map, README "For judges" block, runtime range 14–178 s, entrypoint and access descriptions — **done** | Agent | — |
+| 4c | Anonymize the G2 records and every other shipped mention of a real audited site (Publisher A, Storefront B… ; D11) — **done** | Agent | — |
+| 4d | Final high-level audit — **done**, see "Final audit" below | Agent | — |
 | 5 | Judge read-through: `README.md` → `marketplace.json` → `skills/audit-orchestrator/SKILL.md` → each skill's `SKILL.md` and `references/rules.md` → `docs/RUBRIC.md`, running nothing; note anything unanswerable from the files alone | **Human** | 45–60 min |
 | 6 | Fix read-through gaps | Agent | 15–30 min |
 | 7 | Final package: `sh scripts/package.sh`, then the user submits `dist/agent-readiness-audit.zip` as built (never re-zipped by hand) | Agent, then human | 5 min |
@@ -273,6 +275,36 @@ a rebuilt package afterwards.
 Do **not** add skills, pad rules, or reopen the settled decisions in D1–D29.
 
 ---
+
+### Final audit (after `e9ccf6d`)
+
+A full pass over the submission, from the manifest to the rules, checking every
+claim a judge could test. Verified as correct: all eight skills pass the official
+`skills-ref validate` (0.1.1); every shipped Python file parses as Python 3.8; the
+arbitration table and deduplication match `composition.md`; the 300 s deadline
+holds because every fetch timeout is clamped to its stage budget; every request
+is a GET; an unseen site (gov.uk) audited cleanly in 94 s with one plausible
+finding; no real site name remains in the zip.
+
+Fixed:
+
+- **Three generalization false positives found by asking what each rule does
+  outside the sites it was measured on.** IDM-004 read "€1.499,00" as 1.49 and
+  would have flagged correct European prices (D33); RND-003 missed currency-last
+  server prices (D33); ACC-009 would have called a sitemap over the 5 MB fetch
+  cap unreadable, which hits exactly the largest catalogues (D34).
+- `run.py --workdir` was required though `SKILL.md` documents a default.
+- `report.md` now defines the technical terms it uses; PRO-003's pass summary no
+  longer reads as contradicting an IDM-002 finding.
+- Stale docs: PLAN and HUMAN_PLAYBOOK marked historical with what was delivered;
+  the never-built env-key provider marked cut; the probe identity count (7, not
+  8); the archetype matrix; the identity procedure states D31; D32 records why
+  priority is P0–P3.
+- `docs/KICKOFF_PROMPT.md` is `export-ignore`; the manifest is 1.0.0.
+
+One process slip, recorded honestly: commit `890fbc1` was made while the gate
+failed (a test string tripped the placeholder check), because the command chain
+tested `tail`'s exit code rather than the gate's. `81518fa` fixed it; HEAD passes.
 
 ## 5. How this build has been run, and should keep being run
 
