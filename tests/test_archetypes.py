@@ -22,6 +22,9 @@ What each variant asserts, from its ``archetype.json``:
   the observation underneath it is also right.
 - ``requests_only``: every path the server was asked for, for the archetypes
   that test robots compliance.
+- ``absent_text``: phrases from instructions a site addresses to agents, which
+  must appear in no file the run writes: evidence, sidecars, findings, or either
+  report.
 
 Every variant also requires a schema-valid report in which every rule defined in
 the marketplace reaches exactly one outcome.
@@ -198,6 +201,12 @@ class ArchetypeCase(unittest.TestCase):
             self.assertIn(rule, not_assessed, "%s should be not_assessed on %s/%s" % (rule, name, variant_name))
         for path, value in variant.get("evidence", {}).items():
             self.assertEqual(dotted(evidence, path), value, "evidence %s on %s/%s" % (path, name, variant_name))
+        for phrase in variant.get("absent_text", []):
+            for path in pathlib.Path(workdir).rglob("*"):
+                if path.is_file():
+                    self.assertNotIn(phrase, path.read_text(encoding="utf-8", errors="replace"),
+                                     "observed instruction text reached %s on %s/%s" % (
+                                         path.relative_to(workdir), name, variant_name))
         if "requests_only" in variant:
             requested = sorted({p for p, _ in server.requests})
             self.assertEqual(requested, sorted(variant["requests_only"]),

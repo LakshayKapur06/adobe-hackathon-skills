@@ -1,0 +1,92 @@
+[
+  {
+    "id": "C-001",
+    "from_candidates": [
+      "CC-001"
+    ],
+    "kind": "legal_name",
+    "value_normalized": "northwind threads",
+    "first_party_confidence": "high",
+    "entity_ambiguity": "low"
+  },
+  {
+    "id": "C-002",
+    "from_candidates": [
+      "CC-004"
+    ],
+    "kind": "product_name",
+    "value_normalized": "canyon jacket",
+    "first_party_confidence": "high",
+    "entity_ambiguity": "low"
+  },
+  {
+    "id": "C-003",
+    "from_candidates": [
+      "CC-005"
+    ],
+    "kind": "product_name",
+    "value_normalized": "delta socks",
+    "first_party_confidence": "high",
+    "entity_ambiguity": "low"
+  },
+  {
+    "id": "C-004",
+    "from_candidates": [
+      "CC-006"
+    ],
+    "kind": "product_name",
+    "value_normalized": "harbor hoodie",
+    "first_party_confidence": "high",
+    "entity_ambiguity": "low"
+  },
+  {
+    "id": "C-005",
+    "from_candidates": [
+      "CC-007"
+    ],
+    "kind": "product_name",
+    "value_normalized": "meadow scarf",
+    "first_party_confidence": "high",
+    "entity_ambiguity": "low"
+  },
+  {
+    "id": "C-006",
+    "from_candidates": [
+      "CC-008"
+    ],
+    "kind": "product_name",
+    "value_normalized": "ridge gloves",
+    "first_party_confidence": "high",
+    "entity_ambiguity": "low"
+  },
+  {
+    "id": "C-007",
+    "from_candidates": [
+      "CC-009"
+    ],
+    "kind": "product_name",
+    "value_normalized": "summit cap",
+    "first_party_confidence": "high",
+    "entity_ambiguity": "low"
+  },
+  {
+    "id": "C-008",
+    "from_candidates": [
+      "CC-010"
+    ],
+    "kind": "product_name",
+    "value_normalized": "trail tee",
+    "first_party_confidence": "high",
+    "entity_ambiguity": "low"
+  },
+  {
+    "id": "C-009",
+    "from_candidates": [
+      "CC-011"
+    ],
+    "kind": "tagline",
+    "value_normalized": "northwind threads",
+    "first_party_confidence": "low",
+    "entity_ambiguity": "low"
+  }
+]

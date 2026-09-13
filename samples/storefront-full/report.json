@@ -1,0 +1,648 @@
+{
+  "audited_at": "2026-09-13T04:54:07Z",
+  "checks_passed": [
+    {
+      "rule_id": "ACC-001",
+      "summary": "No answer-time retrieval crawler (OAI-SearchBot, PerplexityBot, Claude-SearchBot, Googlebot) is shut out by the * group in robots.txt"
+    },
+    {
+      "rule_id": "ACC-002",
+      "summary": "robots.txt answered HTTP 200, which lets compliant crawlers proceed"
+    },
+    {
+      "rule_id": "ACC-004",
+      "summary": "No primary page template carries nosnippet or max-snippet:0 (9 primary 2xx pages examined)"
+    },
+    {
+      "rule_id": "ACC-005",
+      "summary": "Distinct pages do not declare the home page as canonical (0 of 11 non-root pages with a canonical do)"
+    },
+    {
+      "rule_id": "ACC-008",
+      "summary": "No answer-time retrieval crawler is excluded by name in robots.txt"
+    },
+    {
+      "rule_id": "ACC-009",
+      "summary": "Every assessable sitemap declared in robots.txt returned a readable sitemap (1 file)"
+    },
+    {
+      "rule_id": "ARR-001",
+      "summary": "Median server response time (time to first byte minus connection setup) is 1 ms across 12 pages, within web.dev's 1,800 ms poor boundary"
+    },
+    {
+      "rule_id": "IDM-001",
+      "summary": "The home page's JSON-LD states an organization identity"
+    },
+    {
+      "rule_id": "IDM-003",
+      "summary": "Every JSON-LD block parsed on 8 pages carrying JSON-LD"
+    },
+    {
+      "rule_id": "RND-001",
+      "summary": "No template depends on JavaScript for its text: 0 of 12 rendered pages compared are JavaScript-dependent, below the template threshold"
+    }
+  ],
+  "findings": [
+    {
+      "category": "discoverability",
+      "confidence": "high",
+      "evidence": "7 of 7 sampled 2xx product pages carry noindex or none in their robots meta tag or X-Robots-Tag header (100%). A page excluded from the index cannot be retrieved into an answer.",
+      "evidence_refs": [
+        {
+          "layer": "first_party",
+          "method": "render",
+          "observation": "robots directives in effect: noindex",
+          "retrieved_at": "2026-09-13T04:54:10Z",
+          "url": "http://127.0.0.1:63229/products/trail-tee"
+        },
+        {
+          "layer": "first_party",
+          "method": "render",
+          "observation": "robots directives in effect: noindex",
+          "retrieved_at": "2026-09-13T04:54:10Z",
+          "url": "http://127.0.0.1:63229/products/summit-cap"
+        },
+        {
+          "layer": "first_party",
+          "method": "render",
+          "observation": "robots directives in effect: noindex",
+          "retrieved_at": "2026-09-13T04:54:10Z",
+          "url": "http://127.0.0.1:63229/products/delta-socks"
+        },
+        {
+          "layer": "first_party",
+          "method": "render",
+          "observation": "robots directives in effect: noindex",
+          "retrieved_at": "2026-09-13T04:54:10Z",
+          "url": "http://127.0.0.1:63229/products/meadow-scarf"
+        },
+        {
+          "layer": "first_party",
+          "method": "render",
+          "observation": "robots directives in effect: noindex",
+          "retrieved_at": "2026-09-13T04:54:10Z",
+          "url": "http://127.0.0.1:63229/products/ridge-gloves"
+        },
+        {
+          "layer": "first_party",
+          "method": "render",
+          "observation": "robots directives in effect: noindex",
+          "retrieved_at": "2026-09-13T04:54:10Z",
+          "url": "http://127.0.0.1:63229/products/canyon-jacket"
+        },
+        {
+          "layer": "first_party",
+          "method": "render",
+          "observation": "robots directives in effect: noindex",
+          "retrieved_at": "2026-09-13T04:54:10Z",
+          "url": "http://127.0.0.1:63229/products/harbor-hoodie"
+        }
+      ],
+      "exceptions_checked": [
+        "editorial noindex on single pages: at least 2 pages and 50% of the type required",
+        "syndicated copies pointing elsewhere by canonical: excluded"
+      ],
+      "false_positive_controls_applied": [
+        "2xx pages only",
+        "exact token match after lower-casing",
+        "X-Robots-Tag scopes other than the retrieval crawlers ignored",
+        "pages declaring another URL as canonical excluded",
+        "category, contact, policy and other pages never counted"
+      ],
+      "id": "F-001",
+      "impact": {
+        "blocking": true,
+        "breadth": "section",
+        "content_importance": "primary"
+      },
+      "rule_id": "ACC-003",
+      "scope": {
+        "page_types": [
+          "product"
+        ],
+        "pages_affected": 7,
+        "pages_examined": 7
+      },
+      "severity": "high",
+      "skill": "access-and-indexability",
+      "status": "found",
+      "suggested_action": {
+        "effort": "low",
+        "how": "Find the template or SEO-plugin setting that applies the directive to the whole type, often a 'discourage indexing' toggle left on from staging, and scope it to the pages actually meant to be excluded.",
+        "mechanism": "Index admission for the affected template.",
+        "priority": "P1",
+        "success_criteria": "A plain fetch of every cited URL returns no noindex or none in either the robots meta tag or X-Robots-Tag.",
+        "summary": "Remove noindex from the product template or the header rule that emits it.",
+        "what": "Remove noindex (or none) from the product page template, or from the header rule adding it.",
+        "where": "The robots meta tag in the product template or the server/CDN rule setting X-Robots-Tag, on the URLs cited.",
+        "why": "The directive is applied after fetching, so no amount of crawl access recovers the page."
+      },
+      "symptom": [
+        "invisible"
+      ],
+      "title": "Pages of type product refuse indexing"
+    },
+    {
+      "category": "discoverability",
+      "confidence": "medium",
+      "evidence": "Rendered 7 eligible product pages; a price appears in the rendered text of 5 and in neither the server text nor server JSON-LD of those 5. Examples: http://127.0.0.1:63229/products/trail-tee (rendered shows ₹999.00); http://127.0.0.1:63229/products/summit-cap (rendered shows ₹999.00); http://127.0.0.1:63229/products/delta-socks (rendered shows ₹999.00); http://127.0.0.1:63229/products/canyon-jacket (rendered shows ₹999.00); http://127.0.0.1:63229/products/harbor-hoodie (rendered shows ₹999.00).",
+      "evidence_refs": [
+        {
+          "layer": "first_party",
+          "method": "render",
+          "observation": "no price token in server text or JSON-LD; rendered text contains ₹999.00",
+          "retrieved_at": "2026-09-13T04:54:10Z",
+          "url": "http://127.0.0.1:63229/products/trail-tee"
+        },
+        {
+          "layer": "first_party",
+          "method": "render",
+          "observation": "no price token in server text or JSON-LD; rendered text contains ₹999.00",
+          "retrieved_at": "2026-09-13T04:54:10Z",
+          "url": "http://127.0.0.1:63229/products/summit-cap"
+        },
+        {
+          "layer": "first_party",
+          "method": "render",
+          "observation": "no price token in server text or JSON-LD; rendered text contains ₹999.00",
+          "retrieved_at": "2026-09-13T04:54:10Z",
+          "url": "http://127.0.0.1:63229/products/delta-socks"
+        },
+        {
+          "layer": "first_party",
+          "method": "render",
+          "observation": "no price token in server text or JSON-LD; rendered text contains ₹999.00",
+          "retrieved_at": "2026-09-13T04:54:10Z",
+          "url": "http://127.0.0.1:63229/products/canyon-jacket"
+        },
+        {
+          "layer": "first_party",
+          "method": "render",
+          "observation": "no price token in server text or JSON-LD; rendered text contains ₹999.00",
+          "retrieved_at": "2026-09-13T04:54:10Z",
+          "url": "http://127.0.0.1:63229/products/harbor-hoodie"
+        }
+      ],
+      "exceptions_checked": [
+        "quote-on-request pricing: no price in rendered text either, so never matches",
+        "region-selected pricing: undetectable, confidence below high under 8 pages"
+      ],
+      "false_positive_controls_applied": [
+        "same currency-token pattern applied to both texts",
+        "pages with any price in the server text excluded",
+        "pages exposing offers.price or offers.lowPrice in server JSON-LD excluded",
+        "JavaScript-dependent pages left to RND-001",
+        "page_type_confidence >= 0.6"
+      ],
+      "id": "F-002",
+      "impact": {
+        "blocking": true,
+        "breadth": "section",
+        "content_importance": "primary"
+      },
+      "rule_id": "RND-003",
+      "scope": {
+        "page_types": [
+          "product"
+        ],
+        "pages_affected": 5,
+        "pages_examined": 7
+      },
+      "severity": "high",
+      "skill": "render-and-extraction",
+      "status": "found",
+      "suggested_action": {
+        "effort": "medium",
+        "how": "Render the price component on the server, or emit Product with offers.price and offers.priceCurrency in JSON-LD generated server-side.",
+        "mechanism": "The price becomes extractable and quotable.",
+        "priority": "P1",
+        "success_criteria": "The price appears in the server response, as text or as offers.price JSON-LD, on every cited product URL, verifiable with a plain fetch and no JavaScript.",
+        "summary": "Server-render the product price, or emit Offer JSON-LD with offers.price in the server response.",
+        "what": "Include the price in the server response of the product template, as visible text or Offer JSON-LD.",
+        "where": "The product page template and its price component, on the URLs cited.",
+        "why": "The server response is what a fetcher extracts, and it holds a product without a price."
+      },
+      "symptom": [
+        "invisible",
+        "misrepresented"
+      ],
+      "title": "Product prices appear only after rendering"
+    },
+    {
+      "category": "discoverability",
+      "confidence": "high",
+      "evidence": "1 of 12 2xx pages carry an organization node (Organization) whose sameAs is declared with 3 entries and not one absolute URL: [\"\", \"\", \"\"].",
+      "evidence_refs": [
+        {
+          "layer": "first_party",
+          "method": "render",
+          "observation": "sameAs declared with no absolute URL",
+          "retrieved_at": "2026-09-13T04:54:07Z",
+          "url": "http://127.0.0.1:63229/"
+        }
+      ],
+      "exceptions_checked": [
+        "organization with no external profiles: it would not declare sameAs at all"
+      ],
+      "false_positive_controls_applied": [
+        "sameAs truncated from values excluded, never read as empty",
+        "one absolute http(s) URL makes a node pass",
+        "only organization nodes counted"
+      ],
+      "id": "F-003",
+      "impact": {
+        "blocking": false,
+        "breadth": "site",
+        "content_importance": "secondary"
+      },
+      "rule_id": "IDM-002",
+      "scope": {
+        "page_types": [
+          "home"
+        ],
+        "pages_affected": 1,
+        "pages_examined": 12
+      },
+      "severity": "medium",
+      "skill": "identity-and-markup",
+      "status": "found",
+      "suggested_action": {
+        "effort": "low",
+        "how": "Enter the absolute URLs of the organization's official profiles in the theme's social settings, or edit the template to omit empty entries.",
+        "mechanism": "Identity anchoring to external descriptions of the same entity.",
+        "priority": "P2",
+        "success_criteria": "Every organization node's sameAs in the server response contains only absolute http or https URLs, or the property is absent.",
+        "summary": "Fill sameAs with the organization's real profile URLs, or remove the property until there are some.",
+        "what": "Fill sameAs with the organization's real profile URLs, or remove the property.",
+        "where": "The theme or template setting that populates the organization markup's sameAs, usually the social-links configuration.",
+        "why": "An empty identity link is noise a consumer has to discard."
+      },
+      "symptom": [
+        "misrepresented"
+      ],
+      "title": "Organization markup declares sameAs links that identify nothing"
+    },
+    {
+      "category": "discoverability",
+      "confidence": "low",
+      "evidence": "The same client sent the same request with different user-agent strings: browser-ua received 2xx, while GPTBot received a refusal (GPTBot: 403 on http://127.0.0.1:63229/, 403 on http://127.0.0.1:63229/pages/about-us). robots.txt admits these agents. This compares two header strings, not a browser against a crawler, and cannot show how requests from the operators' own addresses are treated.",
+      "evidence_refs": [
+        {
+          "layer": "first_party",
+          "method": "fetch",
+          "observation": "browser-ua 200; GPTBot 403",
+          "retrieved_at": "2026-09-13T04:54:07Z",
+          "url": "http://127.0.0.1:63229/"
+        },
+        {
+          "layer": "first_party",
+          "method": "fetch",
+          "observation": "browser-ua 200; GPTBot 403",
+          "retrieved_at": "2026-09-13T04:54:10Z",
+          "url": "http://127.0.0.1:63229/pages/about-us"
+        }
+      ],
+      "exceptions_checked": [
+        "edge verification of claimed identity by published address ranges: indistinguishable here, so status is risk at low confidence"
+      ],
+      "false_positive_controls_applied": [
+        "429 and 5xx excluded",
+        "Googlebot excluded: refusing unverified Googlebot is documented defence",
+        "refusal required on every URL where browser-ua received 2xx",
+        "agents robots.txt disallows are never probed"
+      ],
+      "id": "F-004",
+      "impact": {
+        "blocking": true,
+        "breadth": "site",
+        "content_importance": "primary"
+      },
+      "rule_id": "ACC-006",
+      "scope": {
+        "page_types": [
+          "about",
+          "home"
+        ],
+        "pages_affected": 2,
+        "pages_examined": 2
+      },
+      "severity": "medium",
+      "skill": "access-and-indexability",
+      "status": "risk",
+      "suggested_action": {
+        "effort": "low",
+        "how": "Filter logs for the crawler's user-agent string, compare source addresses against the operator's published ranges, and check the status verified requests received; if refused, verify identity by address instead of refusing by string.",
+        "mechanism": "Admission of the crawler where the policy already grants it.",
+        "priority": "P2",
+        "success_criteria": "Server logs show 2xx responses to requests from the crawler's published address ranges on the cited URLs.",
+        "summary": "Check the server logs for how verified requests from the named crawlers are answered.",
+        "what": "Establish whether requests from the named crawler's published address ranges receive 2xx, and if not, remove the user-agent match refusing them.",
+        "where": "Server access logs first, then web server, CDN bot-management or firewall rules matching on User-Agent.",
+        "why": "robots.txt admits these crawlers, so a refusal at the server contradicts the site's own policy."
+      },
+      "symptom": [
+        "invisible"
+      ],
+      "title": "A named AI crawler identity is refused where robots.txt admits it"
+    },
+    {
+      "category": "discoverability",
+      "confidence": "high",
+      "evidence": "On 2 of 2 2xx pages with price markup, the page shows currency amounts and none equals the marked-up price: http://127.0.0.1:63229/products/meadow-scarf (markup 1499.00); http://127.0.0.1:63229/products/ridge-gloves (markup 1499.00).",
+      "evidence_refs": [
+        {
+          "layer": "first_party",
+          "method": "render",
+          "observation": "markup price 1499.00 is not among the prices shown",
+          "retrieved_at": "2026-09-13T04:54:10Z",
+          "url": "http://127.0.0.1:63229/products/meadow-scarf"
+        },
+        {
+          "layer": "first_party",
+          "method": "render",
+          "observation": "markup price 1499.00 is not among the prices shown",
+          "retrieved_at": "2026-09-13T04:54:10Z",
+          "url": "http://127.0.0.1:63229/products/ridge-gloves"
+        }
+      ],
+      "exceptions_checked": [
+        "server-side currency conversion or a different default variant: undetectable, medium confidence on a single page"
+      ],
+      "false_positive_controls_applied": [
+        "commerce nodes only, and a price of zero never counts",
+        "a price absent from visible text is never a contradiction",
+        "a page showing the marked-up price among others matches",
+        "2xx pages only"
+      ],
+      "id": "F-005",
+      "impact": {
+        "blocking": false,
+        "breadth": "section",
+        "content_importance": "primary"
+      },
+      "rule_id": "IDM-004",
+      "scope": {
+        "page_types": [
+          "product"
+        ],
+        "pages_affected": 2,
+        "pages_examined": 2
+      },
+      "severity": "medium",
+      "skill": "identity-and-markup",
+      "status": "found",
+      "suggested_action": {
+        "effort": "medium",
+        "how": "Generate offers.price from the same variable that renders the visible price, including sale and selected-variant logic, rather than from a separate field.",
+        "mechanism": "The structured statement of price matches what a buyer sees.",
+        "priority": "P2",
+        "success_criteria": "On every cited URL, the offers.price value in the server response equals a price shown in the page's visible text.",
+        "summary": "Generate offers.price from the same value that renders the visible price.",
+        "what": "Make the marked-up price equal the price the page shows.",
+        "where": "The product template's Offer markup on the URLs cited, and the data source it reads the price from.",
+        "why": "Markup is taken as the authoritative statement, so a stale or base price there is repeated as fact."
+      },
+      "symptom": [
+        "misrepresented"
+      ],
+      "title": "Structured price contradicts the prices shown on the page"
+    },
+    {
+      "category": "discoverability",
+      "confidence": "medium",
+      "evidence": "This audit observes the site, not assistants' answers, by design. 1 claims were promoted with at least medium first-party confidence, which gives a panel whose expected answers are known: What is northwind threads, and what does it do? (expected: northwind threads).",
+      "evidence_refs": [
+        {
+          "layer": "first_party",
+          "method": "fetch",
+          "observation": "claims promoted from first-party evidence: 1",
+          "retrieved_at": "2026-09-13T04:54:07Z",
+          "url": "http://127.0.0.1:63229/"
+        }
+      ],
+      "exceptions_checked": [],
+      "false_positive_controls_applied": [],
+      "id": "F-006",
+      "impact": {
+        "blocking": false,
+        "breadth": "site",
+        "content_importance": "secondary"
+      },
+      "rule_id": "PRO-002",
+      "scope": {
+        "page_types": [],
+        "pages_affected": 0,
+        "pages_examined": 0
+      },
+      "severity": "medium",
+      "skill": "audit-orchestrator",
+      "status": "proactive",
+      "suggested_action": {
+        "effort": "low",
+        "how": "Use exactly these prompts each time, record date, assistant, answer and whether it matches: What is northwind threads, and what does it do? (expected: northwind threads). Re-run after each fix from this report to see whether it moved anything.",
+        "mechanism": "Turns the audit's fixes into something whose effect can be seen.",
+        "priority": "P2",
+        "success_criteria": "A dated record of answers per assistant exists, and each answer is marked as matching or not matching the site's stated value.",
+        "summary": "Ask the same questions of the main assistants monthly and record whether each answer matches the site.",
+        "what": "Run a fixed panel of questions about northwind threads against the assistants that matter to the site, on a schedule, and record each answer against the expected value.",
+        "where": "Outside the site: a shared sheet or a scheduled script owned by whoever owns the brand's facts.",
+        "why": "Whether a fix changes what assistants say is not observable from the site, so it has to be measured where it happens."
+      },
+      "symptom": [
+        "misrepresented"
+      ],
+      "title": "Monitor how assistants describe northwind threads with a fixed prompt panel"
+    },
+    {
+      "category": "discoverability",
+      "confidence": "low",
+      "evidence": "/llms.txt at http://127.0.0.1:63229 answered HTTP 404 and is not present. No major assistant is documented to read this file, so this is listed only as a low-cost hedge, not as a gap.",
+      "evidence_refs": [
+        {
+          "layer": "first_party",
+          "method": "fetch",
+          "observation": "HTTP 404, not present",
+          "retrieved_at": "2026-09-13T04:54:07Z",
+          "url": "http://127.0.0.1:63229/llms.txt"
+        }
+      ],
+      "exceptions_checked": [],
+      "false_positive_controls_applied": [],
+      "id": "F-007",
+      "impact": {
+        "blocking": false,
+        "breadth": "page",
+        "content_importance": "secondary"
+      },
+      "rule_id": "PRO-001",
+      "scope": {
+        "page_types": [],
+        "pages_affected": 0,
+        "pages_examined": 0
+      },
+      "severity": "low",
+      "skill": "audit-orchestrator",
+      "status": "proactive",
+      "suggested_action": {
+        "effort": "low",
+        "how": "Write a short markdown file: one paragraph describing the organization, then links to the pages that answer the questions people ask about it. Keep it consistent with those pages.",
+        "mechanism": "A possible, undocumented discovery channel for tools that adopt the convention.",
+        "priority": "P2",
+        "success_criteria": "/llms.txt answers 200 with content that is not the site's soft-404 page.",
+        "summary": "If it costs little, publish a short /llms.txt; do not expect it to change how assistants see the site.",
+        "what": "Publish a plain-text /llms.txt summarising what the site is and linking its key pages.",
+        "where": "http://127.0.0.1:63229/llms.txt",
+        "why": "It is a proposed convention some tools read; no major assistant documents consuming it, which is why this is proactive and never a finding."
+      },
+      "symptom": [
+        "invisible"
+      ],
+      "title": "Optional and speculative: publish /llms.txt"
+    },
+    {
+      "category": "discoverability",
+      "confidence": "high",
+      "evidence": "2 of 14 sampled URLs (14%), all discovered from the site's own sitemap, navigation or links, returned an error: 404 http://127.0.0.1:63229/products/retired-logo-tee, 404 http://127.0.0.1:63229/products/retired-classic-tee.",
+      "evidence_refs": [
+        {
+          "layer": "first_party",
+          "method": "fetch",
+          "observation": "HTTP 404 at http://127.0.0.1:63229/products/retired-logo-tee",
+          "retrieved_at": "2026-09-13T04:54:10Z",
+          "url": "http://127.0.0.1:63229/products/retired-logo-tee"
+        },
+        {
+          "layer": "first_party",
+          "method": "fetch",
+          "observation": "HTTP 404 at http://127.0.0.1:63229/products/retired-classic-tee",
+          "retrieved_at": "2026-09-13T04:54:10Z",
+          "url": "http://127.0.0.1:63229/products/retired-classic-tee"
+        }
+      ],
+      "exceptions_checked": [
+        "retired content served 410 behind a stale link: counted, the reference is the defect",
+        "momentary outage: handled by confidence"
+      ],
+      "false_positive_controls_applied": [
+        "401, 403 and 429 excluded as refusals to this client",
+        "status judged at the final URL after redirects",
+        "5xx lowers confidence"
+      ],
+      "id": "F-008",
+      "impact": {
+        "blocking": true,
+        "breadth": "page",
+        "content_importance": "secondary"
+      },
+      "rule_id": "ACC-007",
+      "scope": {
+        "page_types": [],
+        "pages_affected": 2,
+        "pages_examined": 14
+      },
+      "severity": "low",
+      "skill": "access-and-indexability",
+      "status": "found",
+      "suggested_action": {
+        "effort": "medium",
+        "how": "For each cited URL restore the page, add a 301 to its current equivalent, or remove it from the sitemap and linking template; for 5xx, check application logs for the failing route.",
+        "mechanism": "Every advertised address yields content.",
+        "priority": "P3",
+        "success_criteria": "A plain fetch of every cited URL returns 2xx, a redirect to a 2xx, or the URL no longer appears in the sitemap or on linking pages.",
+        "summary": "Stop advertising URLs that do not resolve; restore or redirect the ones that should.",
+        "what": "Restore, redirect, or stop linking the cited URLs.",
+        "where": "The sitemap generator and the navigation or link templates that produced the cited URLs.",
+        "why": "Each reference sends crawlers to an error and spends crawl they would otherwise use on real pages."
+      },
+      "symptom": [
+        "invisible"
+      ],
+      "title": "URLs the site links to or lists return not-found or server errors"
+    }
+  ],
+  "not_assessed": [
+    {
+      "enable_hint": "applies only to sites publishing long articles or documentation",
+      "reason": "long-form article or doc pages of at least 1500 words sampled, news reporting excluded: 0; the recommendation needs 2",
+      "rule_id": "ANS-001"
+    },
+    {
+      "enable_hint": "applies to sites publishing articles",
+      "reason": "article pages classified with confidence >= 0.8 sampled: 0; 2 are needed",
+      "rule_id": "FRC-001"
+    },
+    {
+      "enable_hint": "applies when the site states a founding year and its organization has a Wikidata item naming the site as official website",
+      "reason": "no founding-year claim with medium or high first-party confidence and an unambiguous name was matched to a Wikidata record (frontier: 3 sources)",
+      "rule_id": "FRC-002"
+    },
+    {
+      "enable_hint": "none needed: this rule covers only runs with no rendered page",
+      "reason": "rendered pages were available, so RND-001 made the stronger raw-versus-rendered comparison instead",
+      "rule_id": "RND-002"
+    }
+  ],
+  "run_context": {
+    "capabilities": {
+      "egress": true,
+      "js_render": true,
+      "renderer": "system-chromium:chrome"
+    },
+    "corroboration": {
+      "attempted": true,
+      "frontier_size": 3,
+      "method": "keyless",
+      "provider_unavailable": [],
+      "truncated": false
+    },
+    "crawl": {
+      "blocked_by_robots": 0,
+      "discovered": 14,
+      "errors": 2,
+      "fetched": 14
+    },
+    "degradations": [],
+    "elapsed_s": 10.0,
+    "finished_at": "2026-09-13T04:54:17Z",
+    "sampling": {
+      "strata": [
+        {
+          "discovered": 1,
+          "page_type": "home",
+          "sampled": 1
+        },
+        {
+          "discovered": 9,
+          "page_type": "product",
+          "sampled": 9
+        },
+        {
+          "discovered": 2,
+          "page_type": "category",
+          "sampled": 2
+        },
+        {
+          "discovered": 1,
+          "page_type": "about",
+          "sampled": 1
+        },
+        {
+          "discovered": 1,
+          "page_type": "policy",
+          "sampled": 1
+        }
+      ],
+      "strategy": "stratified:sitemap+nav"
+    },
+    "started_at": "2026-09-13T04:54:07Z"
+  },
+  "site": "127.0.0.1",
+  "summary": {
+    "critical": 0,
+    "high": 2,
+    "low": 1,
+    "medium": 3,
+    "proactive": 2,
+    "total_findings": 6
+  }
+}

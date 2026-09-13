@@ -1,0 +1,276 @@
+{
+  "schema_version": "1.0.0",
+  "site": {
+    "input": "http://127.0.0.1:58777",
+    "resolved_origin": "http://127.0.0.1:58777",
+    "registrable_domain": "127.0.0.1",
+    "detected_locales": [
+      "en"
+    ]
+  },
+  "run_context": {
+    "started_at": "2026-09-13T04:55:04Z",
+    "finished_at": "2026-09-13T04:55:04Z",
+    "capabilities": {
+      "js_render": false,
+      "egress": false,
+      "renderer": null
+    },
+    "budgets": {
+      "global_s": 300,
+      "crawl_s": 90,
+      "render_s": 60,
+      "external_s": 90
+    },
+    "degradations": [
+      {
+        "what": "render",
+        "reason": "rendering disabled (--no-render)",
+        "impact": "raw-versus-rendered comparisons are not assessed"
+      },
+      {
+        "what": "page-content",
+        "reason": "every one of 1 sampled URL returned the same server response as a path that cannot exist, and rendering is unavailable",
+        "impact": "no page-level content exists in the server response at all: nothing on this site is readable without executing JavaScript, and no page-level rule can be assessed"
+      },
+      {
+        "what": "external",
+        "reason": "third-party egress disabled (--no-egress)",
+        "impact": "corroboration rules are not assessed: nothing off-site could be reached"
+      },
+      {
+        "what": "claims",
+        "reason": "no claim was promoted from the candidates observed",
+        "impact": "canonical_claims is empty, so corroboration had nothing to ask about"
+      }
+    ],
+    "corroboration": {
+      "method": "none",
+      "provider_unavailable": []
+    }
+  },
+  "robots": {
+    "fetched": true,
+    "url": "http://127.0.0.1:58777/robots.txt",
+    "status": 200,
+    "parse_ok": false,
+    "parse_reason": "not_plausibly_robots",
+    "groups": [],
+    "ai_agents": {
+      "GPTBot": "unspecified",
+      "ClaudeBot": "unspecified",
+      "PerplexityBot": "unspecified",
+      "Google-Extended": "unspecified",
+      "OAI-SearchBot": "unspecified",
+      "CCBot": "unspecified",
+      "Googlebot": "unspecified",
+      "Claude-SearchBot": "unspecified"
+    },
+    "sitemaps": []
+  },
+  "sitemaps": [
+    {
+      "url": "http://127.0.0.1:58777/sitemap.xml",
+      "status": 200,
+      "url_count": null,
+      "lastmod_present_ratio": null,
+      "parse_ok": false
+    }
+  ],
+  "crawl": {
+    "discovered": 1,
+    "fetched": 1,
+    "blocked_by_robots": 0,
+    "errors": 0,
+    "sampling": {
+      "strategy": "stratified:nav",
+      "strata": [
+        {
+          "page_type": "home",
+          "discovered": 1,
+          "sampled": 1
+        }
+      ]
+    }
+  },
+  "discovery": {
+    "soft_404": {
+      "detected": true,
+      "baseline_text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "probe_paths": [
+        "/75c4a6d407c9a374",
+        "/a4d1172a380c9870"
+      ]
+    },
+    "collapsed_duplicate_text": 0,
+    "collapsed_redirect_target": 0
+  },
+  "pages": [
+    {
+      "url": "http://127.0.0.1:58777/",
+      "final_url": "http://127.0.0.1:58777/",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:55:04Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [],
+      "canonical": "http://127.0.0.1:58777/",
+      "canonical_self": true,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "home",
+      "page_type_confidence": 0.95,
+      "raw": {
+        "bytes": 8628,
+        "text_len": 0,
+        "hidden_text_len": 0,
+        "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text_path": "evidence/pages/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.txt",
+        "headings": [],
+        "anchors": [],
+        "links": [],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": false,
+        "text_len": null,
+        "text_hash": null,
+        "text_path": null,
+        "headings": [],
+        "delta_ratio": null
+      },
+      "jsonld": [],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "",
+        "word_count": 0,
+        "boilerplate_ratio": null,
+        "longest_block_words": 0,
+        "heading_density_per_1k": null
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 2.7,
+        "connect_ms": 0.7,
+        "fetch_ms": 2.9,
+        "render_ms": null
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "fetch"
+      }
+    }
+  ],
+  "link_graph": {
+    "edges": [],
+    "orphans": [],
+    "max_depth_from_home": 0
+  },
+  "claim_candidates": [],
+  "canonical_claims": [],
+  "external": {
+    "attempted": false,
+    "method": "none",
+    "frontier_size": 0,
+    "truncated": false,
+    "origins": [],
+    "hits": []
+  },
+  "ua_probe": [
+    {
+      "url": "http://127.0.0.1:58777/",
+      "user_agent": "browser-ua",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:58777/",
+      "user_agent": "GPTBot",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:58777/",
+      "user_agent": "ClaudeBot",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:58777/",
+      "user_agent": "PerplexityBot",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:58777/",
+      "user_agent": "OAI-SearchBot",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:58777/",
+      "user_agent": "CCBot",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:58777/",
+      "user_agent": "Googlebot",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "well_known": [
+    {
+      "path": "/llms.txt",
+      "status": 200,
+      "present": false,
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/agents.md",
+      "status": 200,
+      "present": false,
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/.well-known/ucp",
+      "status": 200,
+      "present": false,
+      "content_type": "text/html; charset=utf-8"
+    }
+  ],
+  "errors": [
+    {
+      "url": "http://127.0.0.1:58777/robots.txt",
+      "stage": "robots",
+      "message": "not a robots.txt: the body is an HTML document (content-type text/html); treated as absent, no restrictions"
+    },
+    {
+      "url": "http://127.0.0.1:58777/",
+      "stage": "discovery",
+      "message": "soft-404 baseline sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855: two paths that cannot exist both returned status 200 with this identical body"
+    }
+  ]
+}

@@ -2,38 +2,125 @@
   "archetype": "storefront-defects",
   "real_world_class": "A server-rendered e-commerce store on a hosted platform, with template-level mistakes of the kind a theme or plugin introduces site-wide.",
   "claim": "Template defects are found at template scope with honest denominators, while the legitimate patterns beside them (noindexed collection pages, an unlimited max-snippet, a hidden cart dialog, a hydrated review widget) produce nothing.",
-  "mechanisms": ["noindex on a primary template", "user-agent-conditional refusal", "advertised dead URLs", "broken identity links", "markup contradicting visible price", "price only after rendering"],
-  "server": {"refuse_agents": {"GPTBot": 403}},
+  "mechanisms": [
+    "noindex on a primary template",
+    "user-agent-conditional refusal",
+    "advertised dead URLs",
+    "broken identity links",
+    "markup contradicting visible price",
+    "price only after rendering"
+  ],
+  "server": {
+    "refuse_agents": {
+      "GPTBot": 403
+    }
+  },
   "variants": [
     {
       "name": "no-render",
       "render": false,
       "findings": [
-        {"rule_id": "ACC-003", "status": "found", "breadth": "section", "confidence": "high"},
-        {"rule_id": "ACC-006", "status": "risk", "confidence": "low"},
-        {"rule_id": "ACC-007", "status": "found", "confidence": "high"},
-        {"rule_id": "IDM-002", "status": "found"},
-        {"rule_id": "IDM-004", "status": "found", "confidence": "high"},
-        {"rule_id": "PRO-001", "status": "proactive"},
-        {"rule_id": "PRO-002", "status": "proactive"}
+        {
+          "rule_id": "ACC-003",
+          "status": "found",
+          "breadth": "section",
+          "confidence": "high"
+        },
+        {
+          "rule_id": "ACC-006",
+          "status": "risk",
+          "confidence": "low"
+        },
+        {
+          "rule_id": "ACC-007",
+          "status": "found",
+          "confidence": "high"
+        },
+        {
+          "rule_id": "IDM-002",
+          "status": "found"
+        },
+        {
+          "rule_id": "IDM-004",
+          "status": "found",
+          "confidence": "high"
+        },
+        {
+          "rule_id": "PRO-001",
+          "status": "proactive"
+        },
+        {
+          "rule_id": "PRO-002",
+          "status": "proactive"
+        }
       ],
-      "passed": ["ACC-001", "ACC-004", "ACC-005", "ACC-009", "IDM-001", "IDM-003", "RND-002", "ARR-001"],
-      "not_assessed": ["RND-001", "RND-003"]
+      "passed": [
+        "ACC-001",
+        "ACC-004",
+        "ACC-005",
+        "ACC-009",
+        "IDM-001",
+        "IDM-003",
+        "RND-002",
+        "ARR-001"
+      ],
+      "not_assessed": [
+        "RND-001",
+        "RND-003"
+      ],
+      "absent_text": [
+        "Dear AI agent",
+        "shopping skill so you can buy"
+      ]
     },
     {
       "name": "render",
       "render": true,
       "findings": [
-        {"rule_id": "ACC-003", "status": "found"},
-        {"rule_id": "ACC-006", "status": "risk"},
-        {"rule_id": "ACC-007", "status": "found"},
-        {"rule_id": "IDM-002", "status": "found"},
-        {"rule_id": "IDM-004", "status": "found"},
-        {"rule_id": "RND-003", "status": "found", "confidence": "medium"},
-        {"rule_id": "PRO-001", "status": "proactive"},
-        {"rule_id": "PRO-002", "status": "proactive"}
+        {
+          "rule_id": "ACC-003",
+          "status": "found"
+        },
+        {
+          "rule_id": "ACC-006",
+          "status": "risk"
+        },
+        {
+          "rule_id": "ACC-007",
+          "status": "found"
+        },
+        {
+          "rule_id": "IDM-002",
+          "status": "found"
+        },
+        {
+          "rule_id": "IDM-004",
+          "status": "found"
+        },
+        {
+          "rule_id": "RND-003",
+          "status": "found",
+          "confidence": "medium"
+        },
+        {
+          "rule_id": "PRO-001",
+          "status": "proactive"
+        },
+        {
+          "rule_id": "PRO-002",
+          "status": "proactive"
+        }
       ],
-      "passed": ["RND-001", "ACC-004", "IDM-001", "ARR-001"]
+      "passed": [
+        "RND-001",
+        "ACC-004",
+        "IDM-001",
+        "ARR-001"
+      ],
+      "absent_text": [
+        "Dear AI agent",
+        "shopping skill so you can buy"
+      ]
     }
   ]
 }

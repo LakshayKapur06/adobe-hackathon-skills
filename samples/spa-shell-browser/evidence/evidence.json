@@ -1,0 +1,627 @@
+{
+  "schema_version": "1.0.0",
+  "site": {
+    "input": "http://127.0.0.1:51057",
+    "resolved_origin": "http://127.0.0.1:51057",
+    "registrable_domain": "127.0.0.1",
+    "detected_locales": [
+      "en"
+    ]
+  },
+  "run_context": {
+    "started_at": "2026-09-13T04:54:51Z",
+    "finished_at": "2026-09-13T04:55:00Z",
+    "capabilities": {
+      "js_render": true,
+      "egress": false,
+      "renderer": "system-chromium:chrome"
+    },
+    "budgets": {
+      "global_s": 300,
+      "crawl_s": 90,
+      "render_s": 60,
+      "external_s": 90
+    },
+    "degradations": [
+      {
+        "what": "external",
+        "reason": "third-party egress disabled (--no-egress)",
+        "impact": "corroboration rules are not assessed: nothing off-site could be reached"
+      },
+      {
+        "what": "claims",
+        "reason": "no claim was promoted from the candidates observed",
+        "impact": "canonical_claims is empty, so corroboration had nothing to ask about"
+      }
+    ],
+    "corroboration": {
+      "method": "none",
+      "provider_unavailable": []
+    }
+  },
+  "robots": {
+    "fetched": true,
+    "url": "http://127.0.0.1:51057/robots.txt",
+    "status": 200,
+    "parse_ok": false,
+    "parse_reason": "not_plausibly_robots",
+    "groups": [],
+    "ai_agents": {
+      "GPTBot": "unspecified",
+      "ClaudeBot": "unspecified",
+      "PerplexityBot": "unspecified",
+      "Google-Extended": "unspecified",
+      "OAI-SearchBot": "unspecified",
+      "CCBot": "unspecified",
+      "Googlebot": "unspecified",
+      "Claude-SearchBot": "unspecified"
+    },
+    "sitemaps": []
+  },
+  "sitemaps": [
+    {
+      "url": "http://127.0.0.1:51057/sitemap.xml",
+      "status": 200,
+      "url_count": null,
+      "lastmod_present_ratio": null,
+      "parse_ok": false
+    }
+  ],
+  "crawl": {
+    "discovered": 5,
+    "fetched": 5,
+    "blocked_by_robots": 0,
+    "errors": 0,
+    "sampling": {
+      "strategy": "stratified:nav",
+      "strata": [
+        {
+          "page_type": "home",
+          "discovered": 1,
+          "sampled": 1
+        },
+        {
+          "page_type": "about",
+          "discovered": 1,
+          "sampled": 1
+        },
+        {
+          "page_type": "policy",
+          "discovered": 3,
+          "sampled": 3
+        }
+      ]
+    }
+  },
+  "discovery": {
+    "soft_404": {
+      "detected": true,
+      "baseline_text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "probe_paths": [
+        "/75c4a6d407c9a374",
+        "/a4d1172a380c9870"
+      ]
+    },
+    "collapsed_duplicate_text": 0,
+    "collapsed_redirect_target": 0
+  },
+  "pages": [
+    {
+      "url": "http://127.0.0.1:51057/",
+      "final_url": "http://127.0.0.1:51057/",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:54:51Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [],
+      "canonical": "http://127.0.0.1:51057/",
+      "canonical_self": true,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "home",
+      "page_type_confidence": 0.95,
+      "raw": {
+        "bytes": 8628,
+        "text_len": 0,
+        "hidden_text_len": 0,
+        "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text_path": "evidence/pages/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.txt",
+        "headings": [],
+        "anchors": [],
+        "links": [],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": true,
+        "text_len": 583,
+        "text_hash": "sha256:b251f3e7a79eb3d60a53bf216b19ea0b2f4055ce8e38fc445dfc860b5d262b6b",
+        "text_path": "evidence/pages/b251f3e7a79eb3d60a53bf216b19ea0b2f4055ce8e38fc445dfc860b5d262b6b.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Nimbus Devices"
+          }
+        ],
+        "delta_ratio": 1.0
+      },
+      "jsonld": [],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "",
+        "word_count": 0,
+        "boilerplate_ratio": null,
+        "longest_block_words": 0,
+        "heading_density_per_1k": null
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 3.0,
+        "connect_ms": 0.8,
+        "fetch_ms": 3.3,
+        "render_ms": 1415.5
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "render"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:51057/warranty",
+      "final_url": "http://127.0.0.1:51057/warranty",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:54:56Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [],
+      "canonical": "http://127.0.0.1:51057/",
+      "canonical_self": false,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "policy",
+      "page_type_confidence": 0.6,
+      "raw": {
+        "bytes": 8628,
+        "text_len": 0,
+        "hidden_text_len": 0,
+        "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text_path": "evidence/pages/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.txt",
+        "headings": [],
+        "anchors": [],
+        "links": [],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": true,
+        "text_len": 1968,
+        "text_hash": "sha256:65a908ae36e73489beda0f0f23d916f4622be7557a603556a96383a415909fcb",
+        "text_path": "evidence/pages/65a908ae36e73489beda0f0f23d916f4622be7557a603556a96383a415909fcb.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Warranty"
+          }
+        ],
+        "delta_ratio": 1.0
+      },
+      "jsonld": [],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "",
+        "word_count": 0,
+        "boilerplate_ratio": null,
+        "longest_block_words": 0,
+        "heading_density_per_1k": null
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 6.9,
+        "connect_ms": 5.3,
+        "fetch_ms": 7.2,
+        "render_ms": 2481.0
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "render"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:51057/aboutus",
+      "final_url": "http://127.0.0.1:51057/aboutus",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:54:56Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [],
+      "canonical": "http://127.0.0.1:51057/",
+      "canonical_self": false,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "about",
+      "page_type_confidence": 0.6,
+      "raw": {
+        "bytes": 8628,
+        "text_len": 0,
+        "hidden_text_len": 0,
+        "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text_path": "evidence/pages/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.txt",
+        "headings": [],
+        "anchors": [],
+        "links": [],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": true,
+        "text_len": 1712,
+        "text_hash": "sha256:4cb82c11685b9c235697ca3b83fd10a72bd1f55b91b72342b267ea66c8980a66",
+        "text_path": "evidence/pages/4cb82c11685b9c235697ca3b83fd10a72bd1f55b91b72342b267ea66c8980a66.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "About Nimbus"
+          }
+        ],
+        "delta_ratio": 1.0
+      },
+      "jsonld": [],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "",
+        "word_count": 0,
+        "boilerplate_ratio": null,
+        "longest_block_words": 0,
+        "heading_density_per_1k": null
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 3.3,
+        "connect_ms": 0.9,
+        "fetch_ms": 3.7,
+        "render_ms": 2434.5
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "render"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:51057/grievance",
+      "final_url": "http://127.0.0.1:51057/grievance",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:54:56Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [],
+      "canonical": "http://127.0.0.1:51057/",
+      "canonical_self": false,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "policy",
+      "page_type_confidence": 0.6,
+      "raw": {
+        "bytes": 8628,
+        "text_len": 0,
+        "hidden_text_len": 0,
+        "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text_path": "evidence/pages/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.txt",
+        "headings": [],
+        "anchors": [],
+        "links": [],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": true,
+        "text_len": 1558,
+        "text_hash": "sha256:d98f10aea2d797eda239cfd4ea9bff37d4e6b9b37c55a9ab07cbd165cc08d0dd",
+        "text_path": "evidence/pages/d98f10aea2d797eda239cfd4ea9bff37d4e6b9b37c55a9ab07cbd165cc08d0dd.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Grievance redressal"
+          }
+        ],
+        "delta_ratio": 1.0
+      },
+      "jsonld": [],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "",
+        "word_count": 0,
+        "boilerplate_ratio": null,
+        "longest_block_words": 0,
+        "heading_density_per_1k": null
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 10.0,
+        "connect_ms": 8.1,
+        "fetch_ms": 10.4,
+        "render_ms": 2557.1
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "render"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:51057/extended-warranty",
+      "final_url": "http://127.0.0.1:51057/extended-warranty",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:54:56Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [],
+      "canonical": "http://127.0.0.1:51057/",
+      "canonical_self": false,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "policy",
+      "page_type_confidence": 0.6,
+      "raw": {
+        "bytes": 8628,
+        "text_len": 0,
+        "hidden_text_len": 0,
+        "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text_path": "evidence/pages/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.txt",
+        "headings": [],
+        "anchors": [],
+        "links": [],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": true,
+        "text_len": 2111,
+        "text_hash": "sha256:355a47d45c303d89aead5721a55c3c1e67dc1ad87de43c71047a9eeca2c38ca8",
+        "text_path": "evidence/pages/355a47d45c303d89aead5721a55c3c1e67dc1ad87de43c71047a9eeca2c38ca8.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Extended warranty"
+          }
+        ],
+        "delta_ratio": 1.0
+      },
+      "jsonld": [],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "",
+        "word_count": 0,
+        "boilerplate_ratio": null,
+        "longest_block_words": 0,
+        "heading_density_per_1k": null
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 3.3,
+        "connect_ms": 0.9,
+        "fetch_ms": 3.8,
+        "render_ms": 1513.5
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "render"
+      }
+    }
+  ],
+  "link_graph": {
+    "edges": [],
+    "orphans": [
+      "http://127.0.0.1:51057/warranty",
+      "http://127.0.0.1:51057/aboutus",
+      "http://127.0.0.1:51057/grievance",
+      "http://127.0.0.1:51057/extended-warranty"
+    ],
+    "max_depth_from_home": 0
+  },
+  "claim_candidates": [],
+  "canonical_claims": [],
+  "external": {
+    "attempted": false,
+    "method": "none",
+    "frontier_size": 0,
+    "truncated": false,
+    "origins": [],
+    "hits": []
+  },
+  "ua_probe": [
+    {
+      "url": "http://127.0.0.1:51057/",
+      "user_agent": "browser-ua",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:51057/",
+      "user_agent": "GPTBot",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:51057/",
+      "user_agent": "ClaudeBot",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:51057/",
+      "user_agent": "PerplexityBot",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:51057/",
+      "user_agent": "OAI-SearchBot",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:51057/",
+      "user_agent": "CCBot",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:51057/",
+      "user_agent": "Googlebot",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:51057/warranty",
+      "user_agent": "browser-ua",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:51057/warranty",
+      "user_agent": "GPTBot",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:51057/warranty",
+      "user_agent": "ClaudeBot",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:51057/warranty",
+      "user_agent": "PerplexityBot",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:51057/warranty",
+      "user_agent": "OAI-SearchBot",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:51057/warranty",
+      "user_agent": "CCBot",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:51057/warranty",
+      "user_agent": "Googlebot",
+      "status": 200,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "well_known": [
+    {
+      "path": "/llms.txt",
+      "status": 200,
+      "present": false,
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/agents.md",
+      "status": 200,
+      "present": false,
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/.well-known/ucp",
+      "status": 200,
+      "present": false,
+      "content_type": "text/html; charset=utf-8"
+    }
+  ],
+  "errors": [
+    {
+      "url": "http://127.0.0.1:51057/robots.txt",
+      "stage": "robots",
+      "message": "not a robots.txt: the body is an HTML document (content-type text/html); treated as absent, no restrictions"
+    },
+    {
+      "url": "http://127.0.0.1:51057/",
+      "stage": "discovery",
+      "message": "soft-404 baseline sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855: two paths that cannot exist both returned status 200 with this identical body"
+    }
+  ]
+}

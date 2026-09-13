@@ -1,0 +1,2570 @@
+{
+  "schema_version": "1.0.0",
+  "site": {
+    "input": "http://127.0.0.1:63229",
+    "resolved_origin": "http://127.0.0.1:63229",
+    "registrable_domain": "127.0.0.1",
+    "detected_locales": [
+      "en"
+    ]
+  },
+  "run_context": {
+    "started_at": "2026-09-13T04:54:07Z",
+    "finished_at": "2026-09-13T04:54:17Z",
+    "capabilities": {
+      "js_render": true,
+      "egress": true,
+      "renderer": "system-chromium:chrome"
+    },
+    "budgets": {
+      "global_s": 300,
+      "crawl_s": 90,
+      "render_s": 60,
+      "external_s": 90
+    },
+    "degradations": [],
+    "corroboration": {
+      "method": "keyless",
+      "provider_unavailable": []
+    }
+  },
+  "robots": {
+    "fetched": true,
+    "url": "http://127.0.0.1:63229/robots.txt",
+    "status": 200,
+    "parse_ok": true,
+    "parse_reason": "ok",
+    "groups": [
+      {
+        "user_agent": "*",
+        "allow": [],
+        "disallow": [
+          "/cart",
+          "/checkout"
+        ],
+        "crawl_delay": null
+      }
+    ],
+    "ai_agents": {
+      "GPTBot": "allowed",
+      "ClaudeBot": "allowed",
+      "PerplexityBot": "allowed",
+      "Google-Extended": "allowed",
+      "OAI-SearchBot": "allowed",
+      "CCBot": "allowed",
+      "Googlebot": "allowed",
+      "Claude-SearchBot": "allowed"
+    },
+    "sitemaps": [
+      "http://127.0.0.1:63229/sitemap.xml"
+    ]
+  },
+  "sitemaps": [
+    {
+      "url": "http://127.0.0.1:63229/sitemap.xml",
+      "status": 200,
+      "url_count": 14,
+      "lastmod_present_ratio": 0.0,
+      "parse_ok": true
+    }
+  ],
+  "crawl": {
+    "discovered": 14,
+    "fetched": 14,
+    "blocked_by_robots": 0,
+    "errors": 2,
+    "sampling": {
+      "strategy": "stratified:sitemap+nav",
+      "strata": [
+        {
+          "page_type": "home",
+          "discovered": 1,
+          "sampled": 1
+        },
+        {
+          "page_type": "product",
+          "discovered": 9,
+          "sampled": 9
+        },
+        {
+          "page_type": "category",
+          "discovered": 2,
+          "sampled": 2
+        },
+        {
+          "page_type": "about",
+          "discovered": 1,
+          "sampled": 1
+        },
+        {
+          "page_type": "policy",
+          "discovered": 1,
+          "sampled": 1
+        }
+      ]
+    }
+  },
+  "discovery": {
+    "soft_404": {
+      "detected": false,
+      "baseline_text_hash": null,
+      "probe_paths": [
+        "/75c4a6d407c9a374",
+        "/a4d1172a380c9870"
+      ]
+    },
+    "collapsed_duplicate_text": 0,
+    "collapsed_redirect_target": 0
+  },
+  "pages": [
+    {
+      "url": "http://127.0.0.1:63229/",
+      "final_url": "http://127.0.0.1:63229/",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:54:07Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [],
+      "canonical": "http://127.0.0.1:63229/",
+      "canonical_self": true,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "home",
+      "page_type_confidence": 0.95,
+      "raw": {
+        "bytes": 2721,
+        "text_len": 1574,
+        "hidden_text_len": 19,
+        "text_hash": "sha256:99f5577a928c26cbe6df27b7562dc7056ec628754f72b8676c70b65b97a55bc6",
+        "text_path": "evidence/pages/99f5577a928c26cbe6df27b7562dc7056ec628754f72b8676c70b65b97a55bc6.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Northwind Threads"
+          }
+        ],
+        "anchors": [],
+        "links": [
+          {
+            "href": "/",
+            "rel": null,
+            "anchor": "/",
+            "internal": true
+          },
+          {
+            "href": "/collections/all",
+            "rel": null,
+            "anchor": "/collections/all",
+            "internal": true
+          },
+          {
+            "href": "/collections/graphic-tees",
+            "rel": null,
+            "anchor": "/collections/graphic-tees",
+            "internal": true
+          },
+          {
+            "href": "/pages/about-us",
+            "rel": null,
+            "anchor": "/pages/about-us",
+            "internal": true
+          },
+          {
+            "href": "/policies/refund-policy",
+            "rel": null,
+            "anchor": "/policies/refund-policy",
+            "internal": true
+          },
+          {
+            "href": "/products/trail-tee",
+            "rel": null,
+            "anchor": "trail tee",
+            "internal": true
+          },
+          {
+            "href": "/products/harbor-hoodie",
+            "rel": null,
+            "anchor": "harbor hoodie",
+            "internal": true
+          },
+          {
+            "href": "/products/summit-cap",
+            "rel": null,
+            "anchor": "summit cap",
+            "internal": true
+          },
+          {
+            "href": "/products/delta-socks",
+            "rel": null,
+            "anchor": "delta socks",
+            "internal": true
+          },
+          {
+            "href": "/products/canyon-jacket",
+            "rel": null,
+            "anchor": "canyon jacket",
+            "internal": true
+          },
+          {
+            "href": "/products/meadow-scarf",
+            "rel": null,
+            "anchor": "meadow scarf",
+            "internal": true
+          },
+          {
+            "href": "/products/ridge-gloves",
+            "rel": null,
+            "anchor": "ridge gloves",
+            "internal": true
+          }
+        ],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": true,
+        "text_len": 1574,
+        "text_hash": "sha256:99f5577a928c26cbe6df27b7562dc7056ec628754f72b8676c70b65b97a55bc6",
+        "text_path": "evidence/pages/99f5577a928c26cbe6df27b7562dc7056ec628754f72b8676c70b65b97a55bc6.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Northwind Threads"
+          }
+        ],
+        "delta_ratio": 0.0
+      },
+      "jsonld": [
+        {
+          "type": "Organization",
+          "valid": true,
+          "errors": [],
+          "fields_present": [
+            "logo",
+            "name",
+            "sameAs",
+            "url"
+          ],
+          "values": {
+            "name": "Northwind Threads",
+            "url": "http://127.0.0.1:63229/",
+            "logo": "http://127.0.0.1:63229/logo.png",
+            "sameAs": " |  | "
+          },
+          "contradicts_visible_text": false
+        }
+      ],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "/ /collections/all /collections/graphic-tees /pages/about-us /policies/refund-policy Northwind Threads The workshop keeps every pattern on paper before any fabric is cut. Each batch is inspected by the person who will later answer questions about it. A repair request is logged with the order number and a short description of the fault. Our field team visits partner studios to review how the materials hold up in daily use. The guide explains which settings matter first and which can safely wait.",
+        "word_count": 248,
+        "boilerplate_ratio": 0.062,
+        "longest_block_words": 58,
+        "heading_density_per_1k": 4.0
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 10.5,
+        "connect_ms": 9.3,
+        "fetch_ms": 10.6,
+        "render_ms": 1116.1
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "render"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63229/products/trail-tee",
+      "final_url": "http://127.0.0.1:63229/products/trail-tee",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:54:10Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [
+        "noindex",
+        "max-snippet:-1"
+      ],
+      "canonical": "http://127.0.0.1:63229/products/trail-tee",
+      "canonical_self": true,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "product",
+      "page_type_confidence": 0.9,
+      "raw": {
+        "bytes": 2722,
+        "text_len": 1566,
+        "hidden_text_len": 19,
+        "text_hash": "sha256:9b2f36be95dac8c0f9027f3b037e06077d7413089d1d56d29bc94627c5818106",
+        "text_path": "evidence/pages/9b2f36be95dac8c0f9027f3b037e06077d7413089d1d56d29bc94627c5818106.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Trail Tee"
+          }
+        ],
+        "anchors": [],
+        "links": [
+          {
+            "href": "/",
+            "rel": null,
+            "anchor": "/",
+            "internal": true
+          },
+          {
+            "href": "/collections/all",
+            "rel": null,
+            "anchor": "/collections/all",
+            "internal": true
+          },
+          {
+            "href": "/collections/graphic-tees",
+            "rel": null,
+            "anchor": "/collections/graphic-tees",
+            "internal": true
+          },
+          {
+            "href": "/pages/about-us",
+            "rel": null,
+            "anchor": "/pages/about-us",
+            "internal": true
+          },
+          {
+            "href": "/policies/refund-policy",
+            "rel": null,
+            "anchor": "/policies/refund-policy",
+            "internal": true
+          }
+        ],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": true,
+        "text_len": 1574,
+        "text_hash": "sha256:f58c9da955bc178b1c2a6033160159637d3ae6cad694ff0b44dff925e28eeb95",
+        "text_path": "evidence/pages/f58c9da955bc178b1c2a6033160159637d3ae6cad694ff0b44dff925e28eeb95.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Trail Tee"
+          }
+        ],
+        "delta_ratio": 0.005
+      },
+      "jsonld": [
+        {
+          "type": "Product",
+          "valid": true,
+          "errors": [],
+          "fields_present": [
+            "brand",
+            "brand.@type",
+            "brand.name",
+            "description",
+            "name"
+          ],
+          "values": {
+            "name": "Trail Tee",
+            "description": "The workshop keeps every pattern on paper before any fabric is cut.",
+            "brand.@type": "Brand",
+            "brand.name": "Northwind Threads"
+          },
+          "contradicts_visible_text": false
+        }
+      ],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "/ /collections/all /collections/graphic-tees /pages/about-us /policies/refund-policy Trail Tee Price: The workshop keeps every pattern on paper before any fabric is cut. Each batch is inspected by the person who will later answer questions about it. A repair request is logged with the order number and a short description of the fault. Our field team visits partner studios to review how the materials hold up in daily use. The guide explains which settings matter first and which can safely wait.",
+        "word_count": 249,
+        "boilerplate_ratio": 0.062,
+        "longest_block_words": 58,
+        "heading_density_per_1k": 4.0
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 15.7,
+        "connect_ms": 14.4,
+        "fetch_ms": 15.9,
+        "render_ms": 1674.9
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "render"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63229/collections/all",
+      "final_url": "http://127.0.0.1:63229/collections/all",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:54:10Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [],
+      "canonical": "http://127.0.0.1:63229/collections/all",
+      "canonical_self": true,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "category",
+      "page_type_confidence": 0.6,
+      "raw": {
+        "bytes": 1683,
+        "text_len": 781,
+        "hidden_text_len": 19,
+        "text_hash": "sha256:8cfe9744bfe0c0b9f42784a6268d8f53daf564ae563c21b3c3b0fb2a2d82d88a",
+        "text_path": "evidence/pages/8cfe9744bfe0c0b9f42784a6268d8f53daf564ae563c21b3c3b0fb2a2d82d88a.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "All products"
+          }
+        ],
+        "anchors": [],
+        "links": [
+          {
+            "href": "/",
+            "rel": null,
+            "anchor": "/",
+            "internal": true
+          },
+          {
+            "href": "/collections/all",
+            "rel": null,
+            "anchor": "/collections/all",
+            "internal": true
+          },
+          {
+            "href": "/collections/graphic-tees",
+            "rel": null,
+            "anchor": "/collections/graphic-tees",
+            "internal": true
+          },
+          {
+            "href": "/pages/about-us",
+            "rel": null,
+            "anchor": "/pages/about-us",
+            "internal": true
+          },
+          {
+            "href": "/policies/refund-policy",
+            "rel": null,
+            "anchor": "/policies/refund-policy",
+            "internal": true
+          },
+          {
+            "href": "/products/trail-tee",
+            "rel": null,
+            "anchor": "trail tee",
+            "internal": true
+          },
+          {
+            "href": "/products/harbor-hoodie",
+            "rel": null,
+            "anchor": "harbor hoodie",
+            "internal": true
+          },
+          {
+            "href": "/products/summit-cap",
+            "rel": null,
+            "anchor": "summit cap",
+            "internal": true
+          },
+          {
+            "href": "/products/delta-socks",
+            "rel": null,
+            "anchor": "delta socks",
+            "internal": true
+          },
+          {
+            "href": "/products/canyon-jacket",
+            "rel": null,
+            "anchor": "canyon jacket",
+            "internal": true
+          },
+          {
+            "href": "/products/meadow-scarf",
+            "rel": null,
+            "anchor": "meadow scarf",
+            "internal": true
+          },
+          {
+            "href": "/products/ridge-gloves",
+            "rel": null,
+            "anchor": "ridge gloves",
+            "internal": true
+          }
+        ],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": true,
+        "text_len": 781,
+        "text_hash": "sha256:8cfe9744bfe0c0b9f42784a6268d8f53daf564ae563c21b3c3b0fb2a2d82d88a",
+        "text_path": "evidence/pages/8cfe9744bfe0c0b9f42784a6268d8f53daf564ae563c21b3c3b0fb2a2d82d88a.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "All products"
+          }
+        ],
+        "delta_ratio": 0.0
+      },
+      "jsonld": [],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "/ /collections/all /collections/graphic-tees /pages/about-us /policies/refund-policy All products trail tee harbor hoodie summit cap delta socks canyon jacket meadow scarf ridge gloves A repair request is logged with the order number and a short description of the fault. Our field team visits partner studios to review how the materials hold up in daily use. The guide explains which settings matter first and which can safely wait. Readers who follow the steps in order finish the setup without",
+        "word_count": 122,
+        "boilerplate_ratio": 0.127,
+        "longest_block_words": 57,
+        "heading_density_per_1k": 8.2
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 13.4,
+        "connect_ms": 12.1,
+        "fetch_ms": 13.6,
+        "render_ms": 1665.2
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "render"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63229/pages/about-us",
+      "final_url": "http://127.0.0.1:63229/pages/about-us",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:54:10Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [],
+      "canonical": "http://127.0.0.1:63229/pages/about-us",
+      "canonical_self": true,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "about",
+      "page_type_confidence": 0.6,
+      "raw": {
+        "bytes": 2418,
+        "text_len": 1813,
+        "hidden_text_len": 19,
+        "text_hash": "sha256:55a6c7b937b50a120fbb8f17a5c9f228a0fbb6d7284b6c2762907b8d6e9a4ee9",
+        "text_path": "evidence/pages/55a6c7b937b50a120fbb8f17a5c9f228a0fbb6d7284b6c2762907b8d6e9a4ee9.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "About us"
+          }
+        ],
+        "anchors": [],
+        "links": [
+          {
+            "href": "/",
+            "rel": null,
+            "anchor": "/",
+            "internal": true
+          },
+          {
+            "href": "/collections/all",
+            "rel": null,
+            "anchor": "/collections/all",
+            "internal": true
+          },
+          {
+            "href": "/collections/graphic-tees",
+            "rel": null,
+            "anchor": "/collections/graphic-tees",
+            "internal": true
+          },
+          {
+            "href": "/pages/about-us",
+            "rel": null,
+            "anchor": "/pages/about-us",
+            "internal": true
+          },
+          {
+            "href": "/policies/refund-policy",
+            "rel": null,
+            "anchor": "/policies/refund-policy",
+            "internal": true
+          }
+        ],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": true,
+        "text_len": 1813,
+        "text_hash": "sha256:55a6c7b937b50a120fbb8f17a5c9f228a0fbb6d7284b6c2762907b8d6e9a4ee9",
+        "text_path": "evidence/pages/55a6c7b937b50a120fbb8f17a5c9f228a0fbb6d7284b6c2762907b8d6e9a4ee9.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "About us"
+          }
+        ],
+        "delta_ratio": 0.0
+      },
+      "jsonld": [],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "/ /collections/all /collections/graphic-tees /pages/about-us /policies/refund-policy About us The guide explains which settings matter first and which can safely wait. Readers who follow the steps in order finish the setup without needing support. Configuration files are read once at start-up and validated before any work begins. A missing value falls back to the documented default and is reported in the log. Teams usually adopt the recommended layout and change it only when a project grows.",
+        "word_count": 289,
+        "boilerplate_ratio": 0.054,
+        "longest_block_words": 58,
+        "heading_density_per_1k": 3.5
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 13.8,
+        "connect_ms": 12.2,
+        "fetch_ms": 14.0,
+        "render_ms": 1692.5
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "render"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63229/policies/refund-policy",
+      "final_url": "http://127.0.0.1:63229/policies/refund-policy",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:54:10Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [],
+      "canonical": "http://127.0.0.1:63229/policies/refund-policy",
+      "canonical_self": true,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "policy",
+      "page_type_confidence": 0.6,
+      "raw": {
+        "bytes": 2344,
+        "text_len": 1733,
+        "hidden_text_len": 19,
+        "text_hash": "sha256:6beca9755c8bf397a522c3828e2a7a101d33977daad63aaca0606649ab60baa3",
+        "text_path": "evidence/pages/6beca9755c8bf397a522c3828e2a7a101d33977daad63aaca0606649ab60baa3.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Refund policy"
+          }
+        ],
+        "anchors": [],
+        "links": [
+          {
+            "href": "/",
+            "rel": null,
+            "anchor": "/",
+            "internal": true
+          },
+          {
+            "href": "/collections/all",
+            "rel": null,
+            "anchor": "/collections/all",
+            "internal": true
+          },
+          {
+            "href": "/collections/graphic-tees",
+            "rel": null,
+            "anchor": "/collections/graphic-tees",
+            "internal": true
+          },
+          {
+            "href": "/pages/about-us",
+            "rel": null,
+            "anchor": "/pages/about-us",
+            "internal": true
+          },
+          {
+            "href": "/policies/refund-policy",
+            "rel": null,
+            "anchor": "/policies/refund-policy",
+            "internal": true
+          }
+        ],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": true,
+        "text_len": 1733,
+        "text_hash": "sha256:6beca9755c8bf397a522c3828e2a7a101d33977daad63aaca0606649ab60baa3",
+        "text_path": "evidence/pages/6beca9755c8bf397a522c3828e2a7a101d33977daad63aaca0606649ab60baa3.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Refund policy"
+          }
+        ],
+        "delta_ratio": 0.0
+      },
+      "jsonld": [],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "/ /collections/all /collections/graphic-tees /pages/about-us /policies/refund-policy Refund policy Returns are accepted within the stated window when the item is unused and complete. The editorial desk checks each claim against a primary source before publication. Interviews are recorded with consent and transcribed by the reporting team. Local councils publish their meeting minutes, which reporters read in full. Analysts compare the new figures with the previous series to explain the change.",
+        "word_count": 270,
+        "boilerplate_ratio": 0.056,
+        "longest_block_words": 56,
+        "heading_density_per_1k": 3.7
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 13.5,
+        "connect_ms": 11.9,
+        "fetch_ms": 13.7,
+        "render_ms": 1646.6
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "render"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63229/products/summit-cap",
+      "final_url": "http://127.0.0.1:63229/products/summit-cap",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:54:10Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [
+        "noindex",
+        "max-snippet:-1"
+      ],
+      "canonical": "http://127.0.0.1:63229/products/summit-cap",
+      "canonical_self": true,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "product",
+      "page_type_confidence": 0.9,
+      "raw": {
+        "bytes": 2772,
+        "text_len": 1594,
+        "hidden_text_len": 19,
+        "text_hash": "sha256:7f416db85cbc22a0070be4edc182c85850a79c0f9966d114f880f86da5239377",
+        "text_path": "evidence/pages/7f416db85cbc22a0070be4edc182c85850a79c0f9966d114f880f86da5239377.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Summit Cap"
+          }
+        ],
+        "anchors": [],
+        "links": [
+          {
+            "href": "/",
+            "rel": null,
+            "anchor": "/",
+            "internal": true
+          },
+          {
+            "href": "/collections/all",
+            "rel": null,
+            "anchor": "/collections/all",
+            "internal": true
+          },
+          {
+            "href": "/collections/graphic-tees",
+            "rel": null,
+            "anchor": "/collections/graphic-tees",
+            "internal": true
+          },
+          {
+            "href": "/pages/about-us",
+            "rel": null,
+            "anchor": "/pages/about-us",
+            "internal": true
+          },
+          {
+            "href": "/policies/refund-policy",
+            "rel": null,
+            "anchor": "/policies/refund-policy",
+            "internal": true
+          }
+        ],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": true,
+        "text_len": 1602,
+        "text_hash": "sha256:4898f0686e036a6cb61fac6ecbf84fbd7c118020d3040de4612b0fac2101ccc0",
+        "text_path": "evidence/pages/4898f0686e036a6cb61fac6ecbf84fbd7c118020d3040de4612b0fac2101ccc0.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Summit Cap"
+          }
+        ],
+        "delta_ratio": 0.005
+      },
+      "jsonld": [
+        {
+          "type": "Product",
+          "valid": true,
+          "errors": [],
+          "fields_present": [
+            "brand",
+            "brand.@type",
+            "brand.name",
+            "description",
+            "name"
+          ],
+          "values": {
+            "name": "Summit Cap",
+            "description": "A repair request is logged with the order number and a short description of the fault.",
+            "brand.@type": "Brand",
+            "brand.name": "Northwind Threads"
+          },
+          "contradicts_visible_text": false
+        }
+      ],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "/ /collections/all /collections/graphic-tees /pages/about-us /policies/refund-policy Summit Cap Price: A repair request is logged with the order number and a short description of the fault. Our field team visits partner studios to review how the materials hold up in daily use. The guide explains which settings matter first and which can safely wait. Readers who follow the steps in order finish the setup without needing support. Configuration files are read once at start-up and validated before",
+        "word_count": 255,
+        "boilerplate_ratio": 0.061,
+        "longest_block_words": 57,
+        "heading_density_per_1k": 3.9
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 13.8,
+        "connect_ms": 12.5,
+        "fetch_ms": 14.0,
+        "render_ms": 1620.4
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "render"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63229/collections/graphic-tees",
+      "final_url": "http://127.0.0.1:63229/collections/graphic-tees",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:54:10Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [
+        "noindex",
+        "follow"
+      ],
+      "canonical": "http://127.0.0.1:63229/collections/graphic-tees",
+      "canonical_self": true,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "category",
+      "page_type_confidence": 0.6,
+      "raw": {
+        "bytes": 1652,
+        "text_len": 694,
+        "hidden_text_len": 19,
+        "text_hash": "sha256:4b15357d9f08a8e0d65018641e49619468b03cce7f6c99d8b13d96115d520d83",
+        "text_path": "evidence/pages/4b15357d9f08a8e0d65018641e49619468b03cce7f6c99d8b13d96115d520d83.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Graphic tees"
+          }
+        ],
+        "anchors": [],
+        "links": [
+          {
+            "href": "/",
+            "rel": null,
+            "anchor": "/",
+            "internal": true
+          },
+          {
+            "href": "/collections/all",
+            "rel": null,
+            "anchor": "/collections/all",
+            "internal": true
+          },
+          {
+            "href": "/collections/graphic-tees",
+            "rel": null,
+            "anchor": "/collections/graphic-tees",
+            "internal": true
+          },
+          {
+            "href": "/pages/about-us",
+            "rel": null,
+            "anchor": "/pages/about-us",
+            "internal": true
+          },
+          {
+            "href": "/policies/refund-policy",
+            "rel": null,
+            "anchor": "/policies/refund-policy",
+            "internal": true
+          },
+          {
+            "href": "/products/trail-tee",
+            "rel": null,
+            "anchor": "trail tee",
+            "internal": true
+          },
+          {
+            "href": "/products/harbor-hoodie",
+            "rel": null,
+            "anchor": "harbor hoodie",
+            "internal": true
+          },
+          {
+            "href": "/products/summit-cap",
+            "rel": null,
+            "anchor": "summit cap",
+            "internal": true
+          },
+          {
+            "href": "/products/delta-socks",
+            "rel": null,
+            "anchor": "delta socks",
+            "internal": true
+          },
+          {
+            "href": "/products/canyon-jacket",
+            "rel": null,
+            "anchor": "canyon jacket",
+            "internal": true
+          },
+          {
+            "href": "/products/meadow-scarf",
+            "rel": null,
+            "anchor": "meadow scarf",
+            "internal": true
+          },
+          {
+            "href": "/products/ridge-gloves",
+            "rel": null,
+            "anchor": "ridge gloves",
+            "internal": true
+          }
+        ],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": true,
+        "text_len": 694,
+        "text_hash": "sha256:4b15357d9f08a8e0d65018641e49619468b03cce7f6c99d8b13d96115d520d83",
+        "text_path": "evidence/pages/4b15357d9f08a8e0d65018641e49619468b03cce7f6c99d8b13d96115d520d83.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Graphic tees"
+          }
+        ],
+        "delta_ratio": 0.0
+      },
+      "jsonld": [],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "/ /collections/all /collections/graphic-tees /pages/about-us /policies/refund-policy Graphic tees trail tee harbor hoodie summit cap delta socks canyon jacket meadow scarf ridge gloves Our field team visits partner studios to review how the materials hold up in daily use. The guide explains which settings matter first and which can safely wait. Readers who follow the steps in order finish the setup without needing support. Configuration files are read once at start-up and validated before any",
+        "word_count": 106,
+        "boilerplate_ratio": 0.143,
+        "longest_block_words": 54,
+        "heading_density_per_1k": 9.4
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 2.6,
+        "connect_ms": 0.8,
+        "fetch_ms": 2.8,
+        "render_ms": 1725.9
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "render"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63229/products/delta-socks",
+      "final_url": "http://127.0.0.1:63229/products/delta-socks",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:54:10Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [
+        "noindex",
+        "max-snippet:-1"
+      ],
+      "canonical": "http://127.0.0.1:63229/products/delta-socks",
+      "canonical_self": true,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "product",
+      "page_type_confidence": 0.9,
+      "raw": {
+        "bytes": 2764,
+        "text_len": 1582,
+        "hidden_text_len": 19,
+        "text_hash": "sha256:a5bd854fc68d05472afc288db8ddcc2b89b0feb990c5d09c7d998f1e70786625",
+        "text_path": "evidence/pages/a5bd854fc68d05472afc288db8ddcc2b89b0feb990c5d09c7d998f1e70786625.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Delta Socks"
+          }
+        ],
+        "anchors": [],
+        "links": [
+          {
+            "href": "/",
+            "rel": null,
+            "anchor": "/",
+            "internal": true
+          },
+          {
+            "href": "/collections/all",
+            "rel": null,
+            "anchor": "/collections/all",
+            "internal": true
+          },
+          {
+            "href": "/collections/graphic-tees",
+            "rel": null,
+            "anchor": "/collections/graphic-tees",
+            "internal": true
+          },
+          {
+            "href": "/pages/about-us",
+            "rel": null,
+            "anchor": "/pages/about-us",
+            "internal": true
+          },
+          {
+            "href": "/policies/refund-policy",
+            "rel": null,
+            "anchor": "/policies/refund-policy",
+            "internal": true
+          }
+        ],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": true,
+        "text_len": 1590,
+        "text_hash": "sha256:f2b1b1acd4a33b65e68dddc79ad1d26120d41320c7118d60c369d9f42898f976",
+        "text_path": "evidence/pages/f2b1b1acd4a33b65e68dddc79ad1d26120d41320c7118d60c369d9f42898f976.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Delta Socks"
+          }
+        ],
+        "delta_ratio": 0.005
+      },
+      "jsonld": [
+        {
+          "type": "Product",
+          "valid": true,
+          "errors": [],
+          "fields_present": [
+            "brand",
+            "brand.@type",
+            "brand.name",
+            "description",
+            "name"
+          ],
+          "values": {
+            "name": "Delta Socks",
+            "description": "Our field team visits partner studios to review how the materials hold up in daily use.",
+            "brand.@type": "Brand",
+            "brand.name": "Northwind Threads"
+          },
+          "contradicts_visible_text": false
+        }
+      ],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "/ /collections/all /collections/graphic-tees /pages/about-us /policies/refund-policy Delta Socks Price: Our field team visits partner studios to review how the materials hold up in daily use. The guide explains which settings matter first and which can safely wait. Readers who follow the steps in order finish the setup without needing support. Configuration files are read once at start-up and validated before any work begins. A missing value falls back to the documented default and is reported",
+        "word_count": 251,
+        "boilerplate_ratio": 0.062,
+        "longest_block_words": 56,
+        "heading_density_per_1k": 4.0
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 14.3,
+        "connect_ms": 12.8,
+        "fetch_ms": 14.5,
+        "render_ms": 1726.4
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "render"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63229/products/meadow-scarf",
+      "final_url": "http://127.0.0.1:63229/products/meadow-scarf",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:54:10Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [
+        "noindex",
+        "max-snippet:-1"
+      ],
+      "canonical": "http://127.0.0.1:63229/products/meadow-scarf",
+      "canonical_self": true,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "product",
+      "page_type_confidence": 0.9,
+      "raw": {
+        "bytes": 3087,
+        "text_len": 1593,
+        "hidden_text_len": 19,
+        "text_hash": "sha256:70fe6003be9aedfff08babfca98cbfa2200f814d90e795708ad69044a2bd4dc8",
+        "text_path": "evidence/pages/70fe6003be9aedfff08babfca98cbfa2200f814d90e795708ad69044a2bd4dc8.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Meadow Scarf"
+          }
+        ],
+        "anchors": [],
+        "links": [
+          {
+            "href": "/",
+            "rel": null,
+            "anchor": "/",
+            "internal": true
+          },
+          {
+            "href": "/collections/all",
+            "rel": null,
+            "anchor": "/collections/all",
+            "internal": true
+          },
+          {
+            "href": "/collections/graphic-tees",
+            "rel": null,
+            "anchor": "/collections/graphic-tees",
+            "internal": true
+          },
+          {
+            "href": "/pages/about-us",
+            "rel": null,
+            "anchor": "/pages/about-us",
+            "internal": true
+          },
+          {
+            "href": "/policies/refund-policy",
+            "rel": null,
+            "anchor": "/policies/refund-policy",
+            "internal": true
+          }
+        ],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": true,
+        "text_len": 1939,
+        "text_hash": "sha256:46083cde7261a319c78e174bbfbc8f3a1ccce1189c16cc6e554eecf1d791cc37",
+        "text_path": "evidence/pages/46083cde7261a319c78e174bbfbc8f3a1ccce1189c16cc6e554eecf1d791cc37.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Meadow Scarf"
+          },
+          {
+            "level": 2,
+            "text": "Customer reviews"
+          }
+        ],
+        "delta_ratio": 0.178
+      },
+      "jsonld": [
+        {
+          "type": "Product",
+          "valid": true,
+          "errors": [],
+          "fields_present": [
+            "brand",
+            "brand.@type",
+            "brand.name",
+            "description",
+            "name",
+            "offers",
+            "offers.@type",
+            "offers.price",
+            "offers.priceCurrency"
+          ],
+          "values": {
+            "name": "Meadow Scarf",
+            "description": "Readers who follow the steps in order finish the setup without needing support.",
+            "brand.@type": "Brand",
+            "brand.name": "Northwind Threads",
+            "offers.@type": "Offer",
+            "offers.price": "1499.00",
+            "offers.priceCurrency": "INR"
+          },
+          "contradicts_visible_text": true
+        }
+      ],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "/ /collections/all /collections/graphic-tees /pages/about-us /policies/refund-policy Meadow Scarf Price: ₹999.00 Readers who follow the steps in order finish the setup without needing support. Configuration files are read once at start-up and validated before any work begins. A missing value falls back to the documented default and is reported in the log. Teams usually adopt the recommended layout and change it only when a project grows. The reference lists every option with its type, its",
+        "word_count": 250,
+        "boilerplate_ratio": 0.061,
+        "longest_block_words": 58,
+        "heading_density_per_1k": 4.0
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 14.0,
+        "connect_ms": 12.7,
+        "fetch_ms": 14.2,
+        "render_ms": 1684.5
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "render"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63229/products/ridge-gloves",
+      "final_url": "http://127.0.0.1:63229/products/ridge-gloves",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:54:10Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [
+        "noindex",
+        "max-snippet:-1"
+      ],
+      "canonical": "http://127.0.0.1:63229/products/ridge-gloves",
+      "canonical_self": true,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "product",
+      "page_type_confidence": 0.9,
+      "raw": {
+        "bytes": 3093,
+        "text_len": 1594,
+        "hidden_text_len": 19,
+        "text_hash": "sha256:7aee17182c3fcce4c53fc76cc2774368f99c0e6e7286544a87e1fcc613a92d35",
+        "text_path": "evidence/pages/7aee17182c3fcce4c53fc76cc2774368f99c0e6e7286544a87e1fcc613a92d35.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Ridge Gloves"
+          }
+        ],
+        "anchors": [],
+        "links": [
+          {
+            "href": "/",
+            "rel": null,
+            "anchor": "/",
+            "internal": true
+          },
+          {
+            "href": "/collections/all",
+            "rel": null,
+            "anchor": "/collections/all",
+            "internal": true
+          },
+          {
+            "href": "/collections/graphic-tees",
+            "rel": null,
+            "anchor": "/collections/graphic-tees",
+            "internal": true
+          },
+          {
+            "href": "/pages/about-us",
+            "rel": null,
+            "anchor": "/pages/about-us",
+            "internal": true
+          },
+          {
+            "href": "/policies/refund-policy",
+            "rel": null,
+            "anchor": "/policies/refund-policy",
+            "internal": true
+          }
+        ],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": true,
+        "text_len": 1941,
+        "text_hash": "sha256:e1f896a109967961519d5c0e10ef951b7a4b7d06fd50c0fad1375f41d1310f23",
+        "text_path": "evidence/pages/e1f896a109967961519d5c0e10ef951b7a4b7d06fd50c0fad1375f41d1310f23.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Ridge Gloves"
+          },
+          {
+            "level": 2,
+            "text": "Customer reviews"
+          }
+        ],
+        "delta_ratio": 0.179
+      },
+      "jsonld": [
+        {
+          "type": "Product",
+          "valid": true,
+          "errors": [],
+          "fields_present": [
+            "brand",
+            "brand.@type",
+            "brand.name",
+            "description",
+            "name",
+            "offers",
+            "offers.@type",
+            "offers.price",
+            "offers.priceCurrency"
+          ],
+          "values": {
+            "name": "Ridge Gloves",
+            "description": "Configuration files are read once at start-up and validated before any work begins.",
+            "brand.@type": "Brand",
+            "brand.name": "Northwind Threads",
+            "offers.@type": "Offer",
+            "offers.price": "1499.00",
+            "offers.priceCurrency": "INR"
+          },
+          "contradicts_visible_text": true
+        }
+      ],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "/ /collections/all /collections/graphic-tees /pages/about-us /policies/refund-policy Ridge Gloves Price: ₹999.00 Configuration files are read once at start-up and validated before any work begins. A missing value falls back to the documented default and is reported in the log. Teams usually adopt the recommended layout and change it only when a project grows. The reference lists every option with its type, its default and a short example. Shipping partners collect parcels each weekday and share",
+        "word_count": 252,
+        "boilerplate_ratio": 0.061,
+        "longest_block_words": 57,
+        "heading_density_per_1k": 4.0
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 14.6,
+        "connect_ms": 13.2,
+        "fetch_ms": 14.8,
+        "render_ms": 1528.2
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "render"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63229/products/canyon-jacket",
+      "final_url": "http://127.0.0.1:63229/products/canyon-jacket",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:54:10Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [
+        "noindex",
+        "max-snippet:-1"
+      ],
+      "canonical": "http://127.0.0.1:63229/products/canyon-jacket",
+      "canonical_self": true,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "product",
+      "page_type_confidence": 0.9,
+      "raw": {
+        "bytes": 2750,
+        "text_len": 1576,
+        "hidden_text_len": 19,
+        "text_hash": "sha256:274e7c82c169f819805d4097e939b8e907161e1296fed9a26daaf170526a338c",
+        "text_path": "evidence/pages/274e7c82c169f819805d4097e939b8e907161e1296fed9a26daaf170526a338c.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Canyon Jacket"
+          }
+        ],
+        "anchors": [],
+        "links": [
+          {
+            "href": "/",
+            "rel": null,
+            "anchor": "/",
+            "internal": true
+          },
+          {
+            "href": "/collections/all",
+            "rel": null,
+            "anchor": "/collections/all",
+            "internal": true
+          },
+          {
+            "href": "/collections/graphic-tees",
+            "rel": null,
+            "anchor": "/collections/graphic-tees",
+            "internal": true
+          },
+          {
+            "href": "/pages/about-us",
+            "rel": null,
+            "anchor": "/pages/about-us",
+            "internal": true
+          },
+          {
+            "href": "/policies/refund-policy",
+            "rel": null,
+            "anchor": "/policies/refund-policy",
+            "internal": true
+          }
+        ],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": true,
+        "text_len": 1584,
+        "text_hash": "sha256:1865e81ac5256fe6e3c23ebb632195b1d6ab7fa803e3835921d3a2b67a5cd95a",
+        "text_path": "evidence/pages/1865e81ac5256fe6e3c23ebb632195b1d6ab7fa803e3835921d3a2b67a5cd95a.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Canyon Jacket"
+          }
+        ],
+        "delta_ratio": 0.005
+      },
+      "jsonld": [
+        {
+          "type": "Product",
+          "valid": true,
+          "errors": [],
+          "fields_present": [
+            "brand",
+            "brand.@type",
+            "brand.name",
+            "description",
+            "name"
+          ],
+          "values": {
+            "name": "Canyon Jacket",
+            "description": "The guide explains which settings matter first and which can safely wait.",
+            "brand.@type": "Brand",
+            "brand.name": "Northwind Threads"
+          },
+          "contradicts_visible_text": false
+        }
+      ],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "/ /collections/all /collections/graphic-tees /pages/about-us /policies/refund-policy Canyon Jacket Price: The guide explains which settings matter first and which can safely wait. Readers who follow the steps in order finish the setup without needing support. Configuration files are read once at start-up and validated before any work begins. A missing value falls back to the documented default and is reported in the log. Teams usually adopt the recommended layout and change it only when a",
+        "word_count": 248,
+        "boilerplate_ratio": 0.062,
+        "longest_block_words": 58,
+        "heading_density_per_1k": 4.0
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 2.4,
+        "connect_ms": 0.7,
+        "fetch_ms": 2.6,
+        "render_ms": 1159.3
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "render"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63229/products/harbor-hoodie",
+      "final_url": "http://127.0.0.1:63229/products/harbor-hoodie",
+      "status": 200,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:54:10Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [
+        "noindex",
+        "max-snippet:-1"
+      ],
+      "canonical": "http://127.0.0.1:63229/products/harbor-hoodie",
+      "canonical_self": true,
+      "lang": "en",
+      "hreflang": [],
+      "page_type": "product",
+      "page_type_confidence": 0.9,
+      "raw": {
+        "bytes": 2769,
+        "text_len": 1589,
+        "hidden_text_len": 19,
+        "text_hash": "sha256:6e0c054891450543d9889a34b05ecd88b8188ac78cf3a9627ab3991a8fc3e122",
+        "text_path": "evidence/pages/6e0c054891450543d9889a34b05ecd88b8188ac78cf3a9627ab3991a8fc3e122.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Harbor Hoodie"
+          }
+        ],
+        "anchors": [],
+        "links": [
+          {
+            "href": "/",
+            "rel": null,
+            "anchor": "/",
+            "internal": true
+          },
+          {
+            "href": "/collections/all",
+            "rel": null,
+            "anchor": "/collections/all",
+            "internal": true
+          },
+          {
+            "href": "/collections/graphic-tees",
+            "rel": null,
+            "anchor": "/collections/graphic-tees",
+            "internal": true
+          },
+          {
+            "href": "/pages/about-us",
+            "rel": null,
+            "anchor": "/pages/about-us",
+            "internal": true
+          },
+          {
+            "href": "/policies/refund-policy",
+            "rel": null,
+            "anchor": "/policies/refund-policy",
+            "internal": true
+          }
+        ],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": true,
+        "text_len": 1597,
+        "text_hash": "sha256:0d7d6028a5311dc1c219d34710ad6ad096db65adc42d6318cdfebe38c2ebfbe3",
+        "text_path": "evidence/pages/0d7d6028a5311dc1c219d34710ad6ad096db65adc42d6318cdfebe38c2ebfbe3.txt",
+        "headings": [
+          {
+            "level": 1,
+            "text": "Harbor Hoodie"
+          }
+        ],
+        "delta_ratio": 0.005
+      },
+      "jsonld": [
+        {
+          "type": "Product",
+          "valid": true,
+          "errors": [],
+          "fields_present": [
+            "brand",
+            "brand.@type",
+            "brand.name",
+            "description",
+            "name"
+          ],
+          "values": {
+            "name": "Harbor Hoodie",
+            "description": "Each batch is inspected by the person who will later answer questions about it.",
+            "brand.@type": "Brand",
+            "brand.name": "Northwind Threads"
+          },
+          "contradicts_visible_text": false
+        }
+      ],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "/ /collections/all /collections/graphic-tees /pages/about-us /policies/refund-policy Harbor Hoodie Price: Each batch is inspected by the person who will later answer questions about it. A repair request is logged with the order number and a short description of the fault. Our field team visits partner studios to review how the materials hold up in daily use. The guide explains which settings matter first and which can safely wait. Readers who follow the steps in order finish the setup without",
+        "word_count": 253,
+        "boilerplate_ratio": 0.062,
+        "longest_block_words": 58,
+        "heading_density_per_1k": 4.0
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 2.2,
+        "connect_ms": 0.6,
+        "fetch_ms": 2.4,
+        "render_ms": 1227.8
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "render"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63229/products/retired-logo-tee",
+      "final_url": "http://127.0.0.1:63229/products/retired-logo-tee",
+      "status": 404,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:54:10Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [],
+      "canonical": null,
+      "canonical_self": false,
+      "lang": null,
+      "hreflang": [],
+      "page_type": "product",
+      "page_type_confidence": 0.6,
+      "raw": {
+        "bytes": 44,
+        "text_len": 0,
+        "hidden_text_len": 0,
+        "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text_path": "evidence/pages/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.txt",
+        "headings": [],
+        "anchors": [],
+        "links": [],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": false,
+        "text_len": null,
+        "text_hash": null,
+        "text_path": null,
+        "headings": [],
+        "delta_ratio": null
+      },
+      "jsonld": [],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "",
+        "word_count": 0,
+        "boilerplate_ratio": null,
+        "longest_block_words": 0,
+        "heading_density_per_1k": null
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 22.0,
+        "connect_ms": 20.1,
+        "fetch_ms": 22.1,
+        "render_ms": null
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "fetch"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:63229/products/retired-classic-tee",
+      "final_url": "http://127.0.0.1:63229/products/retired-classic-tee",
+      "status": 404,
+      "redirect_chain": [],
+      "content_type": "text/html; charset=utf-8",
+      "fetched_at": "2026-09-13T04:54:10Z",
+      "headers": {
+        "x_robots_tag": null,
+        "last_modified": null,
+        "cache_control": null
+      },
+      "meta_robots": [],
+      "canonical": null,
+      "canonical_self": false,
+      "lang": null,
+      "hreflang": [],
+      "page_type": "product",
+      "page_type_confidence": 0.6,
+      "raw": {
+        "bytes": 44,
+        "text_len": 0,
+        "hidden_text_len": 0,
+        "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "text_path": "evidence/pages/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.txt",
+        "headings": [],
+        "anchors": [],
+        "links": [],
+        "images": [],
+        "tables": 0,
+        "iframes": 0,
+        "forms": 0
+      },
+      "rendered": {
+        "available": false,
+        "text_len": null,
+        "text_hash": null,
+        "text_path": null,
+        "headings": [],
+        "delta_ratio": null
+      },
+      "jsonld": [],
+      "microdata_or_rdfa": false,
+      "text": {
+        "visible_excerpt": "",
+        "word_count": 0,
+        "boilerplate_ratio": null,
+        "longest_block_words": 0,
+        "heading_density_per_1k": null
+      },
+      "dates": {
+        "visible_dates": [],
+        "schema_date_modified": null,
+        "schema_date_published": null,
+        "http_last_modified": null
+      },
+      "obstructions": [],
+      "timing": {
+        "ttfb_ms": 2.1,
+        "connect_ms": 0.6,
+        "fetch_ms": 2.2,
+        "render_ms": null
+      },
+      "provenance": {
+        "layer": "first_party",
+        "method": "fetch"
+      }
+    }
+  ],
+  "link_graph": {
+    "edges": [
+      [
+        "http://127.0.0.1:63229/",
+        "http://127.0.0.1:63229/collections/all"
+      ],
+      [
+        "http://127.0.0.1:63229/",
+        "http://127.0.0.1:63229/collections/graphic-tees"
+      ],
+      [
+        "http://127.0.0.1:63229/",
+        "http://127.0.0.1:63229/pages/about-us"
+      ],
+      [
+        "http://127.0.0.1:63229/",
+        "http://127.0.0.1:63229/policies/refund-policy"
+      ],
+      [
+        "http://127.0.0.1:63229/",
+        "http://127.0.0.1:63229/products/trail-tee"
+      ],
+      [
+        "http://127.0.0.1:63229/",
+        "http://127.0.0.1:63229/products/harbor-hoodie"
+      ],
+      [
+        "http://127.0.0.1:63229/",
+        "http://127.0.0.1:63229/products/summit-cap"
+      ],
+      [
+        "http://127.0.0.1:63229/",
+        "http://127.0.0.1:63229/products/delta-socks"
+      ],
+      [
+        "http://127.0.0.1:63229/",
+        "http://127.0.0.1:63229/products/canyon-jacket"
+      ],
+      [
+        "http://127.0.0.1:63229/",
+        "http://127.0.0.1:63229/products/meadow-scarf"
+      ],
+      [
+        "http://127.0.0.1:63229/",
+        "http://127.0.0.1:63229/products/ridge-gloves"
+      ],
+      [
+        "http://127.0.0.1:63229/products/trail-tee",
+        "http://127.0.0.1:63229/"
+      ],
+      [
+        "http://127.0.0.1:63229/products/trail-tee",
+        "http://127.0.0.1:63229/collections/all"
+      ],
+      [
+        "http://127.0.0.1:63229/products/trail-tee",
+        "http://127.0.0.1:63229/collections/graphic-tees"
+      ],
+      [
+        "http://127.0.0.1:63229/products/trail-tee",
+        "http://127.0.0.1:63229/pages/about-us"
+      ],
+      [
+        "http://127.0.0.1:63229/products/trail-tee",
+        "http://127.0.0.1:63229/policies/refund-policy"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/all",
+        "http://127.0.0.1:63229/"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/all",
+        "http://127.0.0.1:63229/collections/graphic-tees"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/all",
+        "http://127.0.0.1:63229/pages/about-us"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/all",
+        "http://127.0.0.1:63229/policies/refund-policy"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/all",
+        "http://127.0.0.1:63229/products/trail-tee"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/all",
+        "http://127.0.0.1:63229/products/harbor-hoodie"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/all",
+        "http://127.0.0.1:63229/products/summit-cap"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/all",
+        "http://127.0.0.1:63229/products/delta-socks"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/all",
+        "http://127.0.0.1:63229/products/canyon-jacket"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/all",
+        "http://127.0.0.1:63229/products/meadow-scarf"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/all",
+        "http://127.0.0.1:63229/products/ridge-gloves"
+      ],
+      [
+        "http://127.0.0.1:63229/pages/about-us",
+        "http://127.0.0.1:63229/"
+      ],
+      [
+        "http://127.0.0.1:63229/pages/about-us",
+        "http://127.0.0.1:63229/collections/all"
+      ],
+      [
+        "http://127.0.0.1:63229/pages/about-us",
+        "http://127.0.0.1:63229/collections/graphic-tees"
+      ],
+      [
+        "http://127.0.0.1:63229/pages/about-us",
+        "http://127.0.0.1:63229/policies/refund-policy"
+      ],
+      [
+        "http://127.0.0.1:63229/policies/refund-policy",
+        "http://127.0.0.1:63229/"
+      ],
+      [
+        "http://127.0.0.1:63229/policies/refund-policy",
+        "http://127.0.0.1:63229/collections/all"
+      ],
+      [
+        "http://127.0.0.1:63229/policies/refund-policy",
+        "http://127.0.0.1:63229/collections/graphic-tees"
+      ],
+      [
+        "http://127.0.0.1:63229/policies/refund-policy",
+        "http://127.0.0.1:63229/pages/about-us"
+      ],
+      [
+        "http://127.0.0.1:63229/products/summit-cap",
+        "http://127.0.0.1:63229/"
+      ],
+      [
+        "http://127.0.0.1:63229/products/summit-cap",
+        "http://127.0.0.1:63229/collections/all"
+      ],
+      [
+        "http://127.0.0.1:63229/products/summit-cap",
+        "http://127.0.0.1:63229/collections/graphic-tees"
+      ],
+      [
+        "http://127.0.0.1:63229/products/summit-cap",
+        "http://127.0.0.1:63229/pages/about-us"
+      ],
+      [
+        "http://127.0.0.1:63229/products/summit-cap",
+        "http://127.0.0.1:63229/policies/refund-policy"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/graphic-tees",
+        "http://127.0.0.1:63229/"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/graphic-tees",
+        "http://127.0.0.1:63229/collections/all"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/graphic-tees",
+        "http://127.0.0.1:63229/pages/about-us"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/graphic-tees",
+        "http://127.0.0.1:63229/policies/refund-policy"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/graphic-tees",
+        "http://127.0.0.1:63229/products/trail-tee"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/graphic-tees",
+        "http://127.0.0.1:63229/products/harbor-hoodie"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/graphic-tees",
+        "http://127.0.0.1:63229/products/summit-cap"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/graphic-tees",
+        "http://127.0.0.1:63229/products/delta-socks"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/graphic-tees",
+        "http://127.0.0.1:63229/products/canyon-jacket"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/graphic-tees",
+        "http://127.0.0.1:63229/products/meadow-scarf"
+      ],
+      [
+        "http://127.0.0.1:63229/collections/graphic-tees",
+        "http://127.0.0.1:63229/products/ridge-gloves"
+      ],
+      [
+        "http://127.0.0.1:63229/products/delta-socks",
+        "http://127.0.0.1:63229/"
+      ],
+      [
+        "http://127.0.0.1:63229/products/delta-socks",
+        "http://127.0.0.1:63229/collections/all"
+      ],
+      [
+        "http://127.0.0.1:63229/products/delta-socks",
+        "http://127.0.0.1:63229/collections/graphic-tees"
+      ],
+      [
+        "http://127.0.0.1:63229/products/delta-socks",
+        "http://127.0.0.1:63229/pages/about-us"
+      ],
+      [
+        "http://127.0.0.1:63229/products/delta-socks",
+        "http://127.0.0.1:63229/policies/refund-policy"
+      ],
+      [
+        "http://127.0.0.1:63229/products/meadow-scarf",
+        "http://127.0.0.1:63229/"
+      ],
+      [
+        "http://127.0.0.1:63229/products/meadow-scarf",
+        "http://127.0.0.1:63229/collections/all"
+      ],
+      [
+        "http://127.0.0.1:63229/products/meadow-scarf",
+        "http://127.0.0.1:63229/collections/graphic-tees"
+      ],
+      [
+        "http://127.0.0.1:63229/products/meadow-scarf",
+        "http://127.0.0.1:63229/pages/about-us"
+      ],
+      [
+        "http://127.0.0.1:63229/products/meadow-scarf",
+        "http://127.0.0.1:63229/policies/refund-policy"
+      ],
+      [
+        "http://127.0.0.1:63229/products/ridge-gloves",
+        "http://127.0.0.1:63229/"
+      ],
+      [
+        "http://127.0.0.1:63229/products/ridge-gloves",
+        "http://127.0.0.1:63229/collections/all"
+      ],
+      [
+        "http://127.0.0.1:63229/products/ridge-gloves",
+        "http://127.0.0.1:63229/collections/graphic-tees"
+      ],
+      [
+        "http://127.0.0.1:63229/products/ridge-gloves",
+        "http://127.0.0.1:63229/pages/about-us"
+      ],
+      [
+        "http://127.0.0.1:63229/products/ridge-gloves",
+        "http://127.0.0.1:63229/policies/refund-policy"
+      ],
+      [
+        "http://127.0.0.1:63229/products/canyon-jacket",
+        "http://127.0.0.1:63229/"
+      ],
+      [
+        "http://127.0.0.1:63229/products/canyon-jacket",
+        "http://127.0.0.1:63229/collections/all"
+      ],
+      [
+        "http://127.0.0.1:63229/products/canyon-jacket",
+        "http://127.0.0.1:63229/collections/graphic-tees"
+      ],
+      [
+        "http://127.0.0.1:63229/products/canyon-jacket",
+        "http://127.0.0.1:63229/pages/about-us"
+      ],
+      [
+        "http://127.0.0.1:63229/products/canyon-jacket",
+        "http://127.0.0.1:63229/policies/refund-policy"
+      ],
+      [
+        "http://127.0.0.1:63229/products/harbor-hoodie",
+        "http://127.0.0.1:63229/"
+      ],
+      [
+        "http://127.0.0.1:63229/products/harbor-hoodie",
+        "http://127.0.0.1:63229/collections/all"
+      ],
+      [
+        "http://127.0.0.1:63229/products/harbor-hoodie",
+        "http://127.0.0.1:63229/collections/graphic-tees"
+      ],
+      [
+        "http://127.0.0.1:63229/products/harbor-hoodie",
+        "http://127.0.0.1:63229/pages/about-us"
+      ],
+      [
+        "http://127.0.0.1:63229/products/harbor-hoodie",
+        "http://127.0.0.1:63229/policies/refund-policy"
+      ]
+    ],
+    "orphans": [
+      "http://127.0.0.1:63229/products/retired-logo-tee",
+      "http://127.0.0.1:63229/products/retired-classic-tee"
+    ],
+    "max_depth_from_home": 1
+  },
+  "claim_candidates": [
+    {
+      "id": "CC-001",
+      "kind": "legal_name",
+      "value_raw": "Northwind Threads",
+      "value_normalized": "northwind threads",
+      "source_url": "http://127.0.0.1:63229/",
+      "locator": "name",
+      "extraction_method": "jsonld",
+      "observed_count": 8
+    },
+    {
+      "id": "CC-002",
+      "kind": "price",
+      "value_raw": "₹999.00",
+      "value_normalized": "₹999.00",
+      "source_url": "http://127.0.0.1:63229/products/trail-tee",
+      "locator": "text@102",
+      "extraction_method": "visible_text",
+      "observed_count": 7
+    },
+    {
+      "id": "CC-003",
+      "kind": "price",
+      "value_raw": "1499.00",
+      "value_normalized": "1499.00",
+      "source_url": "http://127.0.0.1:63229/products/meadow-scarf",
+      "locator": "offers.price",
+      "extraction_method": "jsonld",
+      "observed_count": 2
+    },
+    {
+      "id": "CC-004",
+      "kind": "product_name",
+      "value_raw": "Canyon Jacket",
+      "value_normalized": "canyon jacket",
+      "source_url": "http://127.0.0.1:63229/products/canyon-jacket",
+      "locator": "name",
+      "extraction_method": "jsonld",
+      "observed_count": 2
+    },
+    {
+      "id": "CC-005",
+      "kind": "product_name",
+      "value_raw": "Delta Socks",
+      "value_normalized": "delta socks",
+      "source_url": "http://127.0.0.1:63229/products/delta-socks",
+      "locator": "name",
+      "extraction_method": "jsonld",
+      "observed_count": 2
+    },
+    {
+      "id": "CC-006",
+      "kind": "product_name",
+      "value_raw": "Harbor Hoodie",
+      "value_normalized": "harbor hoodie",
+      "source_url": "http://127.0.0.1:63229/products/harbor-hoodie",
+      "locator": "name",
+      "extraction_method": "jsonld",
+      "observed_count": 2
+    },
+    {
+      "id": "CC-007",
+      "kind": "product_name",
+      "value_raw": "Meadow Scarf",
+      "value_normalized": "meadow scarf",
+      "source_url": "http://127.0.0.1:63229/products/meadow-scarf",
+      "locator": "name",
+      "extraction_method": "jsonld",
+      "observed_count": 2
+    },
+    {
+      "id": "CC-008",
+      "kind": "product_name",
+      "value_raw": "Ridge Gloves",
+      "value_normalized": "ridge gloves",
+      "source_url": "http://127.0.0.1:63229/products/ridge-gloves",
+      "locator": "name",
+      "extraction_method": "jsonld",
+      "observed_count": 2
+    },
+    {
+      "id": "CC-009",
+      "kind": "product_name",
+      "value_raw": "Summit Cap",
+      "value_normalized": "summit cap",
+      "source_url": "http://127.0.0.1:63229/products/summit-cap",
+      "locator": "name",
+      "extraction_method": "jsonld",
+      "observed_count": 2
+    },
+    {
+      "id": "CC-010",
+      "kind": "product_name",
+      "value_raw": "Trail Tee",
+      "value_normalized": "trail tee",
+      "source_url": "http://127.0.0.1:63229/products/trail-tee",
+      "locator": "name",
+      "extraction_method": "jsonld",
+      "observed_count": 2
+    },
+    {
+      "id": "CC-011",
+      "kind": "tagline",
+      "value_raw": "Northwind Threads",
+      "value_normalized": "northwind threads",
+      "source_url": "http://127.0.0.1:63229/",
+      "locator": "h1",
+      "extraction_method": "visible_text",
+      "observed_count": 1
+    }
+  ],
+  "canonical_claims": [
+    {
+      "id": "C-001",
+      "from_candidates": [
+        "CC-001"
+      ],
+      "kind": "legal_name",
+      "value_normalized": "northwind threads",
+      "first_party_confidence": "high",
+      "entity_ambiguity": "low"
+    },
+    {
+      "id": "C-002",
+      "from_candidates": [
+        "CC-004"
+      ],
+      "kind": "product_name",
+      "value_normalized": "canyon jacket",
+      "first_party_confidence": "high",
+      "entity_ambiguity": "low"
+    },
+    {
+      "id": "C-003",
+      "from_candidates": [
+        "CC-005"
+      ],
+      "kind": "product_name",
+      "value_normalized": "delta socks",
+      "first_party_confidence": "high",
+      "entity_ambiguity": "low"
+    },
+    {
+      "id": "C-004",
+      "from_candidates": [
+        "CC-006"
+      ],
+      "kind": "product_name",
+      "value_normalized": "harbor hoodie",
+      "first_party_confidence": "high",
+      "entity_ambiguity": "low"
+    },
+    {
+      "id": "C-005",
+      "from_candidates": [
+        "CC-007"
+      ],
+      "kind": "product_name",
+      "value_normalized": "meadow scarf",
+      "first_party_confidence": "high",
+      "entity_ambiguity": "low"
+    },
+    {
+      "id": "C-006",
+      "from_candidates": [
+        "CC-008"
+      ],
+      "kind": "product_name",
+      "value_normalized": "ridge gloves",
+      "first_party_confidence": "high",
+      "entity_ambiguity": "low"
+    },
+    {
+      "id": "C-007",
+      "from_candidates": [
+        "CC-009"
+      ],
+      "kind": "product_name",
+      "value_normalized": "summit cap",
+      "first_party_confidence": "high",
+      "entity_ambiguity": "low"
+    },
+    {
+      "id": "C-008",
+      "from_candidates": [
+        "CC-010"
+      ],
+      "kind": "product_name",
+      "value_normalized": "trail tee",
+      "first_party_confidence": "high",
+      "entity_ambiguity": "low"
+    },
+    {
+      "id": "C-009",
+      "from_candidates": [
+        "CC-011"
+      ],
+      "kind": "tagline",
+      "value_normalized": "northwind threads",
+      "first_party_confidence": "low",
+      "entity_ambiguity": "low"
+    }
+  ],
+  "external": {
+    "attempted": true,
+    "method": "keyless",
+    "frontier_size": 3,
+    "truncated": false,
+    "origins": [
+      {
+        "registrable_domain": "wikipedia.org",
+        "source_type": "encyclopedic",
+        "urls": [
+          "https://en.wikipedia.org/wiki/F_Sharp_%28programming_language%29",
+          "https://en.wikipedia.org/wiki/Microsoft_SQL_Server",
+          "https://en.wikipedia.org/wiki/Dave_Wedge"
+        ],
+        "syndication_cluster": null,
+        "brand_owned": false
+      }
+    ],
+    "hits": []
+  },
+  "ua_probe": [
+    {
+      "url": "http://127.0.0.1:63229/",
+      "user_agent": "browser-ua",
+      "status": 200,
+      "text_len": 1574,
+      "text_hash": "sha256:99f5577a928c26cbe6df27b7562dc7056ec628754f72b8676c70b65b97a55bc6"
+    },
+    {
+      "url": "http://127.0.0.1:63229/",
+      "user_agent": "GPTBot",
+      "status": 403,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:63229/",
+      "user_agent": "ClaudeBot",
+      "status": 200,
+      "text_len": 1574,
+      "text_hash": "sha256:99f5577a928c26cbe6df27b7562dc7056ec628754f72b8676c70b65b97a55bc6"
+    },
+    {
+      "url": "http://127.0.0.1:63229/",
+      "user_agent": "PerplexityBot",
+      "status": 200,
+      "text_len": 1574,
+      "text_hash": "sha256:99f5577a928c26cbe6df27b7562dc7056ec628754f72b8676c70b65b97a55bc6"
+    },
+    {
+      "url": "http://127.0.0.1:63229/",
+      "user_agent": "OAI-SearchBot",
+      "status": 200,
+      "text_len": 1574,
+      "text_hash": "sha256:99f5577a928c26cbe6df27b7562dc7056ec628754f72b8676c70b65b97a55bc6"
+    },
+    {
+      "url": "http://127.0.0.1:63229/",
+      "user_agent": "CCBot",
+      "status": 200,
+      "text_len": 1574,
+      "text_hash": "sha256:99f5577a928c26cbe6df27b7562dc7056ec628754f72b8676c70b65b97a55bc6"
+    },
+    {
+      "url": "http://127.0.0.1:63229/",
+      "user_agent": "Googlebot",
+      "status": 200,
+      "text_len": 1574,
+      "text_hash": "sha256:99f5577a928c26cbe6df27b7562dc7056ec628754f72b8676c70b65b97a55bc6"
+    },
+    {
+      "url": "http://127.0.0.1:63229/pages/about-us",
+      "user_agent": "browser-ua",
+      "status": 200,
+      "text_len": 1813,
+      "text_hash": "sha256:55a6c7b937b50a120fbb8f17a5c9f228a0fbb6d7284b6c2762907b8d6e9a4ee9"
+    },
+    {
+      "url": "http://127.0.0.1:63229/pages/about-us",
+      "user_agent": "GPTBot",
+      "status": 403,
+      "text_len": 0,
+      "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "url": "http://127.0.0.1:63229/pages/about-us",
+      "user_agent": "ClaudeBot",
+      "status": 200,
+      "text_len": 1813,
+      "text_hash": "sha256:55a6c7b937b50a120fbb8f17a5c9f228a0fbb6d7284b6c2762907b8d6e9a4ee9"
+    },
+    {
+      "url": "http://127.0.0.1:63229/pages/about-us",
+      "user_agent": "PerplexityBot",
+      "status": 200,
+      "text_len": 1813,
+      "text_hash": "sha256:55a6c7b937b50a120fbb8f17a5c9f228a0fbb6d7284b6c2762907b8d6e9a4ee9"
+    },
+    {
+      "url": "http://127.0.0.1:63229/pages/about-us",
+      "user_agent": "OAI-SearchBot",
+      "status": 200,
+      "text_len": 1813,
+      "text_hash": "sha256:55a6c7b937b50a120fbb8f17a5c9f228a0fbb6d7284b6c2762907b8d6e9a4ee9"
+    },
+    {
+      "url": "http://127.0.0.1:63229/pages/about-us",
+      "user_agent": "CCBot",
+      "status": 200,
+      "text_len": 1813,
+      "text_hash": "sha256:55a6c7b937b50a120fbb8f17a5c9f228a0fbb6d7284b6c2762907b8d6e9a4ee9"
+    },
+    {
+      "url": "http://127.0.0.1:63229/pages/about-us",
+      "user_agent": "Googlebot",
+      "status": 200,
+      "text_len": 1813,
+      "text_hash": "sha256:55a6c7b937b50a120fbb8f17a5c9f228a0fbb6d7284b6c2762907b8d6e9a4ee9"
+    }
+  ],
+  "well_known": [
+    {
+      "path": "/llms.txt",
+      "status": 404,
+      "present": false,
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/agents.md",
+      "status": 404,
+      "present": false,
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/.well-known/ucp",
+      "status": 404,
+      "present": false,
+      "content_type": "text/html; charset=utf-8"
+    }
+  ],
+  "errors": [
+    {
+      "url": "http://127.0.0.1:63229/products/retired-logo-tee",
+      "stage": "fetch",
+      "message": "returned HTTP 404"
+    },
+    {
+      "url": "http://127.0.0.1:63229/products/retired-classic-tee",
+      "stage": "fetch",
+      "message": "returned HTTP 404"
+    },
+    {
+      "url": "https://api.wikimedia.org/robots.txt",
+      "stage": "robots",
+      "message": "not a robots.txt: the body is an HTML document (content-type text/html); treated as absent, no restrictions"
+    }
+  ]
+}
