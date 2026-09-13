@@ -30,6 +30,26 @@ consulted.
 5. **`docs/DECISIONS.md`** — why it is built this way, including the decisions
    revised when measurement proved them wrong.
 
+## How an agent runs this
+
+An Agent Skill is instructions plus, optionally, bundled scripts. A host agent
+reads the entrypoint's `SKILL.md`, follows its numbered procedure, and runs the
+bundled scripts with its own code-execution tool; the handout asks for exactly
+that split, with "executable checks to `scripts/`". So there is nothing to
+install and no service to call: point the entrypoint at a URL and it writes the
+report.
+
+The host needs Python 3.8 or newer and outbound HTTPS from wherever the scripts
+run. A Chromium-family browser is optional and raises coverage. Where a host
+cannot provide one of those, the marketplace still works:
+
+| The host cannot… | What happens |
+|---|---|
+| run a browser | Every render comparison is reported as not assessed with what would enable it; everything else runs (`samples/spa-shell-no-browser/`) |
+| reach third-party hosts | Corroboration is not assessed; the whole on-site audit still runs (`--no-egress`) |
+| reach the network from the sandbox at all | The agent fetches with its own tools and passes the bundle: `scripts/run.py --evidence <bundle>` runs diagnosis, arbitration, severity and both reports unchanged |
+| run scripts at all | Each skill's `references/rules.md` is the specification the script implements, in one fixed 14-field block per rule, and each `SKILL.md` procedure is written to be followed by hand |
+
 ## Running it
 
     python scripts/run_audit.py --url https://example.com --out runs/example/

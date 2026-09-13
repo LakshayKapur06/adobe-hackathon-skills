@@ -107,3 +107,32 @@ class TestRunner(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestDiagnoseAnExistingBundle(unittest.TestCase):
+    """The entrypoint can diagnose a bundle instead of observing a site.
+
+    A host whose sandbox cannot reach the network, or an agent that already has a
+    bundle from an earlier run, still gets the whole pipeline after observation:
+    diagnosis, arbitration, derived severity, and both report files.
+    """
+
+    def test_a_bundle_alone_produces_the_whole_report(self):
+        import shutil
+        import run as run_mod
+        with tempfile.TemporaryDirectory() as work:
+            shutil.copytree(str(ROOT / "tests" / "fixtures" / "evidence"), str(pathlib.Path(work) / "evidence"))
+            bundle = str(pathlib.Path(work) / "evidence" / "evidence.json")
+            shutil.move(str(pathlib.Path(work) / "evidence" / "minimal.evidence.json"), bundle)
+            self.assertEqual(run_mod.main(["--evidence", bundle]), 0)
+            report = json.loads((pathlib.Path(work) / "report.json").read_text(encoding="utf-8"))
+            self.assertFalse(Validator(REGISTRY["report.schema.json"], REGISTRY).errors(report))
+            self.assertTrue((pathlib.Path(work) / "report.md").is_file())
+            outcomes = {x["rule_id"] for key in ("findings", "not_assessed", "checks_passed") for x in report[key]}
+            self.assertEqual(len(outcomes), 24, "every rule still reaches an outcome")
+
+    def test_url_and_evidence_are_mutually_exclusive(self):
+        import run as run_mod
+        for argv in ([], ["--url", "https://example.com", "--evidence", "x.json"]):
+            with self.assertRaises(SystemExit):
+                run_mod.main(argv)

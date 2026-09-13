@@ -61,10 +61,17 @@ def _fail(message, details=()):
     return 1
 
 
-def run(url, workdir, collect_only=False, no_render=False, no_egress=False, max_pages=30):
+def run(url, workdir, collect_only=False, no_render=False, no_egress=False, max_pages=30, evidence_file=None):
     started = time.monotonic()
     registry = _registry()
     os.makedirs(workdir, exist_ok=True)
+
+    if evidence_file:
+        # Observation already happened elsewhere: a previous run, or a host whose
+        # sandbox cannot reach the network, whose agent fetched the pages with its
+        # own tools and wrote the bundle. Everything after observation is the same,
+        # and the bundle is validated before any diagnostic reads it.
+        return _diagnose_and_report(evidence_file, workdir, started, registry)
 
     command = [sys.executable, COLLECTOR, "--url", url, "--workdir", workdir, "--max-pages", str(max_pages)]
     if no_render:
@@ -112,6 +119,20 @@ def run(url, workdir, collect_only=False, no_render=False, no_egress=False, max_
     if collect_only:
         return 0
 
+    return _diagnose_and_report(evidence_path, workdir, started, registry)
+
+
+def _diagnose_and_report(evidence_path, workdir, started, registry):
+    """Diagnose a validated bundle, arbitrate, and write the report."""
+    if not os.path.isfile(evidence_path):
+        return _fail("no evidence bundle at %s" % evidence_path)
+    with open(evidence_path, encoding="utf-8") as handle:
+        evidence = json.load(handle)
+    problems = _validate(evidence, "evidence.schema.json", registry)
+    if problems:
+        return _fail("the evidence bundle is not schema-valid; no diagnostic will read it", problems)
+    # Each diagnostic resolves the bundle's text sidecars from the bundle's own
+    # location, so a bundle produced elsewhere needs nothing else from this run.
     findings_dir = os.path.join(workdir, "findings")
     os.makedirs(findings_dir, exist_ok=True)
     unruled, failed = [], []
@@ -168,7 +189,10 @@ def run(url, workdir, collect_only=False, no_render=False, no_egress=False, max_
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Run one read-only website audit end to end.")
-    parser.add_argument("--url", required=True)
+    parser.add_argument("--url", help="the site to audit; omit only with --evidence")
+    parser.add_argument("--evidence", metavar="PATH",
+                        help="diagnose an evidence bundle produced earlier, or by a host whose sandbox cannot "
+                             "reach the network, instead of observing the site now")
     parser.add_argument("--workdir", default="audit-run",
                         help="where every artefact is written (default: ./audit-run)")
     parser.add_argument("--collect-only", action="store_true")
@@ -176,8 +200,13 @@ def main(argv=None):
     parser.add_argument("--no-egress", action="store_true")
     parser.add_argument("--max-pages", type=int, default=30)
     args = parser.parse_args(argv)
+    if bool(args.url) == bool(args.evidence):
+        parser.error("give either --url (observe the site now) or --evidence (diagnose a bundle), not both")
+    if args.evidence and args.workdir == "audit-run":
+        # Default the output beside the bundle, where its sidecars already are.
+        args.workdir = os.path.dirname(os.path.dirname(os.path.abspath(args.evidence)))
     return run(args.url, args.workdir, collect_only=args.collect_only, no_render=args.no_render,
-               no_egress=args.no_egress, max_pages=args.max_pages)
+               no_egress=args.no_egress, max_pages=args.max_pages, evidence_file=args.evidence)
 
 
 if __name__ == "__main__":

@@ -36,14 +36,21 @@ hand-assigned severities.
 
 | Input | Required | Notes |
 |---|---|---|
-| `site` | yes | A URL or bare domain. Scheme optional; the collector resolves it. |
+| `site` | yes, unless `evidence` is given | A URL or bare domain. Scheme optional; the collector resolves it. |
+| `evidence` | no | Path to an evidence bundle to diagnose instead of observing the site now: one from an earlier run, or one an agent assembled with its own fetch tools where the sandbox running these scripts has no network. Everything after observation is unchanged. |
 | `workdir` | no | Working directory for all artefacts. Defaults to `./audit-run`. |
 | `max_pages` | no | Pages the collector samples. Default 30. |
 | `no_render`, `no_egress` | no | Run without a browser, or without third-party access. |
 
 Nothing else is required. No API key, no account, no configuration. The whole
 procedure below runs as `scripts/run.py --url <site> --workdir <dir>`, under a
-300s global deadline.
+300s global deadline, or as `scripts/run.py --evidence <bundle>` to diagnose a
+bundle that already exists. What the host must provide: a Python 3.8 or newer
+interpreter, outbound HTTPS from wherever these scripts run, and optionally a
+Chromium-family browser. A host that cannot give the scripts network access can
+still run steps 3 to 9 by passing `evidence`; a host that cannot run scripts at
+all has the whole specification in each skill's `references/`, and the procedures
+are written to be followed by hand.
 
 **Run one audit at a time per machine.** The renderer shares the machine's CPU,
 and concurrent audits starve it: measured during the G2 check, one site rendered

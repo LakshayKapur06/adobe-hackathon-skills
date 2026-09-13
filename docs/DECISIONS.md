@@ -1041,3 +1041,21 @@ fixed:
   non-English and would have dropped English articles out of FRC-001 and PRO-004.
 - **FRC-002's not-assessed reason** printed internal values ("egress True,
   attempted False"); it now says which of the two prevented the check.
+
+### D43 — The entrypoint accepts an evidence bundle, not only a URL
+
+A read-through asked how a host actually runs this: is the script the only way?
+It is the intended way — an Agent Skill is instructions plus bundled scripts that
+the host agent executes — but the question exposed a portability gap. A host
+whose sandbox has no outbound network can run the scripts and still observe
+nothing, and the audit would report only that the site could not be reached.
+
+`scripts/run.py` now takes `--evidence <bundle>` as an alternative to `--url`.
+Observation is the only stage that needs the network; everything after it
+(promotion, the six diagnostics, arbitration, derived severity, proactive
+recommendations, both report files) runs from a validated bundle, whether it came
+from an earlier run or from an agent that fetched the pages with its own tools.
+The bundle is schema-validated first, exactly as in a full run, and each
+diagnostic resolves the bundle's text sidecars from the bundle's own location.
+The README now states what a host must provide and what happens when it cannot
+provide each capability.
