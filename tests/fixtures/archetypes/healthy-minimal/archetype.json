@@ -2,28 +2,79 @@
   "archetype": "healthy-minimal",
   "real_world_class": "A small, well-built organization or studio site: marketing pages, a blog, short documentation, a policy page.",
   "claim": "A well-built site produces no defect or risk finding: every rule that can run passes, and what cannot run says so. A rule set that lights this site up is measuring conformity, not defects.",
-  "mechanisms": ["true negatives across every diagnostic", "assessed passes rather than silent not_assessed"],
+  "mechanisms": [
+    "true negatives across every diagnostic",
+    "assessed passes rather than silent not_assessed"
+  ],
   "server": {},
   "variants": [
     {
       "name": "no-render",
       "render": false,
       "findings": [
-        {"rule_id": "PRO-002", "status": "proactive"}
+        {
+          "rule_id": "PRO-002",
+          "status": "proactive"
+        }
       ],
-      "passed": ["ACC-001", "ACC-002", "ACC-003", "ACC-004", "ACC-005", "ACC-006", "ACC-007", "ACC-008", "ACC-009",
-                 "RND-002", "IDM-001", "IDM-002", "IDM-003", "ANS-001", "FRC-001", "ARR-001", "PRO-001"],
-      "not_assessed": ["RND-001", "RND-003", "IDM-004", "FRC-002"],
-      "evidence": {"robots.parse_reason": "ok", "discovery.soft_404.detected": false}
+      "passed": [
+        "ACC-001",
+        "ACC-002",
+        "ACC-003",
+        "ACC-004",
+        "ACC-005",
+        "ACC-006",
+        "ACC-007",
+        "ACC-008",
+        "ACC-009",
+        "RND-002",
+        "IDM-001",
+        "IDM-002",
+        "IDM-003",
+        "ANS-001",
+        "FRC-001",
+        "ARR-001",
+        "PRO-001",
+        "PRO-003",
+        "PRO-004"
+      ],
+      "not_assessed": [
+        "RND-001",
+        "RND-003",
+        "IDM-004",
+        "FRC-002"
+      ],
+      "evidence": {
+        "robots.parse_reason": "ok",
+        "discovery.soft_404.detected": false
+      }
     },
     {
       "name": "render",
       "render": true,
       "findings": [
-        {"rule_id": "PRO-002", "status": "proactive"}
+        {
+          "rule_id": "PRO-002",
+          "status": "proactive"
+        }
       ],
-      "passed": ["RND-001", "ACC-001", "ACC-003", "ACC-005", "ACC-007", "IDM-001", "ANS-001", "FRC-001", "ARR-001"],
-      "not_assessed": ["RND-002", "RND-003", "IDM-004", "FRC-002"]
+      "passed": [
+        "RND-001",
+        "ACC-001",
+        "ACC-003",
+        "ACC-005",
+        "ACC-007",
+        "IDM-001",
+        "ANS-001",
+        "FRC-001",
+        "ARR-001"
+      ],
+      "not_assessed": [
+        "RND-002",
+        "RND-003",
+        "IDM-004",
+        "FRC-002"
+      ]
     }
   ]
 }

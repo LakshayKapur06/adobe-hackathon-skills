@@ -682,3 +682,34 @@ improvements beyond the problems, what passed, what could not be checked with
 what would make it checkable, and how the audit was run. It adds no fact the JSON
 does not hold, and observed text is collapsed onto one line so a site's own
 content cannot restructure it.
+
+### D28 — `contracts-v14`: two more proactive recommendations, each completing a signal the site already gives
+
+The handout asks for suggested actions that "may go beyond the detected
+problems", and the rubric rewards recommendations that are specific rather than
+generic. PRO-001 and PRO-002 were the only two. Two more were added, chosen by one
+test: the recommendation must be triggered by something observed on this site,
+must not restate a diagnostic's finding, and must be one a well-built site can
+pass.
+
+- **PRO-003** fires when the site already describes itself as an organization in
+  JSON-LD on its home or about page and no node anywhere declares `sameAs`. A
+  declared but empty `sameAs` stays IDM-002's defect; no organization markup at
+  all stays IDM-001's. Confidence rises to high when the name was scored as
+  ambiguous, the case identity links exist for.
+- **PRO-004** fires when at least two articles, and at least half of the dated
+  ones, show a visible date and carry no structured date. Articles with no date
+  at all stay FRC-001's defect.
+
+Both are proactive, so capped at medium severity and counted in
+`summary.proactive`, never as problems. The orchestrator's allow-list in
+`references/proactive.md` gains the page fields they read, every one already in
+the evidence schema, so the evidence contract itself is unchanged
+(`contracts-v14`). The publisher archetype now omits `sameAs` and structured
+article dates to carry both true positives; the healthy archetype passes both.
+
+Candidates considered and not added: recommending `hreflang` (fires on
+single-language sites that need none), recommending FAQ markup (Google restricted
+its display in 2023, so the recommendation would be dated advice), and
+recommending `/agents.md` (no consumer documents reading it, so the
+recommendation could not name a mechanism it improves).

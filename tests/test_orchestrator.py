@@ -195,6 +195,41 @@ class TestProactive(unittest.TestCase):
         got, f = self.outcome(self.evidence([self.claim("legal_name", "poco", ambiguity="high")]), "PRO-002")
         self.assertIn("ambiguous", f["evidence"])
 
+    def test_identity_links_are_recommended_only_where_none_exist(self):
+        e = self.evidence([self.claim("legal_name", "fixture instruments")])
+        got, f = self.outcome(e, "PRO-003")
+        self.assertEqual((got, f["confidence"]), ("fired", "medium"))
+        self.assertEqual(self.outcome(self.evidence([self.claim("legal_name", "poco", ambiguity="high")]),
+                                      "PRO-003")[1]["confidence"], "high", "an ambiguous name raises confidence")
+        website = copy.deepcopy(e)
+        website["pages"][1]["jsonld"].append({"type": "WebSite", "valid": True, "errors": [],
+                                              "fields_present": ["sameAs"], "contradicts_visible_text": False,
+                                              "values": {}})
+        self.assertEqual(self.outcome(website, "PRO-003")[0], "passed", "any sameAs is a statement already made")
+        bare = copy.deepcopy(e)
+        bare["pages"][0]["jsonld"] = []
+        self.assertEqual(self.outcome(bare, "PRO-003")[0], "not_assessed", "no organization markup is IDM-001's")
+
+    def articles(self, dated):
+        e = self.evidence()
+        template = e["pages"][1]
+        e["pages"] = e["pages"][:1]
+        for i, (visible, structured) in enumerate(dated):
+            page = copy.deepcopy(template)
+            page.update(url="http://localhost:8000/news/%d" % i, page_type="article", page_type_confidence=0.9)
+            page["dates"] = {"visible_dates": ["2026-03-0%d" % (i + 1)] if visible else [],
+                             "schema_date_published": "2026-03-01" if structured else None,
+                             "schema_date_modified": None, "http_last_modified": None}
+            e["pages"].append(page)
+        return e
+
+    def test_visible_dates_without_structured_dates(self):
+        self.assertEqual(self.outcome(self.articles([(True, False)] * 3), "PRO-004")[0], "fired")
+        self.assertEqual(self.outcome(self.articles([(True, False), (True, True), (True, True)]), "PRO-004")[0],
+                         "passed", "one stray article is not a template")
+        self.assertEqual(self.outcome(self.articles([(False, False)] * 3), "PRO-004")[0], "not_assessed",
+                         "undated articles are FRC-001's defect, not this recommendation")
+
 
 class TestRunSurvivesADiagnosticFailure(unittest.TestCase):
     def test_a_crashing_diagnostic_becomes_not_assessed(self):

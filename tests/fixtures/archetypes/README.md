@@ -58,6 +58,8 @@ it is skipped with the reason, and the no-browser variants still run.
 | ARR-001 slow server response | TN | TN R | TN | **TP** | |
 | PRO-001 optional /llms.txt | TN (file present) | TP | TP | TP | |
 | PRO-002 monitoring prompt panel | TP | | TP | TP | |
+| PRO-003 organization markup without identity links | TN (sameAs declared) | | TN (empty sameAs is IDM-002) | **TP** | |
+| PRO-004 visible dates without structured dates | TN | | | **TP** | |
 
 **Not covered end to end: FRC-002**, the founding year against Wikidata. It
 needs the second pass to reach Wikidata, and a fixture run cannot, by design:

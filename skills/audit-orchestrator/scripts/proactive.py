@@ -1,6 +1,6 @@
 """Proactive recommendations: strengthening actions the evidence warrants.
 
-Step 8 of ../SKILL.md. The two recommendations are specified as rule blocks in
+Step 8 of ../SKILL.md. The recommendations are specified as rule blocks in
 ../references/proactive.md, where their reasoning lives. Neither describes a
 defect: both are ``status: proactive``, so severity is capped at medium and
 priority held at P2 or P3 by severity.py, and neither can outrank a finding.
@@ -131,7 +131,131 @@ def pro_002(evidence, out):
     })
 
 
-RECOMMENDATIONS = (pro_001, pro_002)
+# The organization types identity-and-markup recognises, repeated here because
+# no skill imports another. A type missing from the list can only keep PRO-003
+# silent: the recommendation needs an organization node to exist.
+ORG_TYPES = frozenset("""
+Organization Corporation NGO GovernmentOrganization EducationalOrganization CollegeOrUniversity School
+MedicalOrganization Hospital Clinic Pharmacy NewsMediaOrganization SportsOrganization SportsTeam PerformingGroup
+ResearchOrganization Airline Consortium LibrarySystem PoliticalParty WorkersUnion FundingScheme Project
+OnlineBusiness OnlineStore LocalBusiness Store AutoDealer BookStore ClothingStore ComputerStore ElectronicsStore
+Florist FurnitureStore GroceryStore HardwareStore HobbyShop HomeGoodsStore JewelryStore MobilePhoneStore
+OfficeEquipmentStore PetStore ShoeStore SportingGoodsStore ToyStore Restaurant FoodEstablishment Bakery CafeOrCoffeeShop
+BarOrPub ProfessionalService LegalService Attorney FinancialService BankOrCreditUnion InsuranceAgency AccountingService
+RealEstateAgent TravelAgency LodgingBusiness Hotel HealthAndBeautyBusiness MedicalBusiness Dentist Physician
+AutomotiveBusiness HomeAndConstructionBusiness EntertainmentBusiness EmploymentAgency SelfStorage ChildCare
+""".split())
+
+
+def _page_ref(page, observation):
+    return {"url": page["url"], "observation": observation, "layer": page["provenance"]["layer"],
+            "method": page["provenance"]["method"], "retrieved_at": page["fetched_at"]}
+
+
+def _ok(page):
+    return isinstance(page["status"], int) and 200 <= page["status"] <= 299
+
+
+def pro_003(evidence, out):
+    """Organization markup exists and declares no identity links at all."""
+    pages = [p for p in evidence["pages"] if _ok(p)]
+    anchors = [p for p in pages if p["page_type"] in ("home", "about")
+               and any(n["type"] in ORG_TYPES for n in p["jsonld"])]
+    if not anchors:
+        out["not_assessed"].append({"rule_id": "PRO-003", "reason":
+                                    "no 2xx home or about page carries organization markup to anchor",
+                                    "enable_hint": "applies to sites whose home or about page describes the "
+                                                   "organization in JSON-LD"})
+        return
+    # Any node declaring sameAs silences the recommendation: an empty declaration
+    # is IDM-002's defect, and a site anchoring identity on another node type has
+    # already made the statement this recommendation asks for.
+    declares = any("sameAs" in n["fields_present"] for p in pages for n in p["jsonld"])
+    if declares:
+        out["passed"].append({"rule_id": "PRO-003", "summary":
+                              "The site's markup declares sameAs identity links"})
+        return
+    page = anchors[0]
+    ambiguous = any(c["kind"] == "legal_name" and c["entity_ambiguity"] == "high"
+                    for c in evidence["canonical_claims"])
+    node_type = [n["type"] for n in page["jsonld"] if n["type"] in ORG_TYPES][0]
+    out["findings"].append({
+        "id": "F-001",
+        "title": "Anchor the organization's identity to its profiles elsewhere",
+        "evidence": "%s describes the organization as %s in JSON-LD, and no organization node on any of the %d "
+                    "sampled pages declares sameAs, so nothing in the markup ties this entity to its descriptions "
+                    "elsewhere.%s" % (page["url"], node_type, len(pages),
+                                      " The organization's name was scored as ambiguous, the case identity links "
+                                      "exist for." if ambiguous else ""),
+        "suggested_action": {
+            "summary": "Add a sameAs array to the organization markup listing its Wikidata, Wikipedia and official "
+                       "profile URLs.",
+            "what": "Add a sameAs array to the organization markup listing the absolute URLs of its entries elsewhere.",
+            "where": "The organization JSON-LD on %s." % page["url"],
+            "why": "Identity links let a machine tie this site to the same entity in the sources it already trusts.",
+            "how": "List the organization's Wikidata item and Wikipedia article if they exist, then its official "
+                   "profiles (LinkedIn, Crunchbase, the main social accounts), only ones that describe this "
+                   "organization.",
+            "mechanism": "Entity disambiguation.",
+            "success_criteria": "The organization node in the server response carries a sameAs array of absolute "
+                                "URLs that each describe this organization.",
+            "effort": "low",
+        },
+        "skill": SKILL, "rule_id": "PRO-003", "status": "proactive", "category": "discoverability",
+        "symptom": ["misrepresented"], "confidence": "high" if ambiguous else "medium",
+        "impact": {"blocking": False, "breadth": "site", "content_importance": "secondary"},
+        "scope": {"pages_affected": 1, "pages_examined": len(pages), "page_types": [page["page_type"]]},
+        "evidence_refs": [_page_ref(page, "%s node without sameAs" % node_type)],
+        "false_positive_controls_applied": [], "exceptions_checked": [],
+    })
+
+
+def pro_004(evidence, out):
+    """Articles show a date and state none in structured data."""
+    articles = [p for p in evidence["pages"] if _ok(p) and p["page_type"] == "article"
+                and (p["page_type_confidence"] or 0) >= 0.8 and p["dates"]["visible_dates"]]
+    if len(articles) < 2:
+        out["not_assessed"].append({"rule_id": "PRO-004", "reason":
+                                    "articles showing a visible date, classified with confidence >= 0.8: %d; 2 are "
+                                    "needed" % len(articles),
+                                    "enable_hint": "applies to sites publishing dated articles"})
+        return
+    bare = [p for p in articles
+            if not p["dates"]["schema_date_published"] and not p["dates"]["schema_date_modified"]]
+    if len(bare) < 2 or len(bare) * 2 < len(articles):
+        out["passed"].append({"rule_id": "PRO-004", "summary":
+                              "Articles that show a date also state it in structured data (%d of %d do not)"
+                              % (len(bare), len(articles))})
+        return
+    out["findings"].append({
+        "id": "F-001",
+        "title": "Give the dates articles show a machine-readable form",
+        "evidence": "%d of %d sampled articles show a date on the page and carry neither datePublished nor "
+                    "dateModified in structured data: %s." % (len(bare), len(articles),
+                                                             ", ".join(p["url"] for p in bare[:5])),
+        "suggested_action": {
+            "summary": "Emit datePublished and dateModified in the article template's structured data.",
+            "what": "Emit the article's publication and update dates in its structured data.",
+            "where": "The article template behind the URLs cited.",
+            "why": "A structured date states which date is the article's, in an unambiguous format.",
+            "how": "Add datePublished and dateModified in ISO 8601 to the Article, NewsArticle or BlogPosting JSON-LD, "
+                   "generated from the same fields that render the visible date.",
+            "mechanism": "Recency read rather than inferred.",
+            "success_criteria": "Every cited article carries datePublished or dateModified in its server response "
+                                "JSON-LD, matching the date it shows.",
+            "effort": "low",
+        },
+        "skill": SKILL, "rule_id": "PRO-004", "status": "proactive", "category": "discoverability",
+        "symptom": ["misrepresented"], "confidence": "medium",
+        "impact": {"blocking": False, "breadth": "section", "content_importance": "secondary"},
+        "scope": {"pages_affected": len(bare), "pages_examined": len(articles), "page_types": ["article"]},
+        "evidence_refs": [_page_ref(p, "visible date %s, no structured date" % p["dates"]["visible_dates"][0])
+                          for p in bare],
+        "false_positive_controls_applied": [], "exceptions_checked": [],
+    })
+
+
+RECOMMENDATIONS = (pro_001, pro_002, pro_003, pro_004)
 
 
 def recommend(evidence):

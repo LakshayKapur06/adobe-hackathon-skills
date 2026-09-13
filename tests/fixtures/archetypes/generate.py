@@ -231,8 +231,7 @@ def storefront_defects(root):
 
 def publisher_docs(root):
     org = {"@context": "https://schema.org", "@type": "NewsMediaOrganization", "name": "Lumen Field Notes",
-           "url": ORIGIN + "/", "logo": ORIGIN + "/logo.png", "foundingDate": "2004",
-           "sameAs": ["https://en.wikipedia.org/wiki/Lumen_Field_Notes"]}
+           "url": ORIGIN + "/", "logo": ORIGIN + "/logo.png", "foundingDate": "2004"}
     news = ["council-budget-vote", "river-survey-results", "rail-link-hearing"]
     blog = ["notes-from-the-desk", "how-we-verify", "reader-questions"]
     docs = ["style-guide", "sourcing-handbook", "corrections-process"]
@@ -257,8 +256,7 @@ def publisher_docs(root):
                                               % "".join('<li><a href="/docs/%s">%s</a></li>' % (d, d) for d in docs),
                                               robots="noindex, follow", nav=nav, footer=footer))
     for i, slug in enumerate(news):
-        article = {"@context": "https://schema.org", "@type": "NewsArticle", "headline": slug.replace("-", " "),
-                   "datePublished": "2026-02-1%d" % i, "dateModified": "2026-02-1%d" % (i + 1)}
+        article = {"@context": "https://schema.org", "@type": "NewsArticle", "headline": slug.replace("-", " ")}
         body = ('<article><h1>%s</h1>\n<p>Published 2026-02-1%d</p>\n<div class="paywall-container">%s</div>'
                 "</article>" % (slug.replace("-", " ").title(), i, paragraphs(1650, 12 + i, per=6)))
         write(root, "news/%s.html" % slug, page("/news/" + slug, slug, body, head_extra=jsonld(article), nav=nav,

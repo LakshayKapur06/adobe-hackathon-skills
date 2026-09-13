@@ -2,24 +2,86 @@
   "archetype": "publisher-docs",
   "real_world_class": "A content-heavy publisher with a blog and documentation: long articles, heavy navigation and footers, archives, paywall-style markup, a slow origin.",
   "claim": "Content defects are found where the evidence supports them, and every text-shape signal the audit measured and rejected (boilerplate share, one long line-break block, multiple h1, a paywall class on fully served text, hidden footer text, noindexed tag archives, long unheaded news, one dead link) stays silent.",
-  "mechanisms": ["snippet ban on a template", "broken declared sitemap", "unparseable JSON-LD", "unsectioned long docs", "undated articles", "slow server response"],
-  "server": {"delay_ms": 1900, "delay_agent": "agent-readiness-audit"},
+  "mechanisms": [
+    "snippet ban on a template",
+    "broken declared sitemap",
+    "unparseable JSON-LD",
+    "unsectioned long docs",
+    "undated articles",
+    "slow server response",
+    "identity links missing from existing organization markup",
+    "visible dates without structured dates"
+  ],
+  "server": {
+    "delay_ms": 1900,
+    "delay_agent": "agent-readiness-audit"
+  },
   "variants": [
     {
       "name": "no-render",
       "render": false,
       "findings": [
-        {"rule_id": "ACC-004", "status": "found", "confidence": "medium"},
-        {"rule_id": "ACC-009", "status": "found", "breadth": "section", "confidence": "high"},
-        {"rule_id": "IDM-003", "status": "found"},
-        {"rule_id": "ANS-001", "status": "proactive"},
-        {"rule_id": "FRC-001", "status": "found"},
-        {"rule_id": "ARR-001", "status": "risk", "confidence": "low"},
-        {"rule_id": "PRO-001", "status": "proactive"},
-        {"rule_id": "PRO-002", "status": "proactive"}
+        {
+          "rule_id": "ACC-004",
+          "status": "found",
+          "confidence": "medium"
+        },
+        {
+          "rule_id": "ACC-009",
+          "status": "found",
+          "breadth": "section",
+          "confidence": "high"
+        },
+        {
+          "rule_id": "IDM-003",
+          "status": "found"
+        },
+        {
+          "rule_id": "ANS-001",
+          "status": "proactive"
+        },
+        {
+          "rule_id": "FRC-001",
+          "status": "found"
+        },
+        {
+          "rule_id": "ARR-001",
+          "status": "risk",
+          "confidence": "low"
+        },
+        {
+          "rule_id": "PRO-001",
+          "status": "proactive"
+        },
+        {
+          "rule_id": "PRO-002",
+          "status": "proactive"
+        },
+        {
+          "rule_id": "PRO-003",
+          "status": "proactive"
+        },
+        {
+          "rule_id": "PRO-004",
+          "status": "proactive"
+        }
       ],
-      "passed": ["ACC-001", "ACC-003", "ACC-005", "ACC-006", "ACC-007", "IDM-001", "IDM-002", "RND-002"],
-      "not_assessed": ["RND-001", "RND-003", "IDM-004", "FRC-002"]
+      "passed": [
+        "ACC-001",
+        "ACC-003",
+        "ACC-005",
+        "ACC-006",
+        "ACC-007",
+        "IDM-001",
+        "RND-002"
+      ],
+      "not_assessed": [
+        "RND-001",
+        "RND-003",
+        "IDM-004",
+        "FRC-002",
+        "IDM-002"
+      ]
     }
   ]
 }
