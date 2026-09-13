@@ -55,8 +55,10 @@ _NUMERIC_DATE = re.compile(r"(?<![\d./-])([0-3]?\d)([/.])([0-3]?\d)\2((?:19|20)\
 _YMD_SLASH = re.compile(r"(?<![\d./-])((?:19|20)\d{2})([/.])(0?[1-9]|1[0-2])\2([0-3]?\d)(?!\d|[./-]\d)")
 _TIME_DATETIME = re.compile(r"^\s*((?:19|20)\d{2})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])")
 _MDY = re.compile(r"\b(%s)\.?\s+([0-3]?\d)(?:st|nd|rd|th)?,?\s+((?:19|20)\d{2})\b" % _MONTH_ALT, re.I)
+# The amount after a currency sign, with either grouping convention: 1,499.00
+# and 1.499,00 both reach _readings, which tries each.
 _CURRENCY_AMOUNT = re.compile(
-    r"(?:[$€£¥₹]|\bRs\.?|\bINR|\bUSD|\bEUR|\bGBP)\s?(\d[\d,]*(?:\.\d{1,2})?)")
+    r"(?:[$€£¥₹]|\bRs\.?|\bINR|\bUSD|\bEUR|\bGBP)\s?(\d(?:[\d.,]*\d)?)")
 _NUMBER = re.compile(r"\d[\d,]*(?:\.\d+)?")
 
 
@@ -458,6 +460,29 @@ def _as_number(value):
         return None
 
 
+def _readings(value):
+    """Every number a written amount can mean under the two decimal conventions.
+
+    "1,499.00" is 1499 where a comma groups thousands and 1.499 where it marks
+    decimals; "1.499,00" is the reverse. A contradiction must hold under every
+    reading, so an amount written in another locale's convention can never make
+    a correct price look wrong.
+    """
+    digits = (value or "").strip()
+    if not digits or not digits[0].isdigit():
+        return set()
+    found = set()
+    for group, decimal in ((",", "."), (".", ",")):
+        candidate = digits.replace(group, "")
+        if candidate.count(decimal) > 1:
+            continue
+        try:
+            found.add(float(candidate.replace(decimal, ".")))
+        except ValueError:
+            pass
+    return found
+
+
 def _price_contradicts(values, text):
     """True only when markup states a price and the visible text shows only other prices.
 
@@ -466,12 +491,13 @@ def _price_contradicts(values, text):
     contradiction needs the page to show currency amounts, none of which is the
     one the markup asserts.
     """
-    price = _as_number(values.get("offers.price") or values.get("price"))
-    if price is None:
+    marked = _NUMBER.search(values.get("offers.price") or values.get("price") or "")
+    prices = _readings(marked.group(0)) if marked else set()
+    if not prices:
         return False
-    shown = [_as_number(m.group(1)) for m in _CURRENCY_AMOUNT.finditer(text)]
-    shown = [s for s in shown if s is not None]
-    return bool(shown) and all(abs(s - price) > 0.005 for s in shown)
+    shown = [_readings(m.group(1)) for m in _CURRENCY_AMOUNT.finditer(text)]
+    shown = [s for s in shown if s]
+    return bool(shown) and not any(abs(a - p) <= 0.005 for s in shown for a in s for p in prices)
 
 
 def jsonld_entries(scripts, visible_text):

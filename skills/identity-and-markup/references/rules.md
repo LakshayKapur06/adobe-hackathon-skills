@@ -285,7 +285,9 @@ in `scripts/diagnose.py`, one function per rule, in the order written here.
   when the first adjudication runs met a Hindi news site whose every page
   carries a `MobileApplication` node with `offers.price` of `0` for its free
   app, while market widgets on the same pages show rupee amounts: the markup
-  was never a claim about anything the page sells.
+  was never a claim about anything the page sells. Every amount shown, and the
+  marked-up price, is read under both decimal conventions, so "€1.499,00" matches
+  a markup price of `1499.00`; a contradiction must hold under every reading.
 - **Legitimate exceptions:** a site-wide promotion of a free app or service
   expressed as an `Offer` at price zero; excluded by the commerce-type and
   above-zero controls. A price converted into the visitor's currency on

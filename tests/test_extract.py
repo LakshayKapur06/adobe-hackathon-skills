@@ -155,6 +155,14 @@ class TestTextHelpers(unittest.TestCase):
         text = "Published 2024-12-31. Updated 1 August 2026 and again March 3, 2025. Not 2024-02-30."
         self.assertEqual(extract.visible_dates(text), ["2024-12-31", "2026-08-01", "2025-03-03"])
 
+    def test_a_price_written_in_another_locale_is_never_a_contradiction(self):
+        same = [("Prijs €1.499,00", "1499.00"), ("Prezzo € 29,95", "29.95"), ("Price ₹1,499.00 MRP ₹1,999", "1499"),
+                ("Rs. 1,499", "1499.00"), ("$29.95", "29.95"), ("Preis 1.499,00 EUR", "1499,00")]
+        for text, price in same:
+            self.assertFalse(extract._price_contradicts({"offers.price": price}, text), text)
+        self.assertTrue(extract._price_contradicts({"offers.price": "1499.00"}, "Now €999,00"))
+        self.assertTrue(extract._price_contradicts({"offers.price": "29.95"}, "Only $24.95 today"))
+
     def test_numeric_dates_are_read_and_versions_are_not(self):
         text = "Posted 31/12/2025, updated 12.09.2026, US style 09/13/2026, 2026/03/04. Version 1.2.2026.1, 45/13/2026."
         self.assertEqual(extract.visible_dates(text), ["2025-12-31", "2026-09-12", "2026-09-13", "2026-03-04"])
