@@ -658,3 +658,27 @@ requires it inside the skill's allow-list. On its first run it found the access
 script reading `site.input`, the requested URL, as a fallback when robots.txt
 blocks the site before its origin resolves. The read is correct, so it is now
 declared: `access-and-indexability` may read `site.input` (`contracts-v12`).
+
+### D27 — `contracts-v13`: the summary counts problems, and the report has a readable view
+
+Two decisions taken against the handout's own wording.
+
+**Proactive recommendations are not problems.** The handout's report has "problems
+found" and, separately, suggested actions that "may go beyond the detected
+problems". Counting a proactive recommendation in `total_findings` and the
+severity counts made a well-built site report findings it did not have: a news
+site with no defect reported two. The user asked for whatever makes the report
+stronger. The summary now counts `found` and `risk` only, proactive
+recommendations stay in `findings[]` with their status, and a new
+`summary.proactive` counts them.
+
+**A report a non-expert can act on.** The rubric grades output design on whether
+the entrypoint emits "a clear, structured, actionable report ... a non-expert
+could act on". `report.json` is the contract and stays the contract;
+`report.md`, rendered deterministically from it, is the same audit for the person
+who fixes the site: problems in the order to fix them, each with what was seen,
+why it matters, what to do, where, how and how to tell it worked, then the
+improvements beyond the problems, what passed, what could not be checked with
+what would make it checkable, and how the audit was run. It adds no fact the JSON
+does not hold, and observed text is collapsed onto one line so a site's own
+content cannot restructure it.

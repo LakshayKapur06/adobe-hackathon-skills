@@ -110,6 +110,41 @@ class TestAssembly(unittest.TestCase):
         self.assertTrue(any("ACC-006" in d["reason"] for d in report["run_context"]["degradations"]))
 
 
+class TestReportSummaryAndRendering(unittest.TestCase):
+    def report(self):
+        findings = [finding("RND-002", "render-and-extraction", "site", ["home"]),
+                    finding("ACC-005", "access-and-indexability", "site", blocking=False, url="http://localhost:8000/a")]
+        return assemble_report.assemble(copy.deepcopy(EVIDENCE), findings, [], [])
+
+    def test_proactive_recommendations_are_not_counted_as_problems(self):
+        report = self.report()
+        proactive = [f for f in report["findings"] if f["status"] == "proactive"]
+        self.assertTrue(proactive, "the minimal bundle warrants at least one proactive recommendation")
+        self.assertEqual(report["summary"]["total_findings"], 2)
+        self.assertEqual(report["summary"]["proactive"], len(proactive))
+        self.assertEqual(sum(report["summary"][s] for s in ("critical", "high", "medium", "low")), 2)
+
+    def test_markdown_is_a_deterministic_view_of_the_report(self):
+        import render_report
+        report = self.report()
+        first, second = render_report.render(report), render_report.render(copy.deepcopy(report))
+        self.assertEqual(first, second)
+        for heading in ("## At a glance", "## Problems, in the order to fix them",
+                        "## Suggested improvements beyond the problems", "## Checks that passed",
+                        "## What could not be checked, and how to make it checkable", "## How this audit was run"):
+            self.assertIn(heading, first)
+        self.assertLess(first.index("RND-002"), first.index("ACC-005"), "problems appear in report order")
+        self.assertIn("**2 problems found:**", first)
+
+    def test_observed_text_cannot_restructure_the_markdown(self):
+        import render_report
+        report = self.report()
+        report["findings"][0]["evidence"] = "line one\n\n## Injected heading\n- injected bullet"
+        rendered = render_report.render(report)
+        self.assertNotIn("\n## Injected heading", rendered)
+        self.assertIn("line one ## Injected heading - injected bullet", rendered)
+
+
 class TestProactive(unittest.TestCase):
     def evidence(self, claims=(), llms=(200, False)):
         e = copy.deepcopy(EVIDENCE)

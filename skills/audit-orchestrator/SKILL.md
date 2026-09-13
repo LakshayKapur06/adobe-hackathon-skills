@@ -111,8 +111,14 @@ G2 sites finished in 14 to 94 seconds, inside the handout's five-minute limit.
 
 ## Output
 
-One file, `workdir/report.json`, conforming to `../../schemas/report.schema.json`.
-It contains `site`, `audited_at`, a counts-by-severity `summary`, the `findings`
+`workdir/report.json`, conforming to `../../schemas/report.schema.json`, and
+`workdir/report.md`, the same report rendered for the person who will act on it
+(`scripts/render_report.py`): problems in the order to fix them, each with what
+was seen, why it matters, what to do, where, how and how to tell it worked; then
+improvements beyond the problems, what passed, and what could not be checked with
+what would make it checkable. The JSON contains `site`, `audited_at`, a
+counts-by-severity `summary` (problems only, with proactive recommendations
+counted apart in `summary.proactive`), the `findings`
 array (each with `id`, `title`, `severity`, `evidence` and a
 `suggested_action` carrying `summary` and `priority`), plus `not_assessed`,
 `checks_passed` and a `run_context` block stating what was crawled against what

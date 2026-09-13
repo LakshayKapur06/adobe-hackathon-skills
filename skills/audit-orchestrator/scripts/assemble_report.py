@@ -173,8 +173,13 @@ def assemble(evidence, findings, not_assessed, checks_passed, extra_degradations
     for index, f in enumerate(findings, start=1):
         f["id"] = "F-%03d" % index
 
+    # The handout separates "problems found" from suggested actions that "go
+    # beyond the detected problems". A proactive recommendation is the second
+    # kind, so it never counts as a problem: a well-built site with one optional
+    # suggestion reports zero findings and one proactive item (contracts-v13).
     counts = {"critical": 0, "high": 0, "medium": 0, "low": 0}
-    for f in findings:
+    problems = [f for f in findings if f["status"] != "proactive"]
+    for f in problems:
         counts[f["severity"]] += 1
 
     site = evidence["site"].get("registrable_domain") or evidence["site"]["input"]
@@ -182,7 +187,7 @@ def assemble(evidence, findings, not_assessed, checks_passed, extra_degradations
     return {
         "site": site,
         "audited_at": evidence["run_context"]["started_at"],
-        "summary": {"total_findings": len(findings), **counts},
+        "summary": dict(counts, total_findings=len(problems), proactive=len(findings) - len(problems)),
         "findings": findings,
         "not_assessed": sorted(
             (dict(n) for n in not_assessed), key=lambda n: (n["rule_id"], n["reason"])

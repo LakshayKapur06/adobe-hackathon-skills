@@ -354,6 +354,13 @@ come first because they change whether this finding still holds, for example
 carries no text at all". The finding keeps its own severity; the arbitration
 table is in `skills/audit-orchestrator/references/composition.md`.
 
+**`summary` counts problems only** (contracts-v13). `total_findings` and the
+severity counts cover findings with status `found` or `risk`; proactive
+recommendations stay in `findings[]`, marked `status: proactive`, and are counted
+in `summary.proactive`. The handout distinguishes problems found from suggested
+actions that go beyond them, and counting a proactive suggestion as a problem made
+a well-built site report findings it did not have.
+
 Separate top-level arrays in the report, so neither inflates `total_findings`:
 
 ```jsonc

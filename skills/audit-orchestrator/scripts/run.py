@@ -25,6 +25,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
 sys.path.insert(0, HERE)
 
 import assemble_report  # noqa: E402
+import render_report  # noqa: E402
 from jsonschema_lite import Validator  # noqa: E402
 
 SCHEMAS = os.path.join(ROOT, "schemas")
@@ -158,6 +159,10 @@ def run(url, workdir, collect_only=False, no_render=False, no_egress=False, max_
     with open(os.path.join(workdir, "report.json"), "w", encoding="utf-8", newline="\n") as handle:
         json.dump(report, handle, indent=2, sort_keys=True, ensure_ascii=False)
         handle.write("\n")
+    # The same report for the person who acts on it. A view of report.json, never
+    # a second source of truth.
+    with open(os.path.join(workdir, "report.md"), "w", encoding="utf-8", newline="\n") as handle:
+        handle.write(render_report.render(report))
     return 0
 
 
