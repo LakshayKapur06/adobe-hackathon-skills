@@ -110,11 +110,16 @@ before anything can appear.
   values over 1.8 seconds as poor. A visitor sent to a deep page from an answer
   arrives with no prior commitment to the site, and a page that shows nothing
   for seconds is the one they leave.
-- **Signal:** the median `timing.ttfb_ms` across sampled 2xx pages exceeds 1,800.
+- **Signal:** the median server response time across sampled 2xx pages exceeds
+  1,800 ms, where server response time is `timing.ttfb_ms` minus
+  `timing.connect_ms` (or `ttfb_ms` alone when `connect_ms` is null).
 - **Evidence read:** `pages[].url`, `pages[].status`, `pages[].page_type`,
-  `pages[].timing.ttfb_ms`, `pages[].timing.fetch_ms`.
+  `pages[].timing.ttfb_ms`, `pages[].timing.connect_ms`, `pages[].timing.fetch_ms`.
 - **Threshold:** median above 1,800 ms. Justification: 1,800 ms is web.dev's
-  boundary for a poor TTFB. The median rather than the mean or the maximum is
+  boundary for a poor TTFB. Applying it to server response time alone, which
+  excludes connection setup that web.dev's TTFB includes, errs towards not
+  firing: a site is only flagged when the server's own share already exceeds the
+  boundary for the whole. The median rather than the mean or the maximum is
   used because a single slow page, such as one uncached search result, pulls a
   mean up and says nothing about the site; the median moves only when most of
   the sample is slow.
@@ -123,7 +128,10 @@ before anything can appear.
   moment.
 - **False-positive controls:** only 2xx pages, so a refusal answered instantly
   or an error page timing out cannot shift the median; the collector starts the
-  timer after any crawl-delay wait, so politeness never counts as latency; the
+  timer after any crawl-delay wait, so politeness never counts as latency;
+  connection setup (DNS, TCP, TLS) is subtracted, so a stall on the auditing
+  client's network never reads as a slow server, which one live G2 run showed
+  it otherwise would (a uniform ten-second stall on every page); the
   finding states the median, the slowest and the fastest page, so a reader can
   see whether slowness is uniform.
 - **Legitimate exceptions:** distance between the auditing client and the

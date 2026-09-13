@@ -27,6 +27,12 @@ def is_2xx(status):
     return isinstance(status, int) and 200 <= status <= 299
 
 
+def server_ms(page):
+    """Time to first byte minus the request's own connection setup."""
+    timing = page["timing"]
+    return timing["ttfb_ms"] - (timing["connect_ms"] or 0)
+
+
 def arr_001(evidence, out):
     timed = [p for p in evidence["pages"] if is_2xx(p["status"]) and p["timing"]["ttfb_ms"] is not None]
     if len(timed) < MIN_PAGES:
@@ -35,24 +41,23 @@ def arr_001(evidence, out):
                                     % (len(timed), MIN_PAGES),
                                     "enable_hint": "needs at least 5 sampled pages that answer this client"})
         return
-    ordered = sorted(timed, key=lambda p: (p["timing"]["ttfb_ms"], p["url"]))
-    median = statistics.median(p["timing"]["ttfb_ms"] for p in timed)
+    ordered = sorted(timed, key=lambda p: (server_ms(p), p["url"]))
+    median = statistics.median(server_ms(p) for p in timed)
     fastest, slowest = ordered[0], ordered[-1]
     if median <= POOR_TTFB_MS:
         out["passed"].append({"rule_id": "ARR-001", "summary":
-                              "Median time to first byte is %d ms across %d pages, within web.dev's 1,800 ms poor "
-                              "boundary as measured from this client" % (round(median), len(timed))})
+                              "Median server response time (time to first byte minus connection setup) is %d ms "
+                              "across %d pages, within web.dev's 1,800 ms poor boundary" % (round(median), len(timed))})
         return
-    slow = [p for p in ordered if p["timing"]["ttfb_ms"] > POOR_TTFB_MS]
+    slow = [p for p in ordered if server_ms(p) > POOR_TTFB_MS]
     out["findings"].append({
         "id": "F-001",
         "title": "The server is slow to send the first byte",
-        "evidence": "Median time to first byte across %d sampled 2xx pages is %d ms, above web.dev's 1,800 ms poor "
-                    "boundary; %d of them exceed it. Slowest %s at %d ms, fastest %s at %d ms. Measured from one "
-                    "auditing client with a fresh connection per request, which inflates it against a returning "
-                    "browser."
-                    % (len(timed), round(median), len(slow), slowest["url"], round(slowest["timing"]["ttfb_ms"]),
-                       fastest["url"], round(fastest["timing"]["ttfb_ms"])),
+        "evidence": "Median server response time (time to first byte minus DNS, TCP and TLS setup) across %d "
+                    "sampled 2xx pages is %d ms, above web.dev's 1,800 ms poor boundary; %d of them exceed it. "
+                    "Slowest %s at %d ms, fastest %s at %d ms. Measured from one auditing client."
+                    % (len(timed), round(median), len(slow), slowest["url"], round(server_ms(slowest)),
+                       fastest["url"], round(server_ms(fastest))),
         "suggested_action": {
             "summary": "Confirm with field TTFB data, then cache HTML at the edge and speed up the slowest templates.",
             "what": "Confirm the delay with field data, then reduce server response time on the slowest templates.",
@@ -71,11 +76,13 @@ def arr_001(evidence, out):
         "impact": {"blocking": False, "breadth": "site", "content_importance": "secondary"},
         "scope": {"pages_affected": len(slow), "pages_examined": len(timed),
                   "page_types": sorted({p["page_type"] for p in slow})},
-        "evidence_refs": [{"url": p["url"], "observation": "time to first byte %d ms" % round(p["timing"]["ttfb_ms"]),
+        "evidence_refs": [{"url": p["url"], "observation": "time to first byte %d ms, of which connection setup %s ms"
+                           % (round(p["timing"]["ttfb_ms"]), p["timing"]["connect_ms"]),
                            "layer": p["provenance"]["layer"], "method": p["provenance"]["method"],
                            "retrieved_at": p["fetched_at"]} for p in slow[-10:]],
         "false_positive_controls_applied": ["2xx pages only", "median, not mean or maximum",
-                                            "timer starts after any crawl-delay wait"],
+                                            "timer starts after any crawl-delay wait",
+                                            "connection setup subtracted, so client network stalls do not count"],
         "exceptions_checked": ["client distance and per-request connection setup: undetectable, hence risk at low "
                                "confidence against the poor boundary"],
     })
