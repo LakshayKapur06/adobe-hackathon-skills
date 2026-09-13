@@ -16,6 +16,7 @@ import argparse
 import json
 import os
 import re
+import urllib.parse
 
 SKILL = "render-and-extraction"
 SUPPORTED_SCHEMA_MAJOR = "1"
@@ -81,6 +82,23 @@ NO_BROWSER = {"reason": "no browser was available, so no page could be rendered 
               "enable_hint": "install a Chromium-based browser (Chrome, Edge or Chromium) and re-run without --no-render"}
 
 
+def shared_path(pages):
+    """The deepest directory every URL sits under, such as "/cli/", or None.
+
+    Page types are inferred from URLs, so one client-side application can be
+    filed under several types; naming the path it shares says what the fix
+    covers more precisely than the type does."""
+    if len(pages) < 2:
+        return None
+    dirs = [[part for part in urllib.parse.urlsplit(page["url"]).path.split("/") if part][:-1] for page in pages]
+    common = []
+    for parts in zip(*dirs):
+        if len(set(parts)) != 1:
+            break
+        common.append(parts[0])
+    return "/" + "/".join(common) + "/" if common else None
+
+
 def rnd_001(evidence, workdir, out):
     pages = [p for p in evidence["pages"] if comparable(p)]
     if not evidence["run_context"]["capabilities"]["js_render"]:
@@ -120,9 +138,12 @@ def rnd_001(evidence, workdir, out):
         empty_server = all(p["raw"]["text_len"] < EMPTY_TEXT for p in hit)
         primary = any(t in PRIMARY_TYPES for t in types)
         where = "across the site" if breadth == "site" else "on %s pages" % types[0]
+        under = shared_path(hit) if breadth == "section" else None
+        if under:
+            where += " under %s" % under
         out["findings"].append(finding(
-            "RND-001", "Page content exists only after JavaScript runs (%s)" % ("site-wide" if breadth == "site"
-                                                                               else types[0]),
+            "RND-001", "Page content exists only after JavaScript runs (%s)" % (
+                "site-wide" if breadth == "site" else ("pages under %s" % under if under else types[0])),
             "%d of %s compared %s are JavaScript-dependent: at least 80%% of their rendered text is missing from the "
             "server response. Examples: %s. %s"
             % (len(hit), plural(len(members), "rendered page"), where,
@@ -134,7 +155,8 @@ def rnd_001(evidence, workdir, out):
             action("Server-render, statically generate or prerender these routes so their text is in the server "
                    "response.",
                    "Put the page's substance in the server response for the templates %s." % where,
-                   "The routes cited and the rendering configuration of their templates.",
+                   ("The routes under %s and the rendering configuration of the application serving them."
+                    % under) if under else "The routes cited and the rendering configuration of their templates.",
                    "Text assembled in the browser does not exist for a fetcher that does not run scripts.",
                    "Enable the framework's server rendering or static generation for these routes, or put a "
                    "prerendering step in front of them serving the rendered HTML to every client alike; then "

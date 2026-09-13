@@ -140,6 +140,15 @@ class TestRND001(RuleCase):
         fired = self.assertOutcome(bundle(pages), "RND-001", "fired")[0]
         self.assertEqual((fired["impact"]["breadth"], fired["scope"]["page_types"], fired["confidence"]),
                          ("section", ["product"], "medium"))
+        self.assertEqual(fired["title"], "Page content exists only after JavaScript runs (product)")
+
+    def test_a_shared_path_names_the_application_not_the_guessed_type(self):
+        pages = [page("/", "home")] + [page("/a%d" % i) for i in range(6)] + \
+                [page("/cli/%s" % name, "doc", 300, 4000) for name in ("docs", "help")] + [page("/api", "doc")]
+        fired = self.assertOutcome(bundle(pages), "RND-001", "fired")[0]
+        self.assertEqual(fired["title"], "Page content exists only after JavaScript runs (pages under /cli/)")
+        self.assertIn("on doc pages under /cli/", fired["evidence"])
+        self.assertIn("/cli/", fired["suggested_action"]["where"])
 
     def test_text_hidden_in_the_server_response_is_not_javascript_only(self):
         # Server sends the whole text in a display:none container and script

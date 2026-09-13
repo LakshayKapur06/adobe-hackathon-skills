@@ -197,7 +197,10 @@ in `scripts/diagnose.py`, one function per rule, in the order written here.
 - **Remediation:** what: put the page's substance in the server response, by
   server-side rendering, static generation or prerendering, for the templates
   named in the finding. Where: the routes cited, and the application's rendering
-  configuration for their templates. Why: text assembled in the browser does not
+  configuration for their templates; when the JavaScript-dependent pages of a
+  section all sit under one path, the finding names that path rather than the
+  page type alone, because page types are inferred from URLs and one client-side
+  application can be filed under several of them. Why: text assembled in the browser does not
   exist for a fetcher that does not run scripts. How: enable the framework's
   server rendering or static generation for these routes, or put a prerendering
   step in front of them that serves the rendered HTML to every client alike;
