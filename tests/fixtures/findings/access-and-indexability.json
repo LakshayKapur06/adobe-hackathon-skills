@@ -2,7 +2,7 @@
   "checks_passed": [
     {
       "rule_id": "ACC-001",
-      "summary": "No answer-time retrieval crawler (OAI-SearchBot, PerplexityBot, Claude-SearchBot, Googlebot) is shut out by the * group in robots.txt"
+      "summary": "No answer-time retrieval crawler (OAI-SearchBot, PerplexityBot, Claude-SearchBot, Googlebot, Bingbot) is shut out by the * group in robots.txt"
     },
     {
       "rule_id": "ACC-002",

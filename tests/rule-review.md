@@ -91,6 +91,7 @@ Fact check against operator documentation, 2026-09-13:
 | OAI-SearchBot = ChatGPT search, GPTBot = training, settings independent, IP ranges published | OpenAI crawler docs | confirmed |
 | PerplexityBot = search index, not training; IP ranges published | Perplexity crawler docs | confirmed |
 | ClaudeBot = training; Claude-SearchBot is Anthropic's search crawler | Anthropic help centre | confirmed; Claude-SearchBot is not in the tracked seven, recorded as a limit in the definitions |
+| Bingbot is Bing's crawler, and Bing's index grounds Microsoft Copilot | Microsoft Bing Webmaster Guidelines; Microsoft Copilot documentation | confirmed; Bingbot tracked from `contracts-v17` (D37), not probed by user agent, since Microsoft publishes crawler verification |
 | Google-Extended does not govern Search AI features | Google "AI features and your website" | confirmed |
 | nosnippet / max-snippet:0 govern AI Overviews and AI Mode input | Google robots meta docs | confirmed, stronger than drafted; ACC-004 mechanism now quotes it |
 | `none` = noindex, nofollow; X-Robots-Tag may be scoped to a user agent | Google robots meta docs | confirmed |

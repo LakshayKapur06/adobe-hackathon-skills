@@ -40,7 +40,7 @@ A diagnostic still fetches nothing.
     "groups": [ { "user_agent": "*", "allow": [], "disallow": ["/cart"], "crawl_delay": null } ],
     "ai_agents": { "GPTBot": "disallowed", "ClaudeBot": "unspecified", "PerplexityBot": "unspecified",
                    "Google-Extended": "unspecified", "OAI-SearchBot": "unspecified", "CCBot": "unspecified",
-                   "Googlebot": "allowed", "Claude-SearchBot": "unspecified" },
+                   "Googlebot": "allowed", "Claude-SearchBot": "unspecified", "Bingbot": "unspecified" },
     "sitemaps": ["https://example.com/sitemap.xml"]
   },
   "sitemaps": [ { "url": "...", "status": 200, "url_count": 412, "lastmod_present_ratio": 0.12, "parse_ok": true } ],

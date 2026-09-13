@@ -99,12 +99,13 @@ costs more than a miss.
 
 ## Definitions shared by the rules below
 
-**Answer-time retrieval crawlers.** Of the eight agents in `robots.ai_agents`,
-four fetch pages into an index that an assistant searches when it answers, as
+**Answer-time retrieval crawlers.** Of the nine agents in `robots.ai_agents`,
+five fetch pages into an index that an assistant searches when it answers, as
 documented by their operators: `OAI-SearchBot` (ChatGPT search), `PerplexityBot`
 (Perplexity's search index, which Perplexity states is not used for training),
-`Claude-SearchBot` (Claude's search results) and `Googlebot` (the Search index
-that AI Overviews draw from). The other four govern training or reuse rather than answer-time
+`Claude-SearchBot` (Claude's search results), `Googlebot` (the Search index
+that AI Overviews draw from) and `Bingbot` (the Bing index, which Microsoft
+Copilot searches to ground its answers). The other four govern training or reuse rather than answer-time
 retrieval: `GPTBot` and `ClaudeBot` collect training data, `CCBot` builds the
 open Common Crawl corpus, and `Google-Extended` is a use-control token with no
 crawler behind it. Excluding a training agent changes what a model may know
@@ -154,7 +155,7 @@ cites the page timestamp for the same URL. The rules implement these blocks in
   decision about that crawler at all: it was swept up by a rule written for
   something else, which is the unintended form of this failure.
 - **Signal:** at least one answer-time retrieval crawler (`OAI-SearchBot`,
-  `PerplexityBot`, `Claude-SearchBot`, `Googlebot`) has the verdict `disallowed`, and no entry in
+  `PerplexityBot`, `Claude-SearchBot`, `Googlebot`, `Bingbot`) has the verdict `disallowed`, and no entry in
   `robots.groups` names that crawler, so the verdict comes from the `*` group.
 - **Evidence read:** `robots.parse_ok`, `robots.parse_reason`,
   `robots.ai_agents`, `robots.groups`, `robots.url`, `site.resolved_origin`,
@@ -294,8 +295,7 @@ cites the page timestamp for the same URL. The rules implement these blocks in
   emit `not_assessed`: there is nothing whose indexability could be judged.
 - **False-positive controls:** only 2xx pages count; tokens are matched exactly
   after lower-casing, so `noodp`, `noimageindex` and `max-image-preview` never
-  match; `X-Robots-Tag` directives scoped to any crawler other than the three
-  retrieval crawlers are ignored; a page whose `canonical` is non-null and not
+  match; `X-Robots-Tag` directives scoped to any crawler other than the retrieval crawlers are ignored; a page whose `canonical` is non-null and not
   self is excluded, because it has declared another URL as the one to index and
   `noindex` on the duplicate is consistent with that; `other`, `category`,
   `contact` and `policy` pages never count.
@@ -573,7 +573,7 @@ cites the page timestamp for the same URL. The rules implement these blocks in
   Perplexity states its search crawler is not used for training, so refusing
   training never required refusing citation.
 - **Signal:** at least one answer-time retrieval crawler (`OAI-SearchBot`,
-  `PerplexityBot`, `Claude-SearchBot`, `Googlebot`) has the verdict
+  `PerplexityBot`, `Claude-SearchBot`, `Googlebot`, `Bingbot`) has the verdict
   `disallowed`, and an entry in `robots.groups` names that crawler.
 - **Evidence read:** `robots.parse_ok`, `robots.parse_reason`,
   `robots.ai_agents`, `robots.groups`, `robots.url`, `site.resolved_origin`,

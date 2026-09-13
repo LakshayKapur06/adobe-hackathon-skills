@@ -31,7 +31,7 @@ SCHEMAS = {name: json.loads((ROOT / "schemas" / name).read_text(encoding="utf-8"
            for name in ("evidence.schema.json", "finding.schema.json", "report.schema.json")}
 ORIGIN = "http://localhost:8000"
 ALL_AGENTS = ("GPTBot", "ClaudeBot", "PerplexityBot", "Google-Extended", "OAI-SearchBot", "CCBot",
-              "Googlebot", "Claude-SearchBot")
+              "Googlebot", "Claude-SearchBot", "Bingbot")
 
 
 def page(path, page_type="article", status=200, meta=("index", "follow"), xrt=None, canonical="self"):

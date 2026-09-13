@@ -22,10 +22,11 @@ from urllib.parse import urlsplit
 SKILL = "access-and-indexability"
 SUPPORTED_SCHEMA_MAJOR = "1"
 
-RETRIEVAL_AGENTS = ("OAI-SearchBot", "PerplexityBot", "Claude-SearchBot", "Googlebot")
+RETRIEVAL_AGENTS = ("OAI-SearchBot", "PerplexityBot", "Claude-SearchBot", "Googlebot", "Bingbot")
 TRAINING_AGENTS = ("GPTBot", "ClaudeBot", "CCBot", "Google-Extended")
 SERVES = {"OAI-SearchBot": "ChatGPT search", "PerplexityBot": "Perplexity",
-          "Claude-SearchBot": "Claude's search results", "Googlebot": "Google Search, including AI Overviews"}
+          "Claude-SearchBot": "Claude's search results", "Googlebot": "Google Search, including AI Overviews",
+          "Bingbot": "Bing search and Microsoft Copilot"}
 PRIMARY_TYPES = ("home", "product", "article", "doc", "about")
 
 # X-Robots-Tag scopes that count, per rule (lower-cased product tokens).
