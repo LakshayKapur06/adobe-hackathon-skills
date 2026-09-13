@@ -48,8 +48,9 @@ memory bound on an ordinary machine, and the renderer shares the CPU with
 everything else: run one audit at a time.
 
 **15s for the user-agent probe.** The one stage that deliberately varies the
-request identity. Two URLs under up to eight identities is at most sixteen
-requests, and repeating it across more pages would be probing rather than
+request identity. Two URLs under seven identities (a browser user-agent and
+six named crawlers) is fourteen requests, inside the schema's hard bound of
+sixteen entries, and repeating it across more pages would be probing rather than
 measuring.
 
 **90s for the off-site probe.** A handful of keyless providers, queried in order

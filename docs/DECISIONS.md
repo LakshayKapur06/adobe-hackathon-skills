@@ -807,3 +807,34 @@ The same test showed the assistant naming several unrelated companies that share
 the brand's one-word name, which the audit had scored `medium` ambiguity. The
 panel added the domain to its questions only at `high`. It now does so at
 `medium` too, which makes the questions more precise and cannot mislead.
+
+### D32 — Priority is P0 to P3, not the severity words
+
+The handout's minimum report shape shows `"priority": "high"` beside
+`"severity": "high"`. The field is required and this report always carries it,
+but its values here are `P0` to `P3`. Priority in this marketplace is not a
+second copy of severity: it is severity adjusted by the effort of the fix, with
+proactive recommendations held at `P2` or `P3` so they never outrank an observed
+defect (`docs/CONTRACTS.md` section 3, 324 cases in `tests/test_severity.py`).
+A high-severity finding is `P1` when its fix is cheap and `P2` when it is
+costly; written with the severity words, a "high" finding with "medium" priority
+would read as a contradiction. `report.md` states what each level means where it is used ("fix
+first", "fix next", "plan it in", "when convenient").
+
+### D33 — A price written in another locale's convention is never a contradiction
+
+A final audit of the rules against sites outside the ones they were measured on
+asked what IDM-004 does with European prices. The collector read the amount after
+a currency sign as digits and commas with an optional two-digit decimal, so
+"€1.499,00" became 1.49 and "€ 29,95" became 29. A store in the Netherlands,
+Italy or Spain whose markup correctly says `1499.00` would have been reported,
+at high confidence across its product template, as marking up a price it does
+not show. That is a false observation on a correct page.
+
+Each shown amount, and the marked-up price, is now read under both conventions
+(comma groups and point marks decimals, and the reverse). A contradiction needs
+no reading of any shown amount to equal any reading of the price. The change can
+only remove contradictions, never add one. Prices written with the currency
+after the amount ("1.499,00 €") were never read as shown amounts, so a page
+using only that form still cannot produce the finding; that is a miss, not a
+false positive.

@@ -169,7 +169,8 @@ def run(url, workdir, collect_only=False, no_render=False, no_egress=False, max_
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Run one read-only website audit end to end.")
     parser.add_argument("--url", required=True)
-    parser.add_argument("--workdir", required=True)
+    parser.add_argument("--workdir", default="audit-run",
+                        help="where every artefact is written (default: ./audit-run)")
     parser.add_argument("--collect-only", action="store_true")
     parser.add_argument("--no-render", action="store_true")
     parser.add_argument("--no-egress", action="store_true")
