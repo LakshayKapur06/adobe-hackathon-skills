@@ -1,9 +1,10 @@
 # HANDOFF — picking this build up in the final stretch
 
-Rewritten 2026-09-13 at commit `c0e4854`. The marketplace is feature-complete,
-adjudicated, audited end to end and packaged. The user is doing the last two
-human checks right now (misses and a judge read-through). What is left for an
-agent is to fold in what they find, then build the final zip. If you are a fresh
+Brought up to date 2026-09-13 at commit `9920780`. The marketplace is
+feature-complete, adjudicated (including the user's miss check), audited end to
+end and packaged. One human step remains: the user's judge read-through, in
+progress. What is left for an agent is to fix the gaps it reports, then build
+and verify the final zip. If you are a fresh
 agent reading this, the previous one ran out of budget or access; everything you
 need is in this repository plus the gitignored `runs/` folder on this machine.
 
@@ -15,7 +16,7 @@ need is in this repository plus the gitignored `runs/` folder on this machine.
 and believe them over anything below.
 
 ```sh
-git log --oneline -15            # compare against c0e4854, named above
+git log --oneline -15            # compare against 9920780, named above
 git tag -l                       # contracts-v1 through contracts-v16, maybe later
 python scripts/check.py; echo "gate exit=$?"   # must be 0 before you change anything
 git status --porcelain           # uncommitted work in flight
@@ -116,18 +117,18 @@ From `CLAUDE.md` and this build:
 
 ---
 
-## 3. Current state at `c0e4854`
+## 3. Current state at `9920780`
 
 | Area | State |
 |---|---|
-| Detection rules | 20 across six diagnostics: access 9, render 3, identity 4, answerability 1, freshness 2, arrival 1. Low counts in the last three are measured cuts, recorded in each `rules.md` |
+| Detection rules | 20 across six diagnostics: access 9, render 3, identity 4, answerability 1, freshness 2, arrival 1. Low counts in the last three are measured cuts, recorded in each `rules.md`. IDM-002 covers both empty `sameAs` and `sameAs` naming the site platform's own profiles (D35) |
 | Proactive recommendations | 4 in the orchestrator: PRO-001 `/llms.txt` (speculative), PRO-002 monitoring prompt panel, PRO-003 `sameAs` identity links, PRO-004 structured article dates. Capped at medium, counted in `summary.proactive`, never as problems (D27, D28) |
 | Composition | Collector pass 1 → identity promotion → collector pass 2 (off-site corroboration) → six diagnostics in dependency order → arbitration (`conditional_on`) → derived severity and P0–P3 priority (D32) → proactive → schema-validated `report.json` and `report.md` |
 | Output | `report.md`: problems in fix order, improvements, passed checks, what could not be checked and how to enable it, a glossary of only the technical terms that report uses, how the audit ran |
-| Verification | G2 collector check (`tests/g2-evidence-check.md`); every rule reviewed and fact-checked (`tests/rule-review.md`); 5 fictional archetype sites with variants, asserted in both directions (`tests/fixtures/archetypes/`); real-site adjudication with a second pass (`tests/adjudication.md`); final audit (section 4) |
+| Verification | G2 collector check (`tests/g2-evidence-check.md`); every rule reviewed and fact-checked (`tests/rule-review.md`); 5 fictional archetype sites with variants, asserted in both directions (`tests/fixtures/archetypes/`); real-site adjudication with a second pass and a miss check (`tests/adjudication.md`); final audit (section 4) |
 | Docs a judge reads | `README.md` (opens with "For judges: where to look, in order"), `docs/RUBRIC.md`, `samples/` (3 fixture runs) |
 | Format | All 8 skills pass the official `skills-ref validate` 0.1.1; all shipped Python parses as 3.8 |
-| Gate and package | `python scripts/check.py` 12/12; `sh scripts/package.sh` builds `dist/agent-readiness-audit.zip` (1.03 MB) from `git archive` of HEAD and re-runs the gate in a clean extraction. `docs/HANDOFF.md` and `docs/KICKOFF_PROMPT.md` are `export-ignore` |
+| Gate and package | `python scripts/check.py` 12/12 at `9920780`; `sh scripts/package.sh` builds `dist/agent-readiness-audit.zip` (about 1.03 MB) from `git archive` of HEAD and re-runs the gate in a clean extraction. `docs/HANDOFF.md` and `docs/KICKOFF_PROMPT.md` are `export-ignore` |
 
 **Samples.** `python scripts/build_samples.py` regenerates `samples/`. Every
 regeneration changes ports and timestamps; commit a regeneration only when a
@@ -160,7 +161,18 @@ Result: every observation true; 2 of 11 conclusions wrong, both fixed at their
 pattern with tests (D30: ACC-006 when Googlebot is refused too; IDM-001 on a
 subdomain); RND-001's label fixed to name the shared path; the prompt panel run
 by the user exposed prose founding years (D31). Second pass on S3, S4 and S1: no
-false positive in 9 findings.
+false positive. After all fixes the six sites yield 10 findings, 4 of them
+problems, none a false positive.
+
+**Miss check (done).** The user looked on every site for real problems the
+audit had not reported:
+
+| Site | Reported | Outcome |
+|---|---|---|
+| S2 | `sameAs` lists `tiktok.com/@shopify` and `youtube.com/shopify` (theme defaults) beside real profiles | **Real miss.** D35 extends IDM-002 to exact platform handles on known social networks; across 38 saved `sameAs` entries it matched only those two. The mistyped `instagram.comcom` stays undetected, recorded as a miss |
+| S3 | Product pages opened from a category said "page does not exist" | **Not a miss.** A read-only fetch of three `/pd/` links returned 200 with name and prices; the browser was rate-limited (429 seen) and availability is location-dependent. Checking the evidence exposed a real classifier defect: the cookies category was typed `policy`. D36 limits ambiguous policy words to within two path segments of the root; 22 of 847 saved pages corrected, none lost |
+| S6 | Home page looked blank with JavaScript off | **Not a miss.** The server response holds 88% of the rendered text; styling hides the section until a script runs |
+| S1, S4, S5 | Nothing | — |
 
 Dropped candidates, so nobody retries them: flipkart.com and india.gov.in answer
 403; IIT Delhi and nishorama.com fail TLS verification; nishorama.in is parked.
@@ -196,7 +208,7 @@ Fixed in that pass:
 
 | Path | What it is |
 |---|---|
-| `runs/adjudication/MANUAL_GUIDE.md` | the guide the user is following now for misses and the read-through |
+| `runs/adjudication/MANUAL_GUIDE.md` | the guide given to the user: Part 1 (misses) done, Part 2 (judge read-through) in progress |
 | `runs/adjudication/file-verification.md` | the agent's file-based verification of each finding, the three decisions, and the second pass |
 | `runs/adjudication/adjudication.filled.csv` | the verdicts, with the real site names. A separate file only because `adjudication.csv` was locked in Excel |
 | `runs/adjudication/adjudication.csv` | the original blank sheet; may hold whatever the user adds |
@@ -211,16 +223,20 @@ Fixed in that pass:
 
 ## 5. What is in progress, and what to do next
 
-The user is working through `runs/adjudication/MANUAL_GUIDE.md`. Expect them to
-send two lists. Handle them in this order.
+The user is working through Part 2 of `runs/adjudication/MANUAL_GUIDE.md`, the
+judge read-through. Expect a list of `file | issue | why it costs points`, plus
+the one thing that impressed them least. A late miss may still arrive; handle it
+with runbook A.
 
 | # | Step | Who | Estimate |
 |---|---|---|---|
-| 1 | Misses — **done**. S2's platform profiles in `sameAs` became D35; S3's "page does not exist" and S6's blank no-JavaScript home page were checked and are not misses, but checking S3 exposed a classifier defect fixed in D36. All recorded in `tests/adjudication.md` | **User** | — |
-| 2 | Judge read-through: `file \| issue \| why it costs points`, plus the one thing that impressed them least | **User** (in progress) | 45–60 min |
-| 3 | Fold in misses — **done** (D35, D36) | Agent | — |
-| 4 | Fix read-through gaps (runbook B) | Agent | 15–45 min |
-| 5 | Final package and handover (runbook C) | Agent, then user submits | 10 min |
+| 1 | Misses — **done** (section 4; D35, D36) | User, then agent | — |
+| 2 | Judge read-through | **User** (in progress) | 45–60 min |
+| 3 | Fix read-through gaps (runbook B) | Agent | 15–45 min |
+| 4 | Final package, verified, handed over (runbook C) | Agent, then the user submits | 10 min |
+
+A safety zip can be built at any committed HEAD with runbook C, so a
+submission-ready package always exists even if later work runs out of time.
 
 Steps 1 and 2 are human-only: an agent reviewing its own build is a closed loop.
 Confirm the submission deadline with the user before starting long work.
@@ -287,6 +303,12 @@ changes, and those changes are not in the zip.
 - **Ask what each rule does outside the sites it was measured on**: other
   languages, locale formats, very large sites, subdomains, bot management. Every
   late false positive in this build was found that way.
+- **Check a person's browser observation against what a crawler receives.** A
+  browser session can be rate-limited, located, logged in, or shown a layout that
+  styling hides until a script runs; none of that is what the audit measures.
+  Verify with the saved evidence or a read-only fetch before changing a rule,
+  and look at the evidence while you are there: the S3 check found a real defect
+  next to the reported one.
 - **robots.txt applies to us on every host**, including Wikipedia and Wikidata.
 - **Confident-looking output carrying no information is worse than none.**
 - **The submission is a zip, not a clone.** Uncommitted work is not in it.
