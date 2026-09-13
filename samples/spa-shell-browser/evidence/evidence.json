@@ -1,16 +1,16 @@
 {
   "schema_version": "1.0.0",
   "site": {
-    "input": "http://127.0.0.1:51331",
-    "resolved_origin": "http://127.0.0.1:51331",
+    "input": "http://127.0.0.1:55528",
+    "resolved_origin": "http://127.0.0.1:55528",
     "registrable_domain": "127.0.0.1",
     "detected_locales": [
       "en"
     ]
   },
   "run_context": {
-    "started_at": "2026-09-13T13:22:05Z",
-    "finished_at": "2026-09-13T13:22:09Z",
+    "started_at": "2026-09-13T16:12:22Z",
+    "finished_at": "2026-09-13T16:12:27Z",
     "capabilities": {
       "js_render": true,
       "egress": false,
@@ -41,7 +41,7 @@
   },
   "robots": {
     "fetched": true,
-    "url": "http://127.0.0.1:51331/robots.txt",
+    "url": "http://127.0.0.1:55528/robots.txt",
     "status": 200,
     "parse_ok": false,
     "parse_reason": "not_plausibly_robots",
@@ -54,13 +54,14 @@
       "OAI-SearchBot": "unspecified",
       "CCBot": "unspecified",
       "Googlebot": "unspecified",
-      "Claude-SearchBot": "unspecified"
+      "Claude-SearchBot": "unspecified",
+      "Bingbot": "unspecified"
     },
     "sitemaps": []
   },
   "sitemaps": [
     {
-      "url": "http://127.0.0.1:51331/sitemap.xml",
+      "url": "http://127.0.0.1:55528/sitemap.xml",
       "status": 200,
       "url_count": null,
       "lastmod_present_ratio": null,
@@ -107,19 +108,19 @@
   },
   "pages": [
     {
-      "url": "http://127.0.0.1:51331/",
-      "final_url": "http://127.0.0.1:51331/",
+      "url": "http://127.0.0.1:55528/",
+      "final_url": "http://127.0.0.1:55528/",
       "status": 200,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T13:22:05Z",
+      "fetched_at": "2026-09-13T16:12:22Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
         "cache_control": null
       },
       "meta_robots": [],
-      "canonical": "http://127.0.0.1:51331/",
+      "canonical": "http://127.0.0.1:55528/",
       "canonical_self": true,
       "lang": "en",
       "hreflang": [],
@@ -169,10 +170,10 @@
       },
       "obstructions": [],
       "timing": {
-        "ttfb_ms": 10.7,
-        "connect_ms": 9.7,
-        "fetch_ms": 10.8,
-        "render_ms": 611.4
+        "ttfb_ms": 18.4,
+        "connect_ms": 17.5,
+        "fetch_ms": 18.5,
+        "render_ms": 646.2
       },
       "provenance": {
         "layer": "first_party",
@@ -180,19 +181,19 @@
       }
     },
     {
-      "url": "http://127.0.0.1:51331/warranty",
-      "final_url": "http://127.0.0.1:51331/warranty",
+      "url": "http://127.0.0.1:55528/warranty",
+      "final_url": "http://127.0.0.1:55528/warranty",
       "status": 200,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T13:22:07Z",
+      "fetched_at": "2026-09-13T16:12:24Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
         "cache_control": null
       },
       "meta_robots": [],
-      "canonical": "http://127.0.0.1:51331/",
+      "canonical": "http://127.0.0.1:55528/",
       "canonical_self": false,
       "lang": "en",
       "hreflang": [],
@@ -242,10 +243,10 @@
       },
       "obstructions": [],
       "timing": {
-        "ttfb_ms": 2.4,
-        "connect_ms": 1.4,
-        "fetch_ms": 2.6,
-        "render_ms": 1054.1
+        "ttfb_ms": 2.2,
+        "connect_ms": 0.4,
+        "fetch_ms": 2.5,
+        "render_ms": 1157.9
       },
       "provenance": {
         "layer": "first_party",
@@ -253,19 +254,19 @@
       }
     },
     {
-      "url": "http://127.0.0.1:51331/aboutus",
-      "final_url": "http://127.0.0.1:51331/aboutus",
+      "url": "http://127.0.0.1:55528/aboutus",
+      "final_url": "http://127.0.0.1:55528/aboutus",
       "status": 200,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T13:22:07Z",
+      "fetched_at": "2026-09-13T16:12:24Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
         "cache_control": null
       },
       "meta_robots": [],
-      "canonical": "http://127.0.0.1:51331/",
+      "canonical": "http://127.0.0.1:55528/",
       "canonical_self": false,
       "lang": "en",
       "hreflang": [],
@@ -315,10 +316,10 @@
       },
       "obstructions": [],
       "timing": {
-        "ttfb_ms": 15.3,
-        "connect_ms": 14.4,
-        "fetch_ms": 15.5,
-        "render_ms": 1057.6
+        "ttfb_ms": 14.3,
+        "connect_ms": 13.5,
+        "fetch_ms": 14.4,
+        "render_ms": 1156.9
       },
       "provenance": {
         "layer": "first_party",
@@ -326,19 +327,19 @@
       }
     },
     {
-      "url": "http://127.0.0.1:51331/grievance",
-      "final_url": "http://127.0.0.1:51331/grievance",
+      "url": "http://127.0.0.1:55528/grievance",
+      "final_url": "http://127.0.0.1:55528/grievance",
       "status": 200,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T13:22:07Z",
+      "fetched_at": "2026-09-13T16:12:24Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
         "cache_control": null
       },
       "meta_robots": [],
-      "canonical": "http://127.0.0.1:51331/",
+      "canonical": "http://127.0.0.1:55528/",
       "canonical_self": false,
       "lang": "en",
       "hreflang": [],
@@ -388,10 +389,10 @@
       },
       "obstructions": [],
       "timing": {
-        "ttfb_ms": 14.6,
-        "connect_ms": 13.7,
-        "fetch_ms": 14.8,
-        "render_ms": 1049.6
+        "ttfb_ms": 15.0,
+        "connect_ms": 14.1,
+        "fetch_ms": 15.1,
+        "render_ms": 1183.5
       },
       "provenance": {
         "layer": "first_party",
@@ -399,19 +400,19 @@
       }
     },
     {
-      "url": "http://127.0.0.1:51331/extended-warranty",
-      "final_url": "http://127.0.0.1:51331/extended-warranty",
+      "url": "http://127.0.0.1:55528/extended-warranty",
+      "final_url": "http://127.0.0.1:55528/extended-warranty",
       "status": 200,
       "redirect_chain": [],
       "content_type": "text/html; charset=utf-8",
-      "fetched_at": "2026-09-13T13:22:07Z",
+      "fetched_at": "2026-09-13T16:12:24Z",
       "headers": {
         "x_robots_tag": null,
         "last_modified": null,
         "cache_control": null
       },
       "meta_robots": [],
-      "canonical": "http://127.0.0.1:51331/",
+      "canonical": "http://127.0.0.1:55528/",
       "canonical_self": false,
       "lang": "en",
       "hreflang": [],
@@ -461,10 +462,10 @@
       },
       "obstructions": [],
       "timing": {
-        "ttfb_ms": 19.6,
-        "connect_ms": 18.6,
-        "fetch_ms": 19.8,
-        "render_ms": 661.9
+        "ttfb_ms": 17.2,
+        "connect_ms": 16.4,
+        "fetch_ms": 17.4,
+        "render_ms": 630.3
       },
       "provenance": {
         "layer": "first_party",
@@ -475,10 +476,10 @@
   "link_graph": {
     "edges": [],
     "orphans": [
-      "http://127.0.0.1:51331/warranty",
-      "http://127.0.0.1:51331/aboutus",
-      "http://127.0.0.1:51331/grievance",
-      "http://127.0.0.1:51331/extended-warranty"
+      "http://127.0.0.1:55528/warranty",
+      "http://127.0.0.1:55528/aboutus",
+      "http://127.0.0.1:55528/grievance",
+      "http://127.0.0.1:55528/extended-warranty"
     ],
     "max_depth_from_home": 0
   },
@@ -494,98 +495,98 @@
   },
   "ua_probe": [
     {
-      "url": "http://127.0.0.1:51331/",
+      "url": "http://127.0.0.1:55528/",
       "user_agent": "browser-ua",
       "status": 200,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:51331/",
+      "url": "http://127.0.0.1:55528/",
       "user_agent": "GPTBot",
       "status": 200,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:51331/",
+      "url": "http://127.0.0.1:55528/",
       "user_agent": "ClaudeBot",
       "status": 200,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:51331/",
+      "url": "http://127.0.0.1:55528/",
       "user_agent": "PerplexityBot",
       "status": 200,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:51331/",
+      "url": "http://127.0.0.1:55528/",
       "user_agent": "OAI-SearchBot",
       "status": 200,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:51331/",
+      "url": "http://127.0.0.1:55528/",
       "user_agent": "CCBot",
       "status": 200,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:51331/",
+      "url": "http://127.0.0.1:55528/",
       "user_agent": "Googlebot",
       "status": 200,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:51331/warranty",
+      "url": "http://127.0.0.1:55528/warranty",
       "user_agent": "browser-ua",
       "status": 200,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:51331/warranty",
+      "url": "http://127.0.0.1:55528/warranty",
       "user_agent": "GPTBot",
       "status": 200,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:51331/warranty",
+      "url": "http://127.0.0.1:55528/warranty",
       "user_agent": "ClaudeBot",
       "status": 200,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:51331/warranty",
+      "url": "http://127.0.0.1:55528/warranty",
       "user_agent": "PerplexityBot",
       "status": 200,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:51331/warranty",
+      "url": "http://127.0.0.1:55528/warranty",
       "user_agent": "OAI-SearchBot",
       "status": 200,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:51331/warranty",
+      "url": "http://127.0.0.1:55528/warranty",
       "user_agent": "CCBot",
       "status": 200,
       "text_len": 0,
       "text_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "url": "http://127.0.0.1:51331/warranty",
+      "url": "http://127.0.0.1:55528/warranty",
       "user_agent": "Googlebot",
       "status": 200,
       "text_len": 0,
@@ -614,12 +615,12 @@
   ],
   "errors": [
     {
-      "url": "http://127.0.0.1:51331/robots.txt",
+      "url": "http://127.0.0.1:55528/robots.txt",
       "stage": "robots",
       "message": "not a robots.txt: the body is an HTML document (content-type text/html); treated as absent, no restrictions"
     },
     {
-      "url": "http://127.0.0.1:51331/",
+      "url": "http://127.0.0.1:55528/",
       "stage": "discovery",
       "message": "soft-404 baseline sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855: two paths that cannot exist both returned status 200 with this identical body"
     }

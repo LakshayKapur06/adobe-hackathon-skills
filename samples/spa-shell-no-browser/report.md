@@ -1,6 +1,6 @@
 # AI-readiness audit: 127.0.0.1
 
-Audited 2026-09-13T13:22:11Z. 1 of 1 discovered pages sampled; no browser was available; no off-site sources were consulted; 0.0 seconds.
+Audited 2026-09-13T16:12:28Z. 1 of 1 discovered pages sampled; no browser was available; no off-site sources were consulted; 0.0 seconds.
 
 ## At a glance
 
@@ -16,14 +16,14 @@ This run had limits that narrow what it could see: render: rendering disabled (-
 
 **Critical** · priority **P0** (fix first: it blocks a stage of being found or used) · Being found and cited by AI assistants · confidence high · effort high
 
-- **What we saw:** The only 2xx HTML page sampled returned fewer than 200 characters of text in the server response (http://127.0.0.1:63979/: 0). The site answered two paths that cannot exist with the identical response, so every URL serves one empty application shell. No page was rendered because no browser was available, so what a browser would add is not measured here; what a fetcher that does not execute JavaScript receives is observed directly.
+- **What we saw:** The only 2xx HTML page sampled returned fewer than 200 characters of text in the server response (http://127.0.0.1:60663/: 0). The site answered two paths that cannot exist with the identical response, so every URL serves one empty application shell. No page was rendered because no browser was available, so what a browser would add is not measured here; what a fetcher that does not execute JavaScript receives is observed directly.
 - **Why it matters:** The server response is all a non-rendering fetcher ever reads.
 - **What improves:** Any text at all reaching a fetcher that does not execute scripts.
 - **What to do:** Serve content in the server response instead of only through client-side scripts.
 - **Where:** The application shell served at the URLs cited.
 - **How:** Adopt server-side rendering or static generation for the site's routes, or place a prerendering step in front of them serving the same rendered HTML to every client; re-run this audit with a browser available to measure the gap per template.
 - **How you will know it worked:** A plain fetch of the home page and each cited URL returns at least the page's main heading and body text in the server response.
-- **Pages behind this:** http://127.0.0.1:63979/ (1 of 1 examined) · rule RND-002
+- **Pages behind this:** http://127.0.0.1:60663/ (1 of 1 examined) · rule RND-002
 
 ### 2. The home page carries no machine-readable organization identity
 
@@ -35,10 +35,10 @@ This run had limits that narrow what it could see: render: rendering disabled (-
 - **Why it matters:** It states the entity behind the site explicitly instead of leaving it to be inferred from a name.
 - **What improves:** Entity disambiguation.
 - **What to do:** Add an Organization JSON-LD block, or the most specific subtype that applies, to the home page.
-- **Where:** The home page template's <head>, in the server response (http://127.0.0.1:63979/).
+- **Where:** The home page template's <head>, in the server response (http://127.0.0.1:60663/).
 - **How:** Emit @type, name, url, logo and sameAs with the organization's profile URLs on other sites, plus legalName and address where they apply, generated server-side.
 - **How you will know it worked:** The home page's server response contains a JSON-LD node of an Organization type with at least name and url.
-- **Pages behind this:** http://127.0.0.1:63979/ (1 of 1 examined) · rule IDM-001
+- **Pages behind this:** http://127.0.0.1:60663/ (1 of 1 examined) · rule IDM-001
 
 ## Suggested improvements beyond the problems
 
@@ -46,14 +46,14 @@ This run had limits that narrow what it could see: render: rendering disabled (-
 
 **Low** · priority **P2** (plan it in) · Being found and cited by AI assistants · confidence low · effort low
 
-- **What we saw:** /llms.txt at http://127.0.0.1:63979 answered HTTP 200 and is not present. No major assistant is documented to read this file, so this is listed only as a low-cost hedge, not as a gap.
-- **Why it matters:** It is a proposed convention some tools read; no major assistant documents consuming it, which is why this is proactive and never a finding.
+- **What we saw:** /llms.txt at http://127.0.0.1:60663 answered HTTP 200 with no file: an empty body or the site's page for unknown addresses, so no /llms.txt is published. No major assistant is documented to read this file, so this is listed only as a low-cost hedge, not as a gap.
+- **Why it matters:** It is a proposed convention some tools read; no major assistant documents consuming it, which is why this is a suggestion and never reported as a problem.
 - **What improves:** A possible, undocumented discovery channel for tools that adopt the convention.
 - **What to do:** Publish a plain-text /llms.txt summarising what the site is and linking its key pages.
-- **Where:** http://127.0.0.1:63979/llms.txt
+- **Where:** http://127.0.0.1:60663/llms.txt
 - **How:** Write a short markdown file: one paragraph describing the organization, then links to the pages that answer the questions people ask about it. Keep it consistent with those pages.
 - **How you will know it worked:** /llms.txt answers 200 with content that is not the site's soft-404 page.
-- **Pages behind this:** http://127.0.0.1:63979/llms.txt · rule PRO-001
+- **Pages behind this:** http://127.0.0.1:60663/llms.txt · rule PRO-001
 
 ## Checks that passed
 
